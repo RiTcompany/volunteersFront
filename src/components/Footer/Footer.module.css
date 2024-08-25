@@ -1,0 +1,11 @@
+.footer__container {
+    background: linear-gradient(90deg, #274FA6 0%, #1E78C1 100%);
+    height: 80px;
+}
+
+@media (max-width: 767px) {
+    .footer__container {
+        background: linear-gradient(180deg, #274FA6 0%, #1E78C1 100%);
+        height: 100px;
+    }
+}
