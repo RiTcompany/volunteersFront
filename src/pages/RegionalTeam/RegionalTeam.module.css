@@ -13,6 +13,16 @@
     max-width: 300px;
 }
 
+.regionalTeam__addButton {
+    width: 133px;
+    height: 32px;
+    padding: 4px 12px 4px 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    /*line-height: 20px;*/
+}
+
 .regionalTeam__tableHead {
     font-size: 16px;
     font-weight: 700;
@@ -33,7 +43,7 @@
 }
 
 .regionalTeam__tableName {
-    min-width: 120px
+    min-width: 180px
 }
 
 .regionalTeam__tableDate {
@@ -118,5 +128,9 @@
     .regionalTeam__input {
         width: 100%;
         max-width: none;
+    }
+
+    .regionalTeam__addButton {
+        width: 50px;
     }
 }
