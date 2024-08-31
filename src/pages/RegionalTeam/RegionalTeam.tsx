@@ -59,7 +59,7 @@ export function RegionalTeam(): React.JSX.Element {
 
 
     useEffect(() => {
-        const allChecked: boolean = Object.keys(columns).every(key => key === 'all' || (columns as ColumnsType)[key]);
+        const allChecked: boolean = Object.keys(columns).every(key => key === 'all' || columns[key as keyof ColumnsType]);
         if (allChecked !== columns.all) {
             setColumns(prevState => ({
                 ...prevState,
