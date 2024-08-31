@@ -12,8 +12,8 @@ const buttons = [
     {name: "Личный кабинет", icon: profile, link: "/profile"},
     {name: "Мой штаб/центр", icon: bag, link: "/my_headquarters"},
     {name: "Региональная команда", icon: document, link: "/regional_team"},
-    {name: "Волонтёры", icon: document, link: "/volunteers"},
-    {name: "Штаб / Центр", icon: document, link: "/center"},
+    {name: "Волонтёры", icon: document, link: "/all_volunteers"},
+    {name: "Штаб / Центр", icon: document, link: "/all_headquarters"},
     {name: "Документы", icon: document, link: "/documents"},
     {name: "Мероприятия", icon: document, link: "/events"},
 ]

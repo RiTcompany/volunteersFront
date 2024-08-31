@@ -1,4 +1,4 @@
-import styles from './RegionalTeam.module.css'
+import styles from './AllVolunteers.module.css'
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
@@ -16,34 +16,33 @@ import cancel from "../../assets/cancel.svg";
 const cn = classNames;
 
 const data = {
-    region: "Команда Такого-то региона",
+    region: "Таблица всех волонтеров",
     people: [
-    {id: 1374, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",],},
-    {id: 1375, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Зеленый", events: ["Мероприятие 1",]},
-    {id: 1376, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Красный", events: ["Мероприятие 1", "Мероприятие 2"],},
-    {id: 1377, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Not found", events: ["Мероприятие 1",],},
-        {id: 1378, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",],},
-        {id: 1379, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Зеленый", events: ["Мероприятие 1",]},
-        {id: 1380, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Красный", events: ["Мероприятие 1", "Мероприятие 2"],},
-        {id: 1381, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Not found", events: ["Мероприятие 1",],},
-        {id: 1382, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",],},
-        {id: 1383, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Зеленый", events: ["Мероприятие 1",]},
-        {id: 1384, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Красный", events: ["Мероприятие 1", "Мероприятие 2"],},
-        {id: 1385, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Not found", events: ["Мероприятие 1",],},
-        {id: 1386, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",],},
-        {id: 1387, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Зеленый", events: ["Мероприятие 1",]},
-        {id: 1388, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Красный", events: ["Мероприятие 1", "Мероприятие 2"],},
-        {id: 1389, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Not found", events: ["Мероприятие 1",],},
+    {id: 1374, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1375, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1376, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1377, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1378, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1379, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1380, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1381, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1382, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1383, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1384, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1385, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
 ]}
 
-export function RegionalTeam(): React.JSX.Element {
+export function AllVolunteers(): React.JSX.Element {
     const navigate = useNavigate()
     const [isFilterOpen, setIsFilterOpen] = useState(false)
     const [isEditorMode, setIsEditorMode] = useState(false)
     const [isOpenNew, setIsOpenNew] = useState(false)
-    const [columns, setColumns] = useState({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, button: true})
+    const [columns, setColumns] = useState({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, comment: true, rate: true, interview: true, step: true, headquarters: true, center: true})
 
     const [openCell, setOpenCell] = useState(null);
+    const [openStepCell, setOpenStepCell] = useState(null);
+    const [openHeadquartersCell, setOpenHeadquartersCell] = useState(null);
+    const [openCenterCell, setOpenCenterCell] = useState(null);
 
 
     useEffect(() => {
@@ -60,7 +59,7 @@ export function RegionalTeam(): React.JSX.Element {
         setColumns(prevState => {
             const newAll = !prevState.all;
             const newColumns = {
-                all: newAll, id: newAll, name: newAll, date: newAll, tg: newAll, vk: newAll, color: newAll, events: newAll, button: newAll
+                all: newAll, id: newAll, name: newAll, date: newAll, tg: newAll, vk: newAll, color: newAll, events: newAll, comment: newAll, rate: newAll, interview: newAll, step: newAll, headquarters: newAll, center: newAll
             };
 
             return newColumns;
@@ -74,6 +73,18 @@ export function RegionalTeam(): React.JSX.Element {
 
     const toggleDropdown = (cellId) => {
         setOpenCell(openCell === cellId ? null : cellId);
+    };
+
+    const toggleStepDropdown = (cellId) => {
+        setOpenStepCell(openStepCell === cellId ? null : cellId);
+    };
+
+    const toggleHeadquartersDropdown = (cellId) => {
+        setOpenHeadquartersCell(openHeadquartersCell === cellId ? null : cellId);
+    };
+
+    const toggleCenterDropdown = (cellId) => {
+        setOpenCenterCell(openCenterCell === cellId ? null : cellId);
     };
 
     const handleColorSelect = (color, cellId) => {
@@ -169,8 +180,13 @@ export function RegionalTeam(): React.JSX.Element {
                             {columns.vk && <th className={cn(styles.regionalTeam__tableLink)}>Ссылка ВКонтакте</th>}
                             {columns.color && <th className={cn(styles.regionalTeam__tableColor)}>Светофор</th>}
                             {columns.events && <th className={cn(styles.regionalTeam__tableEvents)}>Мероприятия</th>}
-                            {columns.button && <th className={cn(styles.regionalTeam__tableButton)}></th>}
-                            {isEditorMode &&
+                            {columns.comment && <th className={cn(styles.regionalTeam__tableButton)}>Комментарий по работе</th>}
+                            {columns.rate && <th className={cn(styles.regionalTeam__tableButton)}>Рейтинг</th>}
+                            {columns.interview && <th className={cn(styles.regionalTeam__tableButton)}>Собеседование для ступени роста</th>}
+                            {columns.step && <th className={cn(styles.regionalTeam__tableButton)}>Ступень роста</th>}
+                            {columns.headquarters && <th className={cn(styles.regionalTeam__tableButton)}>Районный штаб</th>}
+                            {columns.center && <th className={cn(styles.regionalTeam__tableButton)}>Общественный центр</th>}
+                            {!isEditorMode &&
                                 <th className={cn("min-w-8")}></th>
                             }
                         </tr>
@@ -217,8 +233,80 @@ export function RegionalTeam(): React.JSX.Element {
                                     </div>
                                 </th>}
                                 {columns.events && <th className={cn(styles.regionalTeam__tableEvents)} title={person.events.join(", ")}>{person.events.join(", ")}</th>}
-                                {columns.button && <th><button className={cn("bg-[#4471C9] text-white", isEditorMode && "cursor-no-drop bg-[#ABABAB]", styles.regionalTeam__newPassword)} disabled={!isEditorMode}>Выдать новый логин/пароль</button></th>}
-                                {isEditorMode &&
+                                {columns.comment && <th>
+                                    <input value={person.comment} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
+                                </th>}
+                                {columns.rate && <th>
+                                    <p className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "" )}>{person.rate}</p>
+                                </th>}
+                                {columns.interview && <th>
+                                    <input type={"checkbox"} checked={person.interview} className={cn("border-0 h-14 bg-white w-full px-1 text-center")} disabled={!isEditorMode}/>
+                                </th>}
+                                {columns.step && <th className={""}>
+                                    <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#F1F1F1] text-[#141414]")}>
+                                        {person.step}
+                                        {isEditorMode &&
+                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleStepDropdown(person.id)} />
+                                        }
+                                        {openStepCell === person.id && (
+                                            <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
+                                                {["Ступень 1", "Ступень 2", "Ступень 3", "Ступень 4"].map(step => (
+                                                    <div
+                                                        key={step}
+                                                        className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(step))}
+                                                        onClick={() => handleColorSelect(step, person.id)}
+                                                    >
+                                                        {step}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </th>}
+                                {columns.headquarters &&
+                                    <th className={""}>
+                                        <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#FFFFFF] text-[#141414]")}>
+                                            {person.headquarters}
+                                            {isEditorMode &&
+                                                <img src={arrowSmall} alt={"arrow"} onClick={() => toggleHeadquartersDropdown(person.id)} />
+                                            }
+                                            {openHeadquartersCell === person.id && (
+                                                <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
+                                                    {["Название 1", "Название 2", "Название 3", "Название 4"].map(headquarters => (
+                                                        <div
+                                                            key={headquarters}
+                                                            className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(headquarters))}
+                                                            onClick={() => handleColorSelect(headquarters, person.id)}
+                                                        >
+                                                            {headquarters}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </th>}
+                                {columns.center && <th className={""}>
+                                    <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#FFFFFF] text-[#141414]")}>
+                                        {person.center}
+                                        {isEditorMode &&
+                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleCenterDropdown(person.id)} />
+                                        }
+                                        {openCenterCell === person.id && (
+                                            <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
+                                                {["Название 1", "Название 2", "Название 3", "Название 4"].map(center => (
+                                                    <div
+                                                        key={center}
+                                                        className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(center))}
+                                                        onClick={() => handleColorSelect(center, person.id)}
+                                                    >
+                                                        {center}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </th>}
+                                {!isEditorMode &&
                                     <th className={cn("min-w-8 ")}><button className={"w-full flex justify-center"}><img src={bin} alt="delete" className={"self-center"}/></button></th>
                                 }
                             </tr>
@@ -266,12 +354,32 @@ export function RegionalTeam(): React.JSX.Element {
                                 <p>Светофор</p>
                             </div>
                             <div className={"flex gap-2 items-center"}>
-                                <input checked={columns.events}  onClick={() => setColumns({...columns, events: !columns.events})} type="checkbox" name={"events"} className={styles.regionalTeam__checkbox}/>
+                                <input checked={columns.events} onClick={() => setColumns({...columns, events: !columns.events})} type="checkbox" name={"events"} className={styles.regionalTeam__checkbox}/>
                                 <p>Мероприятия</p>
                             </div>
                             <div className={"flex gap-2 items-center"}>
-                                <input checked={columns.button}  onClick={() => setColumns({...columns, button: !columns.button})} type="checkbox" name={"button"} className={styles.regionalTeam__checkbox}/>
-                                <p>Выдать новый логин/пароль</p>
+                                <input checked={columns.comment} onClick={() => setColumns({...columns, comment: !columns.comment})} type="checkbox" name={"comment"} className={styles.regionalTeam__checkbox}/>
+                                <p>Комментарий по работе</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input checked={columns.rate} onClick={() => setColumns({...columns, rate: !columns.rate})} type="checkbox" name={"rate"} className={styles.regionalTeam__checkbox}/>
+                                <p>Рейтинг</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input checked={columns.interview} onClick={() => setColumns({...columns, interview: !columns.interview})} type="checkbox" name={"interview"} className={styles.regionalTeam__checkbox}/>
+                                <p>Собеседование для ступени роста</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input checked={columns.step} onClick={() => setColumns({...columns, step: !columns.step})} type="checkbox" name={"step"} className={styles.regionalTeam__checkbox}/>
+                                <p>Ступень роста</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input checked={columns.headquarters} onClick={() => setColumns({...columns, headquarters: !columns.headquarters})} type="checkbox" name={"headquarters"} className={styles.regionalTeam__checkbox}/>
+                                <p>Районный штаб</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input checked={columns.center} onClick={() => setColumns({...columns, center: !columns.center})} type="checkbox" name={"center"} className={styles.regionalTeam__checkbox}/>
+                                <p>Районный штаб</p>
                             </div>
                         </div>
                         <div className={"flex flex-col gap-2"}>

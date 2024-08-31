@@ -1,7 +1,6 @@
 import styles from './Main.module.css'
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
-import {Footer} from "../../components/Footer/Footer.tsx";
 import {useNavigate} from "react-router-dom";
 const cn = classNames;
 

@@ -1,5 +1,4 @@
 import styles from './Footer.module.css'
-import whiteLogo from "../../assets/whiteLogo.svg"
 import classNames from 'classnames'
 const cn = classNames;
 
