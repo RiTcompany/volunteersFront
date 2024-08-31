@@ -25,7 +25,7 @@ interface dataType {
     events: string[],
 }
 
-interface columnsType {
+interface ColumnsType {
     all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, events: boolean, button: boolean
 }
 
@@ -53,13 +53,13 @@ export function RegionalTeam(): React.JSX.Element {
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
-    const [columns, setColumns] = useState<columnsType>({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, button: true})
+    const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, button: true})
 
     const [openCell, setOpenCell] = useState<number>(-1);
 
 
     useEffect(() => {
-        const allChecked: boolean = Object.keys(columns).every(key => key === 'all' || columns[key]);
+        const allChecked: boolean = Object.keys(columns).every(key => key === 'all' || (columns as ColumnsType)[key]);
         if (allChecked !== columns.all) {
             setColumns(prevState => ({
                 ...prevState,
