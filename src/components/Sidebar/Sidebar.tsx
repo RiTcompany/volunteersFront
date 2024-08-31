@@ -18,12 +18,17 @@ const buttons = [
     {name: "Мероприятия", icon: document, link: "/events"},
 ]
 
-export function Sidebar({isOpenMenu, onMenuClick}): React.JSX.Element {
+interface SidebarProps {
+    isOpenMenu: boolean,
+    onMenuClick: () => void;
+}
+
+export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Element {
     const navigate = useNavigate()
     const location = useLocation()
     // const [tab, setTab] = useState<string>("profile")
 
-    const [activeIndex, setActiveIndex] = useState(-1);
+    const [activeIndex, setActiveIndex] = useState<number>(-1);
 
     useEffect(() => {
         const currLocation = location.pathname
@@ -34,7 +39,7 @@ export function Sidebar({isOpenMenu, onMenuClick}): React.JSX.Element {
         }
     })
 
-    const handleButtonClick = (index, link, isPhone) => {
+    const handleButtonClick = (index: number, link: string, isPhone: boolean) => {
         setActiveIndex(index);
         navigate(link);
         isPhone && onMenuClick()

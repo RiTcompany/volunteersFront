@@ -13,7 +13,7 @@ import {AllVolunteers} from "./pages/AllVolunteers/AllVolunteers.tsx";
 
 function App() {
   const location = useLocation()
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   return (
     <>

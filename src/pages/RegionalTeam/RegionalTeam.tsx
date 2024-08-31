@@ -13,6 +13,7 @@ import arrowSmall from "../../assets/arrowSmall.svg";
 import bin from "../../assets/delete.svg";
 import plus from "../../assets/plus.svg";
 import cancel from "../../assets/cancel.svg";
+import {b} from "vite/dist/node/types.d-aGj9QkWt";
 const cn = classNames;
 
 const data = {
@@ -38,12 +39,12 @@ const data = {
 
 export function RegionalTeam(): React.JSX.Element {
     const navigate = useNavigate()
-    const [isFilterOpen, setIsFilterOpen] = useState(false)
-    const [isEditorMode, setIsEditorMode] = useState(false)
-    const [isOpenNew, setIsOpenNew] = useState(false)
+    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
+    const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
+    const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
     const [columns, setColumns] = useState({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, button: true})
 
-    const [openCell, setOpenCell] = useState(null);
+    const [openCell, setOpenCell] = useState<number>(-1);
 
 
     useEffect(() => {
@@ -68,19 +69,20 @@ export function RegionalTeam(): React.JSX.Element {
     };
 
 
-    const handleAddNewPerson = () => {
+    // const handleAddNewPerson = () => {
+    //
+    // }
 
-    }
-
-    const toggleDropdown = (cellId) => {
+    const toggleDropdown = (cellId: number) => {
         setOpenCell(openCell === cellId ? null : cellId);
     };
 
-    const handleColorSelect = (color, cellId) => {
+    const handleColorSelect = (color: string, cellId: number) => {
+        console.log(color, cellId)
         setOpenCell(null);
     };
 
-    const getColorClass = (color) => {
+    const getColorClass = (color: string) => {
         return color === "Желтый" ? "bg-[#FFF4E4] text-[#E99518]"
             : color === "Зеленый" ? "bg-[#EBF6EB] text-[#31AA27]"
                 : color === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"

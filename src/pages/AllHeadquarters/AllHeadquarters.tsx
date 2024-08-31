@@ -32,30 +32,9 @@ const data = {
 
 export function AllHeadquarters(): React.JSX.Element {
     const navigate = useNavigate()
-    const [isFilterOpen, setIsFilterOpen] = useState(false)
-    const [isEditorMode, setIsEditorMode] = useState(false)
-    const [isOpenNew, setIsOpenNew] = useState(false)
-
-    const [openCell, setOpenCell] = useState(null);
-
-    const handleAddNewPerson = () => {
-
-    }
-
-    const toggleDropdown = (cellId) => {
-        setOpenCell(openCell === cellId ? null : cellId);
-    };
-
-    const handleColorSelect = (color, cellId) => {
-        setOpenCell(null);
-    };
-
-    const getColorClass = (color) => {
-        return color === "Желтый" ? "bg-[#FFF4E4] text-[#E99518]"
-            : color === "Зеленый" ? "bg-[#EBF6EB] text-[#31AA27]"
-                : color === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
-                    : "bg-[#F1F1F1] text-[#777777]";
-    };
+    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
+    const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
+    const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
 
     useEffect(() => {
         !localStorage.getItem("auth") && navigate("/")

@@ -12,12 +12,20 @@ import darkMenu from "../../assets/darkMenu.svg"
 import cross from "../../assets/cross.svg"
 import logout from "../../assets/logout.svg"
 import classNames from 'classnames'
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 const cn = classNames;
 
-function Modal({ closeModal }) {
-    const [showContacts, setShowContacts] = useState(true);
+interface ModalProps {
+    closeModal?: () => void;
+}
+
+interface NavbarProps {
+    onMenuClick: () => void;
+}
+
+function Modal({ closeModal }: ModalProps): React.JSX.Element {
+    const [showContacts, setShowContacts] = useState<boolean>(true);
     return (
         <div className={cn("absolute flex flex-col border-x md:justify-between gap-5 md:gap-0 z-50", styles.navbar__modal)} onClick={(e) => e.stopPropagation()}>
             <button className={"md:hidden absolute top-5 right-5"} onClick={closeModal}>
@@ -55,21 +63,13 @@ function Modal({ closeModal }) {
     );
 }
 
-export function Navbar({onMenuClick}): React.JSX.Element {
+export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const location = useLocation().pathname;
     const navigate = useNavigate()
     // const [navColor, setNavColor] = useState<string>()
 
     const token = localStorage.getItem("auth")
-
-    // useEffect(() => {
-    //     if (location === "/") {
-    //         setNavColor("#0C428C")
-    //     } else {
-    //         setNavColor("#F7F8FC")
-    //     }
-    // }, []);
 
     useEffect(() => {
         function handleClickOutside() {
@@ -83,7 +83,7 @@ export function Navbar({onMenuClick}): React.JSX.Element {
         };
     }, [isModalOpen]);
 
-    function handleContactButton(e) {
+    function handleContactButton(e: React.MouseEvent<HTMLButtonElement>) {
         e.stopPropagation();
         setIsModalOpen(prev => !prev);
     }

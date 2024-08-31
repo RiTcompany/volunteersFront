@@ -1,5 +1,6 @@
 import styles from './Footer.module.css'
 import classNames from 'classnames'
+import React from "react";
 const cn = classNames;
 
 export function Footer(): React.JSX.Element {
