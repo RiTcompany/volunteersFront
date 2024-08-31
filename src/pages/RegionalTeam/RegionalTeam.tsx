@@ -59,7 +59,7 @@ export function RegionalTeam(): React.JSX.Element {
 
 
     useEffect(() => {
-        const allChecked = Object.keys(columns).every(key => key === 'all' || columns[key]);
+        const allChecked: boolean = Object.keys(columns).every(key => key === 'all' || columns[key]);
         if (allChecked !== columns.all) {
             setColumns(prevState => ({
                 ...prevState,
@@ -90,7 +90,7 @@ export function RegionalTeam(): React.JSX.Element {
 
     const handleColorSelect = (color: string, cellId: number) => {
         console.log(color, cellId)
-        setOpenCell(null);
+        setOpenCell(-1);
     };
 
     const getColorClass = (color: string) => {

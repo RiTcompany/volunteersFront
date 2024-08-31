@@ -64,7 +64,7 @@ export function AllVolunteers(): React.JSX.Element {
 
 
     useEffect(() => {
-        const allChecked = Object.keys(columns).every(key => key === 'all' || columns[key]);
+        const allChecked: boolean = Object.keys(columns).every(key => key === 'all' || columns[key]);
         if (allChecked !== columns.all) {
             setColumns(prevState => ({
                 ...prevState,
