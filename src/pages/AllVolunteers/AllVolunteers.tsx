@@ -15,9 +15,27 @@ import plus from "../../assets/plus.svg";
 import cancel from "../../assets/cancel.svg";
 const cn = classNames;
 
-const data = {
-    region: "Таблица всех волонтеров",
-    people: [
+interface dataType {
+    id: number,
+    name: string,
+    date: string,
+    tg: string,
+    vk: string,
+    color: string,
+    events: string[],
+    comment: string,
+    rate: string,
+    interview: boolean,
+    step: string,
+    headquarters: string,
+    center: string
+}
+
+interface ColumnsType {
+    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, events: boolean, comment: boolean, rate: boolean, interview: boolean, step: boolean, headquarters: boolean, center: boolean
+}
+
+const data: dataType[] = [
     {id: 1374, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
     {id: 1375, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
     {id: 1376, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
@@ -30,14 +48,14 @@ const data = {
     {id: 1383, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
     {id: 1384, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
     {id: 1385, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-]}
+]
 
 export function AllVolunteers(): React.JSX.Element {
     const navigate = useNavigate()
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
-    const [columns, setColumns] = useState({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, comment: true, rate: true, interview: true, step: true, headquarters: true, center: true})
+    const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, comment: true, rate: true, interview: true, step: true, headquarters: true, center: true})
 
     const [openCell, setOpenCell] = useState<number>(-1);
     const [openStepCell, setOpenStepCell] = useState<number>(-1);
@@ -72,24 +90,24 @@ export function AllVolunteers(): React.JSX.Element {
     // }
 
     const toggleDropdown = (cellId: number) => {
-        setOpenCell(openCell === cellId ? null : cellId);
+        setOpenCell(openCell === cellId ? -1 : cellId);
     };
 
     const toggleStepDropdown = (cellId: number) => {
-        setOpenStepCell(openStepCell === cellId ? null : cellId);
+        setOpenStepCell(openStepCell === cellId ? -1 : cellId);
     };
 
     const toggleHeadquartersDropdown = (cellId: number) => {
-        setOpenHeadquartersCell(openHeadquartersCell === cellId ? null : cellId);
+        setOpenHeadquartersCell(openHeadquartersCell === cellId ? -1 : cellId);
     };
 
     const toggleCenterDropdown = (cellId: number) => {
-        setOpenCenterCell(openCenterCell === cellId ? null : cellId);
+        setOpenCenterCell(openCenterCell === cellId ? -1 : cellId);
     };
 
     const handleColorSelect = (color: string, cellId: number) => {
         console.log(color, cellId)
-        setOpenCell(null);
+        setOpenCell(-1);
     };
 
     const getColorClass = (color: string) => {
@@ -113,7 +131,7 @@ export function AllVolunteers(): React.JSX.Element {
                 <div className={"flex justify-between"}>
                     <div className={"flex gap-2"}>
                         <img src={document} alt="document"/>
-                        <p className={"text-[18px] md:text-[20px] font-bold"}>{data.region}</p>
+                        <p className={"text-[18px] md:text-[20px] font-bold"}>Таблица всех волонтеров</p>
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
@@ -193,7 +211,7 @@ export function AllVolunteers(): React.JSX.Element {
                         </tr>
                         </thead>
                         <tbody className={""}>
-                        {data.people && data.people.map(person =>
+                        {data && data.map(person =>
                             <tr key={person.id} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
                                 {columns.id && <th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{person.id}</th>}
                                 {columns.name && <th className={cn("sticky z-10 bg-white border-r-[1px] border-b-[1px]", !columns.id ? "left-0" : "left-[48px]")}>

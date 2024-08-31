@@ -13,12 +13,23 @@ import arrowSmall from "../../assets/arrowSmall.svg";
 import bin from "../../assets/delete.svg";
 import plus from "../../assets/plus.svg";
 import cancel from "../../assets/cancel.svg";
-import {b} from "vite/dist/node/types.d-aGj9QkWt";
 const cn = classNames;
 
-const data = {
-    region: "Команда Такого-то региона",
-    people: [
+interface dataType {
+    id: number,
+    name: string,
+    date: string,
+    tg: string,
+    vk: string,
+    color: string,
+    events: string[],
+}
+
+interface columnsType {
+    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, events: boolean, button: boolean
+}
+
+const data: dataType[] = [
     {id: 1374, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",],},
     {id: 1375, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Зеленый", events: ["Мероприятие 1",]},
     {id: 1376, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Красный", events: ["Мероприятие 1", "Мероприятие 2"],},
@@ -35,14 +46,14 @@ const data = {
         {id: 1387, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Зеленый", events: ["Мероприятие 1",]},
         {id: 1388, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Красный", events: ["Мероприятие 1", "Мероприятие 2"],},
         {id: 1389, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Not found", events: ["Мероприятие 1",],},
-]}
+]
 
 export function RegionalTeam(): React.JSX.Element {
     const navigate = useNavigate()
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
-    const [columns, setColumns] = useState({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, button: true})
+    const [columns, setColumns] = useState<columnsType>({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, button: true})
 
     const [openCell, setOpenCell] = useState<number>(-1);
 
@@ -74,7 +85,7 @@ export function RegionalTeam(): React.JSX.Element {
     // }
 
     const toggleDropdown = (cellId: number) => {
-        setOpenCell(openCell === cellId ? null : cellId);
+        setOpenCell(openCell === cellId ? -1 : cellId);
     };
 
     const handleColorSelect = (color: string, cellId: number) => {
@@ -103,7 +114,7 @@ export function RegionalTeam(): React.JSX.Element {
                 <div className={"flex justify-between"}>
                     <div className={"flex gap-2"}>
                         <img src={document} alt="document"/>
-                        <p className={"text-[18px] md:text-[20px] font-bold"}>{data.region}</p>
+                        <p className={"text-[18px] md:text-[20px] font-bold"}>Команда Такого-то региона</p>
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
@@ -178,7 +189,7 @@ export function RegionalTeam(): React.JSX.Element {
                         </tr>
                         </thead>
                         <tbody className={""}>
-                        {data.people && data.people.map(person =>
+                        {data && data.map(person =>
                             <tr key={person.id} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
                                 {columns.id && <th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{person.id}</th>}
                                 {columns.name && <th className={cn("sticky z-10 bg-white border-r-[1px] border-b-[1px]", !columns.id ? "left-0" : "left-[48px]")}>

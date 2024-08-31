@@ -4,7 +4,19 @@ import React, {useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
 const cn = classNames;
 
-const data = {
+interface dataType {
+    name: string,
+    who: string,
+    id: number,
+    date: string,
+    tg: string,
+    vk: string,
+    rate: number,
+    events: string[],
+    center: string
+}
+
+const data: dataType = {
     name: "Иванов Иван Иванович",
     who: "Руководитель какого-то региона",
     id: 1374,
