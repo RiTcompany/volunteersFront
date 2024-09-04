@@ -73,9 +73,11 @@ export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
 
     const [user, setUser] = useState<string>("")
 
+    const token = localStorage.getItem("authToken")
+
     useEffect(() => {
-        !localStorage.getItem("authToken") && navigate("/")
-        if (parseJwt(localStorage.getItem("authToken"))) {
+        !token && navigate("/")
+        if (token) {
             setUser(parseJwt(localStorage.getItem("authToken")).sub)
         }
     })

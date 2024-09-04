@@ -37,9 +37,11 @@ export function Profile(): React.JSX.Element {
     const navigate = useNavigate()
     const [user, setUser] = useState<string>("")
 
+    const token = localStorage.getItem("authToken")
+
     useEffect(() => {
-        !localStorage.getItem("authToken") && navigate("/")
-        if (parseJwt(localStorage.getItem("authToken"))) {
+        !token && navigate("/")
+        if (token) {
             setUser(parseJwt(localStorage.getItem("authToken")).sub)
         }
     })
