@@ -39,7 +39,9 @@ export function Profile(): React.JSX.Element {
 
     useEffect(() => {
         !localStorage.getItem("authToken") && navigate("/")
-        setUser(parseJwt(localStorage.getItem("authToken")) && parseJwt(localStorage.getItem("authToken")).sub)
+        if (parseJwt(localStorage.getItem("authToken"))) {
+            setUser(parseJwt(localStorage.getItem("authToken")).sub)
+        }
     })
 
     return (

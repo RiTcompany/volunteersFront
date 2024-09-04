@@ -121,7 +121,13 @@ export function AllEvents(): React.JSX.Element {
             const [day, month, year] = datePart.split('.');
             const [hours, minutes] = timePart.split(':');
 
-            const localDate = new Date(Number(year), month - 1, Number(day), Number(hours), Number(minutes));
+            const dayNumber = Number(day);
+            const monthNumber = Number(month) - 1;
+            const yearNumber = Number(year);
+            const hoursNumber = Number(hours);
+            const minutesNumber = Number(minutes);
+
+            const localDate = new Date(yearNumber, monthNumber, dayNumber, hoursNumber, minutesNumber);
 
             const mskOffset = -3;
             const utcDate = new Date(localDate.getTime() - (mskOffset * 60 * 60 * 1000));
