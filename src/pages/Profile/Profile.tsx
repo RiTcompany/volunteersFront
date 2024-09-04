@@ -1,7 +1,8 @@
 import styles from './Profile.module.css'
 import classNames from 'classnames'
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
+import {parseJwt} from "../../App.tsx";
 const cn = classNames;
 
 interface dataType {
@@ -34,10 +35,16 @@ const data: dataType = {
 
 export function Profile(): React.JSX.Element {
     const navigate = useNavigate()
+    const [user, setUser] = useState<string>("")
 
     useEffect(() => {
-        !localStorage.getItem("auth") && navigate("/")
+        !localStorage.getItem("authToken") && navigate("/")
+        setUser(parseJwt(localStorage.getItem("authToken")).sub)
     })
+
+
+
+    console.log(parseJwt(localStorage.getItem("authToken")))
 
     return (
         <div className={cn("h-full mx-auto my-0 flex w-full", styles.profile__container)}>
@@ -45,7 +52,7 @@ export function Profile(): React.JSX.Element {
                 <div className={"flex flex-col items-center text-center md:text-left md:flex-row gap-5 bg-[#F6F8FC] rounded-2xl p-8"}>
                     <div className={cn("rounded-full flex justify-center items-center", styles.profile__circle)}>ИИ</div>
                     <div className={cn("flex flex-col justify-center")}>
-                        <p className={cn(styles.profile__name)}>{data.name}</p>
+                        <p className={cn(styles.profile__name)}>{user}</p>
                         <p className={cn(styles.profile__post)}>{data.who}</p>
                     </div>
                 </div>

@@ -35,7 +35,7 @@ export function MyHeadquarters(): React.JSX.Element {
     const navigate = useNavigate()
 
     useEffect(() => {
-        !localStorage.getItem("auth") && navigate("/")
+        !localStorage.getItem("authToken") && navigate("/")
     })
     return (
         <div className={cn("h-full mx-auto my-0 flex w-full", styles.profile__container)}>

@@ -14,6 +14,7 @@ import logout from "../../assets/logout.svg"
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
+import {parseJwt} from "../../App.tsx";
 const cn = classNames;
 
 interface ModalProps {
@@ -69,7 +70,13 @@ export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
     const navigate = useNavigate()
     // const [navColor, setNavColor] = useState<string>()
 
-    const token = localStorage.getItem("auth")
+
+    const [user, setUser] = useState<string>("")
+
+    useEffect(() => {
+        !localStorage.getItem("authToken") && navigate("/")
+        setUser(parseJwt(localStorage.getItem("authToken")).sub)
+    })
 
     useEffect(() => {
         function handleClickOutside() {
@@ -89,12 +96,12 @@ export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
     }
 
     function handleLogout() {
-        localStorage.removeItem("auth")
+        localStorage.removeItem("authToken")
         navigate("/")
     }
 
     return (
-        <header className={cn("w-full flex justify-center", styles.navbar__container)} style={token ? {backgroundColor: "#F7F8FC"} : {backgroundColor: "#0C428C"}}>
+        <header className={cn("w-full flex justify-center", styles.navbar__container)} style={user ? {backgroundColor: "#F7F8FC"} : {backgroundColor: "#0C428C"}}>
             {
                 location === "/" ?
                 <div className={cn("flex justify-between items-center", styles.navbar__content)}>
@@ -126,7 +133,7 @@ export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
                     <div className={cn("flex items-center gap-4")}>
                         <div className={cn("rounded-full flex justify-center items-center", styles.navbar__nameIcon)}>ИИ</div>
                         <div className={cn("hidden md:flex flex-col w-2/4")}>
-                            <p className={cn("text-[14px] leading-[14px]")}>Иванов И. И.</p>
+                            <p className={cn("text-[14px] leading-[14px]")}>{user.split(' ').length === 3 ? `${user.split(' ')[0]} ${user.split(' ')[1][0]}. ${user.split(' ')[2][0]}.` : user}</p>
                             <p className={cn("text-[12px] leading-[12px] text-[#B0B0C1]")}>Руководитель какого-то региона</p>
                         </div>
                         <button className={cn("border-l-2 border-[#B0B0C1] pl-4 h-10")} onClick={handleLogout}>

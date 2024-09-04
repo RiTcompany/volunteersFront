@@ -101,7 +101,7 @@ export function RegionalTeam(): React.JSX.Element {
     };
 
     useEffect(() => {
-        !localStorage.getItem("auth") && navigate("/")
+        !localStorage.getItem("authToken") && navigate("/")
     })
 
     useEffect(() => {

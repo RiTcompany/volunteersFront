@@ -7,8 +7,8 @@ const cn = classNames;
 export function Main(): React.JSX.Element {
     const [page, setPage] = useState<string>("default");
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [loginData, setLoginData] = useState<{login: string, password: string}>({
-        login: "",
+    const [loginData, setLoginData] = useState<{username: string, password: string}>({
+        username: "",
         password: ""
     })
     const [error, setError] = useState<string>("")
@@ -22,28 +22,42 @@ export function Main(): React.JSX.Element {
     }
 
     useEffect(() => {
-        localStorage.getItem("auth") && navigate("/profile")
+        localStorage.getItem("authToken") && navigate("/profile")
     })
 
     const handleSubmit = async () => {
-        if (!loginData.login || !loginData.password) {
+        if (!loginData.username || !loginData.password) {
             setError("Заполните, пожалуйста, все поля")
             return
         }
-        localStorage.setItem("auth", "true");
-        navigate("/profile")
-        // try {
-        //     const response = await fetch("", {
-        //         method: "POST",
-        //         body: JSON.stringify(loginData),
-        //     })
-        //     if (response.ok) {
-        //         const res = await response.json()
-        //     }
-        // }
-        // catch (error) {
-        //     console.log(error)
-        // }
+        // localStorage.setItem("auth", "true");
+        // navigate("/profile")
+        try {
+            const response = await fetch("http://195.133.197.53:8082/auth/sign-in", {
+                method: "POST",
+                body: JSON.stringify(loginData),
+                headers: { 'Content-Type': 'application/json' },
+                credentials: "include",
+            })
+            if (response.ok) {
+                const responseData = await response.json();
+                localStorage.setItem('authToken', responseData.token);
+                // window.location.hash=`#/profile/`
+                navigate("/profile")
+                // const token = responseData.token;
+                // const data = parseJwt(token);
+                // if (data && data.id && localStorage.getItem('authToken')) {
+                //     window.location.hash=`#/profile/${data.id}`
+                //     window.location.reload();
+                // } else {
+                //     console.error('Invalid token data:', data);
+                // }
+            } else {
+                console.error('Sign-in failed:', response.statusText);
+            }}
+        catch (error) {
+            console.log(error)
+        }
     }
     // useEffect(() => {
     //     console.log(loginData)
@@ -69,7 +83,7 @@ export function Main(): React.JSX.Element {
                     <label className={"flex flex-col w-full"}>
                         Логин
                         <input placeholder="Введите Ваш логин" className={cn(styles.main__loginInput)}
-                               name="login" onChange={handleLoginDataChange}/>
+                               name="username" onChange={handleLoginDataChange}/>
                     </label>
                     <label className={"flex flex-col w-full relative"}>
                         Пароль

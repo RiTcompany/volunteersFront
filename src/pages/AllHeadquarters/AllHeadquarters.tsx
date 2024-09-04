@@ -37,7 +37,7 @@ export function AllHeadquarters(): React.JSX.Element {
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
 
     useEffect(() => {
-        !localStorage.getItem("auth") && navigate("/")
+        !localStorage.getItem("authToken") && navigate("/")
     })
 
     useEffect(() => {

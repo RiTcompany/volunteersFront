@@ -37,7 +37,7 @@ interface ColumnsType {
 
 const data: dataType[] = [
     {id: 1374, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1375, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+    {id: 1375, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: true, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
     {id: 1376, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
     {id: 1377, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
     {id: 1378, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
@@ -118,7 +118,7 @@ export function AllVolunteers(): React.JSX.Element {
     };
 
     useEffect(() => {
-        !localStorage.getItem("auth") && navigate("/")
+        !localStorage.getItem("authToken") && navigate("/")
     })
 
     useEffect(() => {
@@ -256,10 +256,10 @@ export function AllVolunteers(): React.JSX.Element {
                                     <input value={person.comment} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.rate && <th>
-                                    <p className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "" )}>{person.rate}</p>
+                                    <p className={cn("border-0 bg-white w-full px-1 text-center", isEditorMode && "" )}>{person.rate}</p>
                                 </th>}
                                 {columns.interview && <th>
-                                    <input type={"checkbox"} checked={person.interview} className={cn("border-0 h-14 bg-white w-full px-1 text-center")} disabled={!isEditorMode}/>
+                                    <input type={"checkbox"} checked={person.interview} className={cn("border-0 bg-white px-1 text-center h-7 w-7", styles.custom_checkbox)} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.step && <th className={""}>
                                     <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#F1F1F1] text-[#141414]")}>
@@ -398,7 +398,7 @@ export function AllVolunteers(): React.JSX.Element {
                             </div>
                             <div className={"flex gap-2 items-center"}>
                                 <input checked={columns.center} onClick={() => setColumns({...columns, center: !columns.center})} type="checkbox" name={"center"} className={styles.regionalTeam__checkbox}/>
-                                <p>Районный штаб</p>
+                                <p>Общественный центр</p>
                             </div>
                         </div>
                         <div className={"flex flex-col gap-2"}>
@@ -446,6 +446,76 @@ export function AllVolunteers(): React.JSX.Element {
                             <div className={"relative w-full"}>
                                 <img src={search} alt="search" className={"absolute left-2 top-1"}/>
                                 <input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.regionalTeam__input)} />
+                            </div>
+                        </div>
+                        <div className={"flex flex-col gap-2"}>
+                            <p className={styles.regionalTeam__miniTitle}>Возраст</p>
+                            <div className={"flex gap-5 justify-between"}>
+                                <div className={"flex flex-col w-full self-start gap-2"}>
+                                    <label>От</label>
+                                    <input className={styles.regionalTeam__ageInput} name={"ageFrom"} type={"number"}/>
+                                </div>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"rateAsc"} className={styles.regionalTeam__checkbox}/>
+                                <p>По возрастанию</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"rateDesc"} className={styles.regionalTeam__checkbox}/>
+                                <p>По убыванию</p>
+                            </div>
+                        </div>
+                        <div className={"flex flex-col gap-2"}>
+                            <p className={styles.regionalTeam__miniTitle}>Собеседование для ступени роста</p>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"allInt"} className={styles.regionalTeam__checkbox}/>
+                                <p>Все</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"yes"} className={styles.regionalTeam__checkbox}/>
+                                <p>Пройдено</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"no"} className={styles.regionalTeam__checkbox}/>
+                                <p>Не пройдено</p>
+                            </div>
+                        </div>
+                        <div className={"flex flex-col gap-2"}>
+                            <p className={styles.regionalTeam__miniTitle}>Районный штаб</p>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"allHeads"} className={styles.regionalTeam__checkbox}/>
+                                <p>Все</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"head1"} className={styles.regionalTeam__checkbox}/>
+                                <p>1 штаб</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"head2"} className={styles.regionalTeam__checkbox}/>
+                                <p>2 штаб</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"head3"} className={styles.regionalTeam__checkbox}/>
+                                <p>3 штаб</p>
+                            </div>
+                        </div>
+                        <div className={"flex flex-col gap-2"}>
+                            <p className={styles.regionalTeam__miniTitle}>Общественный центр</p>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"allCenters"} className={styles.regionalTeam__checkbox}/>
+                                <p>Все</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"center1"} className={styles.regionalTeam__checkbox}/>
+                                <p>1 центр</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"center2"} className={styles.regionalTeam__checkbox}/>
+                                <p>2 центр</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input type="checkbox" name={"center3"} className={styles.regionalTeam__checkbox}/>
+                                <p>3 центр</p>
                             </div>
                         </div>
                     </div>
