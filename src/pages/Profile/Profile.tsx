@@ -40,9 +40,14 @@ export function Profile(): React.JSX.Element {
     const token = localStorage.getItem("authToken")
 
     useEffect(() => {
-        !token && navigate("/")
-        if (token) {
-            setUser(parseJwt(localStorage.getItem("authToken")).sub)
+        if (!token) {
+            navigate("/");
+        } else {
+            const parsedToken = parseJwt(token);
+
+            if (parsedToken && parsedToken.sub) {
+                setUser(parsedToken.sub);
+            }
         }
     })
 
