@@ -71,7 +71,7 @@ export function AllEvents(): React.JSX.Element {
         !localStorage.getItem("authToken") && navigate("/")
     })
 
-    function formatDateTime(inputDate) {
+    function formatDateTime(inputDate: string) {
         const date = new Date(inputDate);
         const formattedDate = date.toLocaleDateString('ru-RU', {
             day: '2-digit',
@@ -105,7 +105,7 @@ export function AllEvents(): React.JSX.Element {
         console.log(newEvent)
     })
 
-    const handleChangeNewEvent = (e) => {
+    const handleChangeNewEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setNewEvent(prevEvent => ({
             ...prevEvent,
@@ -114,14 +114,14 @@ export function AllEvents(): React.JSX.Element {
     };
 
     const handleAddButtonClick = async () => {
-        const convertToISO = (dateStr) => {
+        const convertToISO = (dateStr: string): string => {
             dateStr = dateStr.replace("  ", " ");
 
             const [datePart, timePart] = dateStr.split(' ');
             const [day, month, year] = datePart.split('.');
             const [hours, minutes] = timePart.split(':');
 
-            const localDate = new Date(year, month - 1, day, hours, minutes);
+            const localDate = new Date(Number(year), month - 1, Number(day), Number(hours), Number(minutes));
 
             const mskOffset = -3;
             const utcDate = new Date(localDate.getTime() - (mskOffset * 60 * 60 * 1000));

@@ -39,12 +39,8 @@ export function Profile(): React.JSX.Element {
 
     useEffect(() => {
         !localStorage.getItem("authToken") && navigate("/")
-        setUser(parseJwt(localStorage.getItem("authToken")).sub)
+        setUser(parseJwt(localStorage.getItem("authToken")) && parseJwt(localStorage.getItem("authToken")).sub)
     })
-
-
-
-    console.log(parseJwt(localStorage.getItem("authToken")))
 
     return (
         <div className={cn("h-full mx-auto my-0 flex w-full", styles.profile__container)}>
