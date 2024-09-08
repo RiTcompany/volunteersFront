@@ -1,4 +1,4 @@
-import styles from './AllHeadquarters.module.css'
+import styles from './AllCenters.module.css'
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
@@ -50,7 +50,7 @@ interface TableDataType {
     teamLeaderVolunteerId: number
 }
 
-export function AllHeadquarters(): React.JSX.Element {
+export function AllCenters(): React.JSX.Element {
     const [tableData, setTableData] = useState([])
 
     const [editedCenters, setEditedCenters] = useState<useState<TableDataType[]>[]>([]);
@@ -97,7 +97,7 @@ export function AllHeadquarters(): React.JSX.Element {
     const handleAddButtonClick = async () => {
         console.log(newCenter)
         try {
-            const response = await fetch('http://195.133.197.53:8082/headquarters', {
+            const response = await fetch('http://195.133.197.53:8082/center', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -140,7 +140,7 @@ export function AllHeadquarters(): React.JSX.Element {
     const handleSave = async () => {
         try {
             console.log(editedCenters)
-            const response = await fetch('http://195.133.197.53:8082/headquarters', {
+            const response = await fetch('http://195.133.197.53:8082/center', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ export function AllHeadquarters(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
-            const response = await fetch(`http://195.133.197.53:8082/headquarters/${id}`, {
+            const response = await fetch(`http://195.133.197.53:8082/center/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -204,7 +204,7 @@ export function AllHeadquarters(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const response = await fetch("http://195.133.197.53:8082/headquarters", {
+                const response = await fetch("http://195.133.197.53:8082/center", {
                     method: "GET",
                     credentials: "include"
                 })
@@ -223,7 +223,7 @@ export function AllHeadquarters(): React.JSX.Element {
                 <div className={"flex justify-between"}>
                     <div className={"flex gap-2"}>
                         <img src={document} alt="document"/>
-                        <p className={"text-[18px] md:text-[20px] font-bold"}>Таблица всех штабов</p>
+                        <p className={"text-[18px] md:text-[20px] font-bold"}>Таблица всех центров</p>
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
@@ -340,26 +340,26 @@ export function AllHeadquarters(): React.JSX.Element {
                                                 console.log(columns, filterColumns)
                                                 if (!filterColumns[column.id]) return null;
                                                 return (
-                                                    <Draggable key={column.id} draggableId={column.id} index={index}>
-                                                        {(provided) => (
-                                                            <th
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                {...provided.dragHandleProps}
-                                                                className={cn("cursor-move", {
-                                                                    [styles.allHeadquarters__tableName]: column.id === 'name',
-                                                                    [styles.allHeadquarters__tablePeopleCount]: column.id === 'participantCount',
-                                                                    [styles.allHeadquarters__tableAddress]: column.id === 'location',
-                                                                    [styles.allHeadquarters__tablePhone]: column.id === 'contact',
-                                                                    [styles.allHeadquarters__tablePhone]: column.id === 'teamLeader',
-                                                                    ['min-w-8']: column.id === 'delete',
-                                                                    ["hidden"]: column.id === 'delete' && isEditorMode
-                                                                })}
-                                                            >
-                                                                {column.title}
-                                                            </th>
-                                                        )}
-                                                    </Draggable>
+                                                <Draggable key={column.id} draggableId={column.id} index={index}>
+                                                    {(provided) => (
+                                                        <th
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className={cn("cursor-move", {
+                                                                [styles.allHeadquarters__tableName]: column.id === 'name',
+                                                                [styles.allHeadquarters__tablePeopleCount]: column.id === 'participantCount',
+                                                                [styles.allHeadquarters__tableAddress]: column.id === 'location',
+                                                                [styles.allHeadquarters__tablePhone]: column.id === 'contact',
+                                                                [styles.allHeadquarters__tablePhone]: column.id === 'teamLeader',
+                                                                ['min-w-8']: column.id === 'delete',
+                                                                ["hidden"]: column.id === 'delete' && isEditorMode
+                                                            })}
+                                                        >
+                                                            {column.title}
+                                                        </th>
+                                                    )}
+                                                </Draggable>
                                                 )})}
                                             {filterColumns.delete && !isEditorMode && (
                                                 <th className="min-w-8"/>

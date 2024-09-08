@@ -13,9 +13,11 @@ const buttons = [
     {name: "Мой штаб/центр", icon: bag, link: "/my_headquarters"},
     {name: "Региональная команда", icon: document, link: "/regional_team"},
     {name: "Волонтёры", icon: document, link: "/all_volunteers"},
-    {name: "Штаб / Центр", icon: document, link: "/all_headquarters"},
+    {name: "Все штабы", icon: document, link: "/all_headquarters"},
+    {name: "Все центры", icon: document, link: "/all_centers"},
     {name: "Документы", icon: document, link: "/documents"},
     {name: "Мероприятия", icon: document, link: "/events"},
+    {name: "Инвентарь", icon: document, link: "/all_equipment"},
 ]
 
 interface SidebarProps {
@@ -26,7 +28,6 @@ interface SidebarProps {
 export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Element {
     const navigate = useNavigate()
     const location = useLocation()
-    // const [tab, setTab] = useState<string>("profile")
 
     const [activeIndex, setActiveIndex] = useState<number>(-1);
 

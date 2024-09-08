@@ -70,18 +70,6 @@
     text-align: center;
 }
 
-@media (max-width: 767px) {
-    .allHeadquarters__input {
-        width: 100%;
-        max-width: none;
-    }
-
-    .allHeadquarters__addButton {
-        width: 50px;
-    }
-}
-
-
 .regionalTeam__miniTitle {
     font-size: 16px;
     font-weight: 600;
@@ -92,4 +80,15 @@
     height: 18px;
     width: 18px;
     border-radius: 4px;
+}
+
+@media (max-width: 767px) {
+    .allHeadquarters__input {
+        width: 100%;
+        max-width: none;
+    }
+
+    .allHeadquarters__addButton {
+        width: 50px;
+    }
 }
