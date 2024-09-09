@@ -42,7 +42,7 @@ export function AllEquipment(): React.JSX.Element {
     const [isOpenDelete, setIsOpenDelete] = useState<{ open: boolean, id: number }>({open: false, id: -1})
     const [tableData, setTableData] = useState<TableDataType[]>([])
     const [newEvent, setNewEvent] = useState<TableDataType>({equipmentId: 0, type: "", year: "", currentOwner: ""})
-    const [editedEvents, setEditedEvents] = useState<useState<TableDataType[]>[]>([]);
+    const [editedEvents, setEditedEvents] = useState<TableDataType[]>([]);
     const [refresh, setRefresh] = useState<boolean>(true)
     const [columns, setColumns] = useState<ColumnsType>({all: true, equipmentId: true, type: true, year: true, currentOwner: true, history: true})
     const [selectedFilters, setSelectedFilters] = useState<string[]>(filterOptions);
@@ -99,7 +99,7 @@ export function AllEquipment(): React.JSX.Element {
                         : event
                 );
             } else {
-                return [...prev, { id, [field]: value } as TableDataType];
+                return [...prev, { id, [field]: value } as unknown as TableDataType];
             }
         });
     };

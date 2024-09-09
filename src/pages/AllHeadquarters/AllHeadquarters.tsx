@@ -51,7 +51,7 @@ interface TableDataType {
 }
 
 export function AllHeadquarters(): React.JSX.Element {
-    const [tableData, setTableData] = useState([])
+    const [tableData, setTableData] = useState<TableDataType[]>([])
 
     const [editedCenters, setEditedCenters] = useState<TableDataType[]>([]);
 
@@ -367,27 +367,27 @@ export function AllHeadquarters(): React.JSX.Element {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {tableData && tableData.map(hq => (
+                                        {tableData && tableData.map((hq: TableDataType) => (
                                             <tr key={hq.id} className={cn("h-[50px] border-b-[1px]")}>
                                                 {columns.filter(column => filterColumns[column.id]).filter(column => column.id !== 'delete').map((column) => (
                                                     <td key={column.id}>
                                                         {column.id !== 'delete' && column.change ? (
                                                             <input
-                                                                value={getEditedValue(hq.id, column.id) ?? hq[column.id]}
-                                                                onChange={(e) => hq.id && handleInputChange(hq.id, column.id, e.target.value)}
+                                                                value={(hq.id && column.id && getEditedValue(hq.id, column.id)) ?? hq[column.id]}
+                                                                onChange={(e) => hq.id && column.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 // value={hq[column.id]}
                                                                 className={cn("border-0 h-14 bg-white w-full px-1 text-center text-black", isEditorMode && "border-[1px]")}
                                                                 disabled={!isEditorMode}
                                                             />
                                                         ) : column.id !== 'delete' && !column.change ? (
                                                             <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300" )}>
-                                                                {column.id && (typeof hq[column.id] === 'object' ? hq[column.id]?.name : hq[column.id])}
+                                                                {column.id && (typeof hq[column.id] === 'object' ? (hq[column.id]?.name && hq[column.id]?.name) : hq[column.id])}
                                                             </p>
                                                         ) : null
                                                         }
                                                     </td>
                                                 ))}
-                                                {filterColumns.delete && !isEditorMode && (
+                                                {filterColumns.delete && !isEditorMode && hq.id && (
                                                     <td>
                                                         <button className="w-full flex justify-center" onClick={() => hq.id && setIsOpenDelete({id: hq.id, open: true})}>
                                                             <img src={bin} alt="delete" />

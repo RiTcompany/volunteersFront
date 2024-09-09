@@ -127,14 +127,14 @@ export function AllCenters(): React.JSX.Element {
                         : event
                 );
             } else {
-                return [...prev, { id, [field]: value } as TableDataType];
+                return [...prev, { id, [field]: value } as unknown as TableDataType];
             }
         });
     };
 
     const getEditedValue = (id: number | undefined, field: string) => {
         const editedEvent = editedCenters.find(event => event.id === id);
-        return editedEvent ? editedEvent[field] : null;
+        return editedEvent ? (editedEvent as any)[field] : null;
     };
 
     const handleSave = async () => {
@@ -373,14 +373,14 @@ export function AllCenters(): React.JSX.Element {
                                                     <td key={column.id}>
                                                         {column.id !== 'delete' && column.change ? (
                                                             <input
-                                                                value={getEditedValue(hq.id, column.id) ?? hq[column.id]}
-                                                                onChange={(e) => hq.id && handleInputChange(hq.id, column.id, e.target.value)}
+                                                                value={(hq.id && column.id && getEditedValue(hq.id, column.id)) ?? hq[column.id]}
+                                                                onChange={(e) => hq.id && column.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
                                                                 disabled={!isEditorMode}
                                                             />
                                                         ) : column.id !== 'delete' && !column.change ? (
                                                             <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300")}>
-                                                                {typeof hq[column.id] === 'object' ? hq[column.id]?.name : hq[column.id]}
+                                                                {column.id && (typeof hq[column.id] === 'object' ? (hq[column.id]?.name && hq[column.id]?.name) : hq[column.id])}
                                                             </p>
                                                         ) : (
                                                             !isEditorMode && (
@@ -391,7 +391,7 @@ export function AllCenters(): React.JSX.Element {
                                                         )}
                                                     </td>
                                                 ))}
-                                                {filterColumns.delete && !isEditorMode && (
+                                                {filterColumns.delete && !isEditorMode && hq.id && (
                                                     <td>
                                                         <button onClick={() => setIsOpenDelete({id: hq.id, open: true})}>
                                                             <img src={bin} alt="delete" />

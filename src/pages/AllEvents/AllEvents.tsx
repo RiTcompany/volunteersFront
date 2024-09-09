@@ -68,7 +68,7 @@ interface TableDataType {
 }
 
 const convertToISO = (dateStr: string | undefined): string => {
-    if (!dateStr) return
+    if (dateStr === undefined) return
     dateStr = dateStr.replace("  ", " ");
 
     const [datePart, timePart] = dateStr.split(' ');
@@ -145,7 +145,7 @@ export function AllEvents(): React.JSX.Element {
                         : event
                 );
             } else {
-                return [...prev, { id, [field]: value } as TableDataType];
+                return [...prev, { id, [field]: value } as unknown as TableDataType];
             }
         });
     };
@@ -153,7 +153,7 @@ export function AllEvents(): React.JSX.Element {
 
     const getEditedValue = (id: number | undefined, field: string) => {
         const editedEvent = editedEvents.find(event => event.id === id);
-        return editedEvent ? editedEvent[field] : null;
+        return editedEvent ? (editedEvent as any)[field] : null;
     };
 
     const handleSave = async () => {
@@ -544,8 +544,8 @@ export function AllEvents(): React.JSX.Element {
                                                             <InputMask
                                                                 name={column.id}
                                                                 mask="99.99.9999  99:99"
-                                                                value={getEditedValue(hq.id, column.id) ?? formatDateTime(hq[column.id])}
-                                                                onChange={(e) => hq.id && handleInputChange(hq.id, column.id, e.target.value)}
+                                                                value={hq.id && column.id && (getEditedValue(hq.id, column.id) ?? formatDateTime(hq[column.id]))}
+                                                                onChange={(e) => hq.id && column.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center min-w-max", isEditorMode && "border-[1px]" )}
                                                                 placeholder={"ДД.ММ.ГГГГ ЧЧ:ММ"}
                                                                 disabled={!isEditorMode}/>
@@ -553,15 +553,15 @@ export function AllEvents(): React.JSX.Element {
                                                             <a href={"#"}>Данные об участниках</a>
                                                         ) : column.id !== 'delete' && column.change ? (
                                                             <input
-                                                                value={getEditedValue(hq.id, column.id) ?? hq[column.id]}
-                                                                onChange={(e) => hq.id && handleInputChange(hq.id, column.id, e.target.value)}
+                                                                value={hq.id && column.id && (getEditedValue(hq.id, column.id) ?? hq[column.id])}
+                                                                onChange={(e) => hq.id && column.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 // value={hq[column.id]}
                                                                 className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
                                                                 disabled={!isEditorMode}
                                                             />
                                                         ) : column.id !== 'delete' && !column.change ? (
                                                             <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300")}>
-                                                                {typeof hq[column.id] === 'object' ? hq[column.id]?.name : hq[column.id]}
+                                                                {column.id && (typeof hq[column.id] === 'object' ? (hq[column.id]?.name && hq[column.id]?.name) : hq[column.id])}
                                                             </p>
                                                         ) : (
                                                             !isEditorMode && (
