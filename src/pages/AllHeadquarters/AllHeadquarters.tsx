@@ -379,7 +379,7 @@ export function AllHeadquarters(): React.JSX.Element {
                                                                 disabled={!isEditorMode}
                                                             />
                                                         ) : column.id !== 'delete' && !column.change ? (
-                                                            <p className={"border-0 h-full bg-white w-full px-1 text-center"}>
+                                                            <p className={cn("border-0 h-full bg-white w-full px-1 text-center", isEditorMode && "text-gray-300" )}>
                                                                 {typeof hq[column.id] === 'object' ? hq[column.id]?.name : hq[column.id]}
                                                             </p>
                                                         ) : (
