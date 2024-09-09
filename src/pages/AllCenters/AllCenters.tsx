@@ -36,7 +36,7 @@ const columnsListFilter = [
 ];
 
 interface FilterColumnsType {
-    all: boolean, name: boolean, participantCount: boolean, location: boolean, contact: boolean, teamLeader:boolean, delete: boolean
+    all: boolean, name: boolean, participantCount: boolean, location: boolean, contact: boolean, teamLeader: boolean, delete: boolean, [key: string]: boolean;
 }
 
 interface TableDataType {
@@ -52,7 +52,7 @@ interface TableDataType {
 }
 
 export function AllCenters(): React.JSX.Element {
-    const [tableData, setTableData] = useState([])
+    const [tableData, setTableData] = useState<TableDataType[]>([])
 
     const [editedCenters, setEditedCenters] = useState<TableDataType[]>([]);
 
@@ -337,8 +337,7 @@ export function AllCenters(): React.JSX.Element {
                                     <table className="w-full overflow-auto min-w-[900px]">
                                         <thead>
                                         <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]")}>
-                                            {columns.filter(column => column.id !== 'delete').map((column, index) => {
-                                                console.log(columns, filterColumns)
+                                            {columns.filter(column => filterColumns[column.id as keyof FilterColumnsType] && column.id !== 'delete').map((column, index) => {
                                                 if (!filterColumns[column.id]) return null;
                                                 return (
                                                 <Draggable key={column.id} draggableId={column.id} index={index}>
@@ -368,8 +367,8 @@ export function AllCenters(): React.JSX.Element {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {tableData && tableData.map(hq => (
-                                            <tr key={hq.id} className={cn("h-[50px] border-b-[1px]")}>
+                                        {tableData && tableData.map((hq, index) => (
+                                            <tr key={index} className={cn("h-[50px] border-b-[1px]")}>
                                                 {columns.filter(column => filterColumns[column.id]).filter(column => column.id !== 'delete').map((column) => (
                                                     <td key={column.id}>
                                                         {column.id !== 'delete' && column.change ? (
@@ -395,7 +394,7 @@ export function AllCenters(): React.JSX.Element {
                                                 ))}
                                                 {filterColumns.delete && !isEditorMode && hq.id && (
                                                     <td>
-                                                        <button onClick={() => setIsOpenDelete({id: hq.id, open: true})}>
+                                                        <button onClick={() =>  hq.id && setIsOpenDelete({id: hq.id, open: true})}>
                                                             <img src={bin} alt="delete" />
                                                         </button>
                                                     </td>
