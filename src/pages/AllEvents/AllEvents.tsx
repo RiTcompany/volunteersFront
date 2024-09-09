@@ -64,11 +64,12 @@ interface TableDataType {
     federalId: number,
     settingParticipantLink: string,
     answerableVolunteerId: number,
-    registrationLink: string
+    registrationLink: string,
+    [key: string]: any;
 }
 
 const convertToISO = (dateStr: string | undefined): string => {
-    if (dateStr === undefined) return
+    if (dateStr === undefined) return '';
     dateStr = dateStr.replace("  ", " ");
 
     const [datePart, timePart] = dateStr.split(' ');
@@ -553,7 +554,7 @@ export function AllEvents(): React.JSX.Element {
                                                             <a href={"#"}>Данные об участниках</a>
                                                         ) : column.id !== 'delete' && column.change ? (
                                                             <input
-                                                                value={hq.id && column.id && (getEditedValue(hq.id, column.id) ?? hq[column.id])}
+                                                                value={(hq.id && column.id && getEditedValue(hq.id, column.id)) ?? (column.id in hq ? hq[column.id as keyof typeof hq] : null)}
                                                                 onChange={(e) => hq.id && column.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 // value={hq[column.id]}
                                                                 className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
@@ -561,7 +562,8 @@ export function AllEvents(): React.JSX.Element {
                                                             />
                                                         ) : column.id !== 'delete' && !column.change ? (
                                                             <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300")}>
-                                                                {column.id && (typeof hq[column.id] === 'object' ? (hq[column.id]?.name && hq[column.id]?.name) : hq[column.id])}
+                                                                {column.id && (column.id in hq && typeof hq[column.id] === 'object' ?
+                                                                    (hq[column.id]?.name && hq[column.id]?.name) : hq[column.id])}
                                                             </p>
                                                         ) : (
                                                             !isEditorMode && (

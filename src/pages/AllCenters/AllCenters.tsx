@@ -47,7 +47,8 @@ interface TableDataType {
     participantCount: number,
     location: string,
     contact: string,
-    teamLeaderVolunteerId: number
+    teamLeaderVolunteerId: number,
+    [key: string]: any;
 }
 
 export function AllCenters(): React.JSX.Element {
@@ -373,14 +374,15 @@ export function AllCenters(): React.JSX.Element {
                                                     <td key={column.id}>
                                                         {column.id !== 'delete' && column.change ? (
                                                             <input
-                                                                value={(hq.id && column.id && getEditedValue(hq.id, column.id)) ?? hq[column.id]}
+                                                                value={(hq.id && column.id && getEditedValue(hq.id, column.id)) ?? (column.id in hq ? hq[column.id as keyof typeof hq] : null)}
                                                                 onChange={(e) => hq.id && column.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
                                                                 disabled={!isEditorMode}
                                                             />
                                                         ) : column.id !== 'delete' && !column.change ? (
                                                             <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300")}>
-                                                                {column.id && (typeof hq[column.id] === 'object' ? (hq[column.id]?.name && hq[column.id]?.name) : hq[column.id])}
+                                                                {column.id && (column.id in hq && typeof hq[column.id] === 'object' ?
+                                                                    (hq[column.id]?.name && hq[column.id]?.name) : hq[column.id])}
                                                             </p>
                                                         ) : (
                                                             !isEditorMode && (
