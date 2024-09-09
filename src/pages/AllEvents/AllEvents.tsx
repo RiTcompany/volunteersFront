@@ -48,7 +48,8 @@ interface ColumnsType {
     participants: boolean,
     registrationLink: boolean,
     teamLeader: boolean,
-    delete: boolean
+    delete: boolean,
+    [key: string]: boolean
 }
 
 interface TableDataType {
@@ -66,7 +67,7 @@ interface TableDataType {
     registrationLink: string
 }
 
-const convertToISO = (dateStr: string): string => {
+const convertToISO = (dateStr: string | undefined): string => {
     if (!dateStr) return
     dateStr = dateStr.replace("  ", " ");
 
@@ -104,8 +105,7 @@ export function AllEvents(): React.JSX.Element {
         registrationLink: "",
         settingParticipantLink: "",
         name: "", startTime: "", endTime: "", location: "", teamLeader: ""})
-    const [editedEvents, setEditedEvents] = useState<useState<TableDataType[]>[]>([]);
-
+    const [editedEvents, setEditedEvents] = useState<TableDataType[]>([]);
 
     const [filterColumns, setFilterColumns] = useState<ColumnsType>({all: true, name: true, startTime: true, endTime: true, location: true, participants: true, registrationLink: true, teamLeader: true, delete: true})
     const [columns, setColumns] = useState(initialColumns);
@@ -135,7 +135,7 @@ export function AllEvents(): React.JSX.Element {
         !localStorage.getItem("authToken") && navigate("/")
     })
 
-    const handleInputChange = (id: number, field: keyof TableDataType, value: string | number) => {
+    const handleInputChange = (id: number, field: string, value: string | number) => {
         setEditedEvents((prev: TableDataType[]) => {
             const existingEvent = prev.find(event => event.id === id);
             if (existingEvent) {
@@ -151,7 +151,7 @@ export function AllEvents(): React.JSX.Element {
     };
 
 
-    const getEditedValue = (id: number | undefined, field: keyof TableDataType) => {
+    const getEditedValue = (id: number | undefined, field: string) => {
         const editedEvent = editedEvents.find(event => event.id === id);
         return editedEvent ? editedEvent[field] : null;
     };
@@ -278,7 +278,7 @@ export function AllEvents(): React.JSX.Element {
         }
     }
 
-    const onDragEnd = (result) => {
+    const onDragEnd = (result: any) => {
         if (!result.destination) return;
         const reorderedColumns = Array.from(columns);
         const [movedColumn] = reorderedColumns.splice(result.source.index, 1);
@@ -296,7 +296,7 @@ export function AllEvents(): React.JSX.Element {
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
-                            <img src={cancel} alt={"cancel"} onClick={() => setIsEditorMode(false)}/>
+                            <img src={cancel} alt={"cancel"} onClick={() => {setIsEditorMode(false); setEditedEvents([])}}/>
                             : <img src={lightHighlight} alt={"highlight"} onClick={() => setIsEditorMode(true)}/>
                         }
 
@@ -341,7 +341,7 @@ export function AllEvents(): React.JSX.Element {
                             "flex text-white text-center bg-[#4A76CB] justify-center gap-2")}>
                             <p className={"hidden md:flex"}>Добавить</p><img src={plus} alt=""/>
                         </button>
-                        <button onClick={() => setIsEditorMode(false)} className={cn("flex md:hidden " +
+                        <button onClick={handleSave} className={cn("flex md:hidden " +
                             "justify-center gap-3 border-none bg-[#31AA27] text-white", styles.allHeadquarters__highlightButton)}>
                             Сохранить
                         </button>
@@ -500,12 +500,12 @@ export function AllEvents(): React.JSX.Element {
                                     {...provided.droppableProps}
                                     className="overflow-y-auto max-h-full"
                                 >
-                                    <table className="w-full overflow-auto min-w-[1000px]">
+                                    <table className="w-full overflow-auto min-w-[300px] md:min-w-[900px]">
                                         <thead>
                                         <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]")}>
-                                            {columns.filter(column => column.id !== 'delete').map((column, index) => {
+                                            {columns.filter(column => filterColumns[column.id as keyof ColumnsType] && column.id !== 'delete').map((column, index) => {
                                                 console.log(columns, filterColumns)
-                                                if (!filterColumns[column.id]) return null;
+                                                if (!filterColumns[column.id as keyof ColumnsType]) return null;
                                                 return (
                                                     <Draggable key={column.id} draggableId={column.id} index={index}>
                                                         {(provided) => (
@@ -536,16 +536,16 @@ export function AllEvents(): React.JSX.Element {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {tableData && tableData.map(hq => (
-                                            <tr key={hq.id} className={cn("h-[50px] border-b-[1px]")}>
-                                                {columns.filter(column => filterColumns[column.id]).filter(column => column.id !== 'delete').map((column) => (
+                                        {tableData && tableData.map((hq, index) => (
+                                            <tr key={index} className={cn("h-[50px] border-b-[1px]")}>
+                                                {columns.filter(column => filterColumns[column.id] && column.id !== 'delete').map((column) => (
                                                     <td key={column.id}>
                                                         {column.id === "endTime" || column.id === "startTime" ? (
                                                             <InputMask
-                                                                name="endTime"
+                                                                name={column.id}
                                                                 mask="99.99.9999  99:99"
-                                                                value={getEditedValue(hq.id, column.id) ?? formatDateTime(hq.endTime)}
-                                                                onChange={(e) => hq.id && handleInputChange(hq.id, 'endTime' || 'startTime', e.target.value)}
+                                                                value={getEditedValue(hq.id, column.id) ?? formatDateTime(hq[column.id])}
+                                                                onChange={(e) => hq.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center min-w-max", isEditorMode && "border-[1px]" )}
                                                                 placeholder={"ДД.ММ.ГГГГ ЧЧ:ММ"}
                                                                 disabled={!isEditorMode}/>
@@ -553,7 +553,8 @@ export function AllEvents(): React.JSX.Element {
                                                             <a href={"#"}>Данные об участниках</a>
                                                         ) : column.id !== 'delete' && column.change ? (
                                                             <input
-                                                                value={getEditedValue(hq[column.id], hq[column.id]) ?? hq[column.id]} onChange={(e) => column.id && handleInputChange(hq[column.id], hq[column.id], e.target.value)}
+                                                                value={getEditedValue(hq.id, column.id) ?? hq[column.id]}
+                                                                onChange={(e) => hq.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 // value={hq[column.id]}
                                                                 className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
                                                                 disabled={!isEditorMode}

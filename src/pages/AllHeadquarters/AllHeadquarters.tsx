@@ -36,7 +36,7 @@ const columnsListFilter = [
 ];
 
 interface FilterColumnsType {
-    all: boolean, name: boolean, participantCount: boolean, location: boolean, contact: boolean, teamLeader:boolean, delete: boolean
+    all: boolean, name: boolean, participantCount: boolean, location: boolean, contact: boolean, teamLeader: boolean, delete: boolean, [key: string]: boolean;
 }
 
 interface TableDataType {
@@ -53,7 +53,7 @@ interface TableDataType {
 export function AllHeadquarters(): React.JSX.Element {
     const [tableData, setTableData] = useState([])
 
-    const [editedCenters, setEditedCenters] = useState<useState<TableDataType[]>[]>([]);
+    const [editedCenters, setEditedCenters] = useState<TableDataType[]>([]);
 
     const [newCenter, setNewCenter] = useState<TableDataType>({
         federalId: 0, rank: 0, teamLeaderVolunteerId: 0, contact: "", participantCount: 0, name: "", location: ""})
@@ -117,7 +117,7 @@ export function AllHeadquarters(): React.JSX.Element {
         }
     };
 
-    const handleInputChange = (id: number, field: keyof TableDataType, value: string | number) => {
+    const handleInputChange = (id: number, field: string, value: string | number) => {
         setEditedCenters((prev: TableDataType[]) => {
             const existingEvent = prev.find(event => event.id === id);
             if (existingEvent) {
@@ -127,12 +127,12 @@ export function AllHeadquarters(): React.JSX.Element {
                         : event
                 );
             } else {
-                return [...prev, { id, [field]: value } as TableDataType];
+                return [...prev, { id, [field]: value } as unknown as TableDataType];
             }
         });
     };
 
-    const getEditedValue = (id: number | undefined, field: keyof TableDataType) => {
+    const getEditedValue = (id: number | undefined, field: string) => {
         const editedEvent = editedCenters.find(event => event.id === id);
         return editedEvent ? editedEvent[field] : null;
     };
@@ -184,7 +184,7 @@ export function AllHeadquarters(): React.JSX.Element {
         }
     }
 
-    const onDragEnd = (result) => {
+    const onDragEnd = (result: any) => {
         if (!result.destination) return;
         const reorderedColumns = Array.from(columns);
         const [movedColumn] = reorderedColumns.splice(result.source.index, 1);
@@ -336,7 +336,7 @@ export function AllHeadquarters(): React.JSX.Element {
                                     <table className="w-full overflow-auto min-w-[900px]">
                                         <thead>
                                         <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]")}>
-                                            {columns.filter(column => column.id !== 'delete').map((column, index) => {
+                                            {columns.filter(column => filterColumns[column.id as keyof FilterColumnsType] && column.id !== 'delete').map((column, index) => {
                                                 console.log(columns, filterColumns)
                                                 if (!filterColumns[column.id]) return null;
                                                 return (
@@ -373,27 +373,23 @@ export function AllHeadquarters(): React.JSX.Element {
                                                     <td key={column.id}>
                                                         {column.id !== 'delete' && column.change ? (
                                                             <input
-                                                                value={getEditedValue(hq[column.id], hq[column.id]) ?? hq[column.id]} onChange={(e) => column.id && handleInputChange(hq[column.id], hq[column.id], e.target.value)}
+                                                                value={getEditedValue(hq.id, column.id) ?? hq[column.id]}
+                                                                onChange={(e) => hq.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 // value={hq[column.id]}
-                                                                className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
+                                                                className={cn("border-0 h-14 bg-white w-full px-1 text-center text-black", isEditorMode && "border-[1px]")}
                                                                 disabled={!isEditorMode}
                                                             />
                                                         ) : column.id !== 'delete' && !column.change ? (
-                                                            <p className={cn("border-0 h-full bg-white w-full px-1 text-center", isEditorMode && "text-gray-300" )}>
-                                                                {typeof hq[column.id] === 'object' ? hq[column.id]?.name : hq[column.id]}
+                                                            <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300" )}>
+                                                                {column.id && (typeof hq[column.id] === 'object' ? hq[column.id]?.name : hq[column.id])}
                                                             </p>
-                                                        ) : (
-                                                            !isEditorMode && (
-                                                                <button className="w-full flex justify-center">
-                                                                    <img src={bin} alt="delete" className="self-center" />
-                                                                </button>
-                                                            )
-                                                        )}
+                                                        ) : null
+                                                        }
                                                     </td>
                                                 ))}
                                                 {filterColumns.delete && !isEditorMode && (
                                                     <td>
-                                                        <button onClick={() => setIsOpenDelete({id: hq.id, open: true})}>
+                                                        <button className="w-full flex justify-center" onClick={() => hq.id && setIsOpenDelete({id: hq.id, open: true})}>
                                                             <img src={bin} alt="delete" />
                                                         </button>
                                                     </td>

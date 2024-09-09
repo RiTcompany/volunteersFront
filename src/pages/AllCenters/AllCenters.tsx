@@ -53,7 +53,7 @@ interface TableDataType {
 export function AllCenters(): React.JSX.Element {
     const [tableData, setTableData] = useState([])
 
-    const [editedCenters, setEditedCenters] = useState<useState<TableDataType[]>[]>([]);
+    const [editedCenters, setEditedCenters] = useState<TableDataType[]>([]);
 
     const [newCenter, setNewCenter] = useState<TableDataType>({
         federalId: 0, rank: 0, teamLeaderVolunteerId: 0, contact: "", participantCount: 0, name: "", location: ""})
@@ -117,7 +117,7 @@ export function AllCenters(): React.JSX.Element {
         }
     };
 
-    const handleInputChange = (id: number, field: keyof TableDataType, value: string | number) => {
+    const handleInputChange = (id: number, field: string, value: string | number) => {
         setEditedCenters((prev: TableDataType[]) => {
             const existingEvent = prev.find(event => event.id === id);
             if (existingEvent) {
@@ -132,7 +132,7 @@ export function AllCenters(): React.JSX.Element {
         });
     };
 
-    const getEditedValue = (id: number | undefined, field: keyof TableDataType) => {
+    const getEditedValue = (id: number | undefined, field: string) => {
         const editedEvent = editedCenters.find(event => event.id === id);
         return editedEvent ? editedEvent[field] : null;
     };
@@ -184,7 +184,7 @@ export function AllCenters(): React.JSX.Element {
         }
     }
 
-    const onDragEnd = (result) => {
+    const onDragEnd = (result: any) => {
         if (!result.destination) return;
         const reorderedColumns = Array.from(columns);
         const [movedColumn] = reorderedColumns.splice(result.source.index, 1);
@@ -373,8 +373,8 @@ export function AllCenters(): React.JSX.Element {
                                                     <td key={column.id}>
                                                         {column.id !== 'delete' && column.change ? (
                                                             <input
-                                                                value={getEditedValue(hq[column.id], hq[column.id]) ?? hq[column.id]} onChange={(e) => column.id && handleInputChange(hq[column.id], hq[column.id], e.target.value)}
-                                                                // value={hq[column.id]}
+                                                                value={getEditedValue(hq.id, column.id) ?? hq[column.id]}
+                                                                onChange={(e) => hq.id && handleInputChange(hq.id, column.id, e.target.value)}
                                                                 className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
                                                                 disabled={!isEditorMode}
                                                             />
