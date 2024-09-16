@@ -15,7 +15,7 @@ const buttons = [
     {name: "Волонтёры", icon: document, link: "/all_volunteers"},
     {name: "Все штабы", icon: document, link: "/all_headquarters"},
     {name: "Все центры", icon: document, link: "/all_centers"},
-    {name: "Документы", icon: document, link: "/documents"},
+    {name: "Документы", icon: document, link: "/documents/headquarters/1"},
     {name: "Мероприятия", icon: document, link: "/events"},
     {name: "Инвентарь", icon: document, link: "/all_equipment"},
 ]

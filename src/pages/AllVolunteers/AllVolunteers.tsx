@@ -7,7 +7,7 @@ import search from "../../assets/search.svg"
 import highlight from "../../assets/highlight.svg"
 import lightHighlight from "../../assets/lightHighlight.svg"
 import filter from "../../assets/filter.svg"
-import filters from "../../assets/filters.svg"
+import filtersImg from "../../assets/filters.svg"
 import cross from "../../assets/darkCross.svg";
 import arrowSmall from "../../assets/arrowSmall.svg";
 import bin from "../../assets/delete.svg";
@@ -15,43 +15,60 @@ import plus from "../../assets/plus.svg";
 import cancel from "../../assets/cancel.svg";
 const cn = classNames;
 
-interface dataType {
-    id: number,
-    name: string,
-    date: string,
-    tg: string,
+// interface dataType {
+//     id: number,
+//     name: string,
+//     date: string,
+//     tg: string,
+//     vk: string,
+//     color: string,
+//     events: string[],
+//     comment: string,
+//     rate: string,
+//     interview: boolean,
+//     step: string,
+//     headquarters: string,
+//     center: string
+// }
+
+interface TableDataType {
+    volunteerId: number,
+    fullName: string,
+    birthdayDto: { birthday: string, age: number },
+    tgLink: string,
     vk: string,
     color: string,
-    events: string[],
+    eventLinkList: [{ id: number, name: string }],
     comment: string,
-    rate: string,
-    interview: boolean,
-    step: string,
-    headquarters: string,
-    center: string
+    rank: number,
+    hasInterview: boolean,
+    level: string,
+    centerLink: { id: number, name: string },
+    headquartersLink: { id: number, name: string }
 }
 
 interface ColumnsType {
     all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, events: boolean, comment: boolean, rate: boolean, interview: boolean, step: boolean, headquarters: boolean, center: boolean
 }
 
-const data: dataType[] = [
-    {id: 1374, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1375, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: true, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1376, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1377, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1378, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1379, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1380, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1381, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1382, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1383, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1384, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-    {id: 1385, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
-]
+// const data: dataType[] = [
+//     {id: 1374, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1375, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: true, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1376, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1377, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1378, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1379, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1380, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1381, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1382, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1383, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1384, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+//     {id: 1385, name: "Иванов Иван Иванович", date: "21.05.2002(22 года)", tg: "https://t.me/vvoroby", vk: "https://vk.com/voroebushek", color: "Желтый", events: ["Мероприятие 1", "Мероприятие 2", "Мероприятие 3", "Мероприятие 3", "Мероприятие 3",], comment: "Очень хорошо выполняет работу, приходит во время, знает английский и испанский.", rate: "5", interview: false, step: "Ступень 1", headquarters: "Название 1", center: "Название 1"},
+// ]
 
 export function AllVolunteers(): React.JSX.Element {
     const navigate = useNavigate()
+    const [tableData, setTableData] = useState<TableDataType[]>([])
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
@@ -61,6 +78,41 @@ export function AllVolunteers(): React.JSX.Element {
     const [openStepCell, setOpenStepCell] = useState<number>(-1);
     const [openHeadquartersCell, setOpenHeadquartersCell] = useState<number>(-1);
     const [openCenterCell, setOpenCenterCell] = useState<number>(-1);
+
+    const [filters, ] = useState({minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
+        colorList: ["RED", "YELLOW", "GREEN"], hasInterview: [true, false], levelList: [], functionalList: [],
+        testing: [true, false], hasClothes: [true, false], centerIdList: [], orderByDateAsc: true, orderByDateDesc: false,
+        orderByRankAsc: true, orderByRankDesc: false
+    })
+
+    const getData = async () => {
+        const newFilters = Object.fromEntries(
+            Object.entries(filters).map(([key, value]) => {
+                if (Array.isArray(value) && value.length === 0) {
+                    return [key, undefined];
+                }
+                if (Array.isArray(value) && (value as boolean[]).includes(true) && (value as boolean[]).includes(false)) {
+                    return [key, undefined];
+                }
+                if (Array.isArray(value) && value.length === 1 && typeof value[0] === "boolean") {
+                    return [key, value[0]];
+                }
+                return [key, value];
+            }).filter(([, value]) => value !== undefined)
+        );
+        const result = await fetch("http://195.133.197.53:8082/volunteer", {
+            method: "POST",
+            body: JSON.stringify(newFilters),
+            headers: { 'Content-Type': 'application/json' },
+            credentials: "include",
+        })
+        console.log(newFilters)
+        setTableData(await result.json())
+    }
+
+    useEffect(() => {
+        getData()
+    }, [])
 
 
     useEffect(() => {
@@ -111,9 +163,9 @@ export function AllVolunteers(): React.JSX.Element {
     };
 
     const getColorClass = (color: string) => {
-        return color === "Желтый" ? "bg-[#FFF4E4] text-[#E99518]"
-            : color === "Зеленый" ? "bg-[#EBF6EB] text-[#31AA27]"
-                : color === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
+        return color === "YELLOW" ? "bg-[#FFF4E4] text-[#E99518]"
+            : color === "GREEN" ? "bg-[#EBF6EB] text-[#31AA27]"
+                : color === "RED" ? "bg-[#FFE3DD] text-[#FF2E00]"
                     : "bg-[#F1F1F1] text-[#777777]";
     };
 
@@ -146,7 +198,7 @@ export function AllVolunteers(): React.JSX.Element {
                         <div className={"relative w-full md:w-auto"}>
                             <img src={search} alt="search" className={"absolute left-2 top-1"}/>
                             <input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.regionalTeam__input)} />
-                            <img src={filters} alt="filters" className={"absolute right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
+                            <img src={filtersImg} alt="filters" className={"absolute right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
                         </div>
                         <button onClick={() => setIsFilterOpen(true)} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__filterButton)}>
                             <img src={filter} alt="filter"/>Фильтры
@@ -211,38 +263,38 @@ export function AllVolunteers(): React.JSX.Element {
                         </tr>
                         </thead>
                         <tbody className={""}>
-                        {data && data.map(person =>
-                            <tr key={person.id} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
-                                {columns.id && <th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{person.id}</th>}
+                        {tableData && tableData.map(person =>
+                            <tr key={person.volunteerId} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
+                                {columns.id && <th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{person.volunteerId}</th>}
                                 {columns.name && <th className={cn("sticky z-10 bg-white border-r-[1px] border-b-[1px]", !columns.id ? "left-0" : "left-[48px]")}>
-                                    <input value={person.name} className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
+                                    <input value={person.fullName} className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.date && <th>
-                                    <input value={person.date} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
+                                    <input value={person.birthdayDto.birthday} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.tg && <th>
-                                    <input value={person.tg} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
+                                    <input value={person.tgLink} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.vk && <th>
                                     <input value={person.vk} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.color && <th className={"flex justify-center items-center h-16"}>
                                     <div className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 relative",
-                                        person.color === "Желтый" ? "bg-[#FFF4E4] text-[#E99518]"
-                                            : person.color === "Зеленый" ? "bg-[#EBF6EB] text-[#31AA27]"
-                                                : person.color === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
+                                        person.color === "YELLOW" ? "bg-[#FFF4E4] text-[#E99518]"
+                                            : person.color === "GREEN" ? "bg-[#EBF6EB] text-[#31AA27]"
+                                                : person.color === "RED" ? "bg-[#FFE3DD] text-[#FF2E00]"
                                                     : "bg-[#F1F1F1] text-[#777777]")}>
                                         {person.color}
                                         {isEditorMode &&
-                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleDropdown(person.id)} />
+                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleDropdown(person.volunteerId)} />
                                         }
-                                        {openCell === person.id && (
+                                        {openCell === person.volunteerId && (
                                             <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
                                                 {["Желтый", "Зеленый", "Красный", "Not found"].map(color => (
                                                     <div
                                                         key={color}
                                                         className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(color))}
-                                                        onClick={() => handleColorSelect(color, person.id)}
+                                                        onClick={() => handleColorSelect(color, person.volunteerId)}
                                                     >
                                                         {color}
                                                     </div>
@@ -251,29 +303,31 @@ export function AllVolunteers(): React.JSX.Element {
                                         )}
                                     </div>
                                 </th>}
-                                {columns.events && <th className={cn(styles.regionalTeam__tableEvents)} title={person.events.join(", ")}>{person.events.join(", ")}</th>}
+                                {columns.events && <th className={cn(styles.regionalTeam__tableEvents)} title={person.eventLinkList.map(event => event.name).join(", ")}>
+                                    {person.eventLinkList.map(event => event.name).join(", ")}
+                                </th>}
                                 {columns.comment && <th>
                                     <input value={person.comment} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.rate && <th>
-                                    <p className={cn("border-0 bg-white w-full px-1 text-center", isEditorMode && "" )}>{person.rate}</p>
+                                    <p className={cn("border-0 bg-white w-full px-1 text-center", isEditorMode && "" )}>{person.rank}</p>
                                 </th>}
                                 {columns.interview && <th>
-                                    <input type={"checkbox"} checked={person.interview} className={cn("border-0 bg-white px-1 text-center h-7 w-7", styles.custom_checkbox)} disabled={!isEditorMode}/>
+                                    <input type={"checkbox"} checked={person.hasInterview} className={cn("border-0 bg-white px-1 text-center h-7 w-7", styles.custom_checkbox)} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.step && <th className={""}>
                                     <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#F1F1F1] text-[#141414]")}>
-                                        {person.step}
+                                        {person.level}
                                         {isEditorMode &&
-                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleStepDropdown(person.id)} />
+                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleStepDropdown(person.volunteerId)} />
                                         }
-                                        {openStepCell === person.id && (
+                                        {openStepCell === person.volunteerId && (
                                             <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
                                                 {["Ступень 1", "Ступень 2", "Ступень 3", "Ступень 4"].map(step => (
                                                     <div
                                                         key={step}
                                                         className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(step))}
-                                                        onClick={() => handleColorSelect(step, person.id)}
+                                                        onClick={() => handleColorSelect(step, person.volunteerId)}
                                                     >
                                                         {step}
                                                     </div>
@@ -285,17 +339,17 @@ export function AllVolunteers(): React.JSX.Element {
                                 {columns.headquarters &&
                                     <th className={""}>
                                         <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#FFFFFF] text-[#141414]")}>
-                                            {person.headquarters}
+                                            {person.headquartersLink.name}
                                             {isEditorMode &&
-                                                <img src={arrowSmall} alt={"arrow"} onClick={() => toggleHeadquartersDropdown(person.id)} />
+                                                <img src={arrowSmall} alt={"arrow"} onClick={() => toggleHeadquartersDropdown(person.volunteerId)} />
                                             }
-                                            {openHeadquartersCell === person.id && (
+                                            {openHeadquartersCell === person.volunteerId && (
                                                 <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
                                                     {["Название 1", "Название 2", "Название 3", "Название 4"].map(headquarters => (
                                                         <div
                                                             key={headquarters}
                                                             className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(headquarters))}
-                                                            onClick={() => handleColorSelect(headquarters, person.id)}
+                                                            onClick={() => handleColorSelect(headquarters, person.volunteerId)}
                                                         >
                                                             {headquarters}
                                                         </div>
@@ -306,17 +360,17 @@ export function AllVolunteers(): React.JSX.Element {
                                     </th>}
                                 {columns.center && <th className={""}>
                                     <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#FFFFFF] text-[#141414]")}>
-                                        {person.center}
+                                        {person.centerLink.name}
                                         {isEditorMode &&
-                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleCenterDropdown(person.id)} />
+                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleCenterDropdown(person.volunteerId)} />
                                         }
-                                        {openCenterCell === person.id && (
+                                        {openCenterCell === person.volunteerId && (
                                             <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
                                                 {["Название 1", "Название 2", "Название 3", "Название 4"].map(center => (
                                                     <div
                                                         key={center}
                                                         className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(center))}
-                                                        onClick={() => handleColorSelect(center, person.id)}
+                                                        onClick={() => handleColorSelect(center, person.volunteerId)}
                                                     >
                                                         {center}
                                                     </div>
@@ -402,7 +456,7 @@ export function AllVolunteers(): React.JSX.Element {
                             </div>
                         </div>
                         <div className={"flex flex-col gap-2"}>
-                            <p className={styles.regionalTeam__miniTitle}>Возраст</p>
+                            <p className={styles.regionalTeam__miniTitle}>Рейтинг</p>
                             <div className={"flex gap-5 justify-between"}>
                                 <div className={"flex flex-col flex-1 self-start gap-2"}>
                                     <label>От</label>

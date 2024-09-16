@@ -67,7 +67,7 @@ export function Main(): React.JSX.Element {
              style={page === "default" ? {backgroundColor: "rgba(12, 66, 140, 0.7)"} :
                  {backgroundColor: "rgba(12, 66, 140, 0.1)"}}>
             {page === "default" &&
-                <div className={cn("flex flex-col justify-center mx-auto my-0 items-center text-white gap-8 md:gap-16")}>
+                <div className={cn("flex flex-col justify-center mx-auto my-0 items-center text-white gap-8 md:gap-8")}>
                     <h3 className={cn(styles.main__title)}>АДМИНИСТРАТИВНЫЙ САЙТ</h3>
                     <hr className={cn(styles.main__line)}/>
                     <div className={cn("flex flex-col items-center")}>

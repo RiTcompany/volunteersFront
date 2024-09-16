@@ -1,0 +1,121 @@
+.allHeadquarters__container {
+    height: calc(100vh - 80px);
+}
+
+.allHeadquarters__input {
+    font-size: 16px;
+    font-weight: 300;
+    text-align: left;
+    border: #ACACAC solid 1px;
+    border-radius: 6px;
+    height: 34px;
+    width: 30vw;
+    max-width: 300px;
+}
+
+.allHeadquarters__addButton {
+    width: 133px;
+    height: 32px;
+    padding: 4px 12px 4px 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    /*line-height: 20px;*/
+}
+
+.allHeadquarters__tableHead {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.allHeadquarters__tableBody th {
+    font-weight: 400;
+}
+
+.allHeadquarters__tableBody {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.allHeadquarters__tableName {
+    min-width: 150px
+}
+
+.allHeadquarters__tablePeopleCount {
+    max-width: 110px;
+}
+
+.allHeadquarters__tableAddress {
+    min-width: 270px;
+}
+
+.allHeadquarters__tablePhone {
+    min-width: 180px;
+}
+
+.allHeadquarters__filterButton, .allHeadquarters__highlightButton {
+    padding: 5px 15px 5px 15px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    height: 34px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.allHeadquarters__filtersTitle {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 20.28px;
+    text-align: center;
+}
+
+.custom_checkbox {
+    position: relative;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.custom_checkbox:checked::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 16px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: translate(-50%, -60%) rotate(45deg);
+}
+
+.custom_checkbox:checked {
+    background-color: #49BC5B;
+}
+
+@media (max-width: 767px) {
+    .allHeadquarters__input {
+        width: 100%;
+        max-width: none;
+    }
+
+    .allHeadquarters__addButton {
+        width: 50px;
+    }
+}
+
+
+.regionalTeam__miniTitle {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 21.82px;
+}
+
+.regionalTeam__checkbox {
+    height: 18px;
+    width: 18px;
+    border-radius: 4px;
+}

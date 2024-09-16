@@ -6,13 +6,14 @@ import {Footer} from "./components/Footer/Footer.tsx";
 import {Route, Routes, useLocation} from "react-router-dom";
 import {Sidebar} from "./components/Sidebar/Sidebar.tsx";
 import {Profile} from "./pages/Profile/Profile.tsx";
-import {MyHeadquarters} from "./pages/MyHeadquarters/MyHeadquarters.tsx";
+import {Headquarters} from "./pages/MyHeadquarters/Headquarters.tsx";
 import {RegionalTeam} from "./pages/RegionalTeam/RegionalTeam.tsx";
 import {AllHeadquarters} from "./pages/AllHeadquarters/AllHeadquarters.tsx";
 import {AllVolunteers} from "./pages/AllVolunteers/AllVolunteers.tsx";
 import {AllEvents} from "./pages/AllEvents/AllEvents.tsx";
 import {AllEquipment} from "./pages/AllEquipment/AllEquipment.tsx";
 import {AllCenters} from "./pages/AllCenters/AllCenters.tsx";
+import {HeadquartersDocuments} from "./pages/HeadquartersDocumets/HeadquartersDocuments.tsx";
 
 
 export function parseJwt(token: string) {
@@ -42,13 +43,14 @@ function App() {
             <Routes>
                 <Route element={<Main/>} path={"/"}/>
                 <Route element={<Profile/>} path={"/profile"}/>
-                <Route element={<MyHeadquarters/>} path={"/my_headquarters"}/>
+                <Route element={<Headquarters/>} path={"/:type/:id"}/>
                 <Route element={<RegionalTeam/>} path={"/regional_team"}/>
                 <Route element={<AllHeadquarters/>} path={"/all_headquarters"}/>
                 <Route element={<AllVolunteers/>} path={"/all_volunteers"}/>
                 <Route element={<AllEvents/>} path={"/events"}/>
                 <Route element={<AllEquipment/>} path={"/all_equipment"}/>
                 <Route element={<AllCenters/>} path={"/all_centers"}/>
+                <Route element={<HeadquartersDocuments/>} path={"/documents/:type/:id"}/>
             </Routes>
         </div>
         {location.pathname === "/" && <Footer/>}

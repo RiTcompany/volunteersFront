@@ -372,7 +372,37 @@ export function AllHeadquarters(): React.JSX.Element {
                                             <tr key={hq.id} className={cn("h-[50px] border-b-[1px]")}>
                                                 {columns.filter(column => filterColumns[column.id]).filter(column => column.id !== 'delete').map((column) => (
                                                     <td key={column.id}>
-                                                        {column.id !== 'delete' && column.change ? (
+                                                        {column.id === 'name' ? (
+                                                            <div className={"w-full flex justify-center items-center"}>
+                                                                {isEditorMode ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        value={
+                                                                            (hq.id && column.id && getEditedValue(hq.id, column.id)) ??
+                                                                            (column.id in hq ? hq[column.id as keyof typeof hq] : null)
+                                                                        }
+                                                                        onChange={(e) => hq.id && column.id && handleInputChange(hq.id, column.id, e.target.value)}
+                                                                        className="border-[1px] bg-white w-full px-1 text-center text-black h-14"
+                                                                    />
+                                                                ) : (
+                                                                    <a
+                                                                        href={`/headquarters/${hq.id}`}
+                                                                        className={cn(
+                                                                            "border-0 bg-white w-full px-1 text-center text-black h-full",
+                                                                            "text-blue-500 underline cursor-pointer"
+                                                                        )}
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            navigate(`/headquarters/${hq.id}`);
+                                                                        }}
+                                                                        style={{ textDecoration: 'none' }}
+                                                                    >
+                                                                        {(hq.id && column.id && getEditedValue(hq.id, column.id)) ??
+                                                                            (column.id in hq ? hq[column.id as keyof typeof hq] : null)}
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        ) : column.id !== 'delete' && column.change ? (
                                                             <input
                                                                 value={(hq.id && column.id && getEditedValue(hq.id, column.id)) ?? (column.id in hq ? hq[column.id as keyof typeof hq] : null)}
                                                                 onChange={(e) => hq.id && column.id && handleInputChange(hq.id, column.id, e.target.value)}
