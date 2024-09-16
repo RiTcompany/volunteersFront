@@ -10,7 +10,8 @@ import cross from "../../assets/darkCross.svg";
 
 const buttons = [
     {name: "Личный кабинет", icon: profile, link: "/profile"},
-    {name: "Мой штаб/центр", icon: bag, link: "/my_headquarters"},
+    {name: "Мой штаб", icon: bag, link: "/headquarters/1"},
+    {name: "Мой центр", icon: bag, link: "/center/5"},
     {name: "Региональная команда", icon: document, link: "/regional_team"},
     {name: "Волонтёры", icon: document, link: "/all_volunteers"},
     {name: "Все штабы", icon: document, link: "/all_headquarters"},
@@ -32,13 +33,13 @@ export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Elem
     const [activeIndex, setActiveIndex] = useState<number>(-1);
 
     useEffect(() => {
-        const currLocation = location.pathname
+        const currLocation = location.pathname;
 
-        const foundIndex = buttons.findIndex(button => currLocation.includes(button.link));
+        const foundIndex = buttons.findIndex(button => currLocation === button.link);
         if (foundIndex !== -1) {
             setActiveIndex(foundIndex);
         }
-    })
+    }, [location.pathname]);
 
     const handleButtonClick = (index: number, link: string, isPhone: boolean) => {
         setActiveIndex(index);
@@ -48,7 +49,7 @@ export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Elem
 
     return (
         <div className={cn("mx-auto my-0")}>
-            <div className={cn("w-auto hidden md:flex flex-col gap-5 pt-5 h-full")}>
+            <div className={cn("w-auto hidden md:flex flex-col gap-2 pt-5 h-full")}>
                 {buttons && buttons.map((button, index) =>
                    <button
                        key={button.name}
