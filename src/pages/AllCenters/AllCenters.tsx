@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import document from "../../assets/document.svg"
-import search from "../../assets/search.svg"
+// import search from "../../assets/search.svg"
 import highlight from "../../assets/highlight.svg"
 import lightHighlight from "../../assets/lightHighlight.svg"
 import filter from "../../assets/filter.svg"
@@ -235,11 +235,11 @@ export function AllCenters(): React.JSX.Element {
                     </button>
                 </div>
                 <div className={"flex justify-between gap-5 w-full"}>
-                    <div className={"flex gap-5 w-full md:w-auto"}>
+                    <div className={"flex w-full md:w-auto"}>
                         <div className={"relative w-full md:w-auto"}>
-                            <img src={search} alt="search" className={"absolute left-2 top-1"}/>
-                            <input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.allHeadquarters__input)} />
-                            <img src={filters} alt="filters" className={"absolute right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
+                            {/*<img src={search} alt="search" className={"absolute left-2 top-1"}/>*/}
+                            {/*<input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.allHeadquarters__input)} />*/}
+                            <img src={filters} alt="filters" className={" flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
                         </div>
                         <button onClick={() => setIsFilterOpen(true)} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.allHeadquarters__filterButton)}>
                             <img src={filter} alt="filter"/>Фильтры

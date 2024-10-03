@@ -1,7 +1,7 @@
-import styles from './AllVolunteers.module.css'
+import styles from './CenterHeadParticipants.module.css'
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import document from "../../assets/document.svg"
 // import search from "../../assets/search.svg"
 import highlight from "../../assets/highlight.svg"
@@ -14,8 +14,8 @@ import bin from "../../assets/delete.svg";
 import cancel from "../../assets/cancel.svg";
 import {convertToISO, formatDateTime} from "../../utils/formatDate.ts";
 import {colorMap, DisplayColor, DisplayStep, reverseColorMap, reverseStepMap, stepMap} from "../../utils/maps.ts";
-import {FiltersType} from "../../utils/type.ts";
 import InputMask from "react-input-mask";
+import {FiltersType} from "../../utils/type.ts";
 
 const cn = classNames;
 
@@ -23,17 +23,15 @@ interface TableDataType {
     id: number,
     volunteerId: number,
     fullName: string,
-    birthdayDto: { birthday: string, age: number },
+    birthday: { birthday: string, age: number },
     tgLink: string,
-    vk: string,
+    vkLink: string,
     color: string,
     eventLinkList: [{ id: number, name: string }],
     comment: string,
     rank: number,
     hasInterview: boolean,
     level: string,
-    centerLink: { id: number, name: string },
-    headquartersLink: { id: number, name: string }
 }
 
 interface EditedDataType {
@@ -46,33 +44,29 @@ interface EditedDataType {
     comment?: string,
     hasInterview?: boolean,
     level?: string,
-    centerId?: number,
-    headquartersId?: number
+    // centerId?: number,
+    // headquartersId?: number
 }
 
 interface ColumnsType {
-    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, events: boolean, comment: boolean, rate: boolean, interview: boolean, step: boolean, headquarters: boolean, center: boolean, delete: boolean
+    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, comment: boolean, rate: boolean, interview: boolean, step: boolean
 }
 
-export function AllVolunteers(): React.JSX.Element {
+export function CenterHeadParticipants(): React.JSX.Element {
     const navigate = useNavigate()
+    const {type, id} = useParams()
     const [tableData, setTableData] = useState<TableDataType[]>([])
     const [editedData, setEditedData] = useState<EditedDataType[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
-    const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, events: true, comment: true, rate: true, interview: true, step: true, headquarters: true, center: true, delete: true})
-    const [refresh, setRefresh] = useState(false)
-
     const [centers, setCenters] = useState<{id: number, name: string}[]>([])
     const [headquarters, setHeadquarters] = useState<{id: number, name: string}[]>([])
-    const [events, setEvents] = useState<{id: number, name: string}[]>([])
+    const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, comment: true, rate: true, interview: true, step: true})
+    const [refresh, setRefresh] = useState(false)
+
     const [openCell, setOpenCell] = useState<number>(-1);
     const [openStepCell, setOpenStepCell] = useState<number>(-1);
-    const [openHeadquartersCell, setOpenHeadquartersCell] = useState<number>(-1);
-    const [openCenterCell, setOpenCenterCell] = useState<number>(-1);
-
-    const [isOpenDelete, setIsOpenDelete] = useState<{ id: number, open: boolean }>({id: -1, open: false})
 
     const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
         colorList: [], hasInterview: [], levelList: [], functionalList: [],
@@ -81,6 +75,38 @@ export function AllVolunteers(): React.JSX.Element {
     }
 
     const [filters, setFilters] = useState<FiltersType>(initialFilters)
+
+    useEffect(() => {
+        (async function() {
+            try {
+                const response = await fetch("http://195.133.197.53:8082/center", {
+                    method: "GET",
+                    credentials: "include"
+                })
+                let result = await response.json()
+                setCenters(result)
+                console.log(result)
+            } catch (e) {
+                console.log(e)
+            }
+        })()
+    }, []);
+
+    useEffect(() => {
+        (async function() {
+            try {
+                const response = await fetch("http://195.133.197.53:8082/headquarters", {
+                    method: "GET",
+                    credentials: "include"
+                })
+                let result = await response.json()
+                setHeadquarters(result)
+                console.log(result)
+            } catch (e) {
+                console.log(e)
+            }
+        })()
+    }, []);
 
     const areAllInterviewsSelected = (interviews: boolean[]) => {
         return interviews.includes(true) && interviews.includes(false);
@@ -199,18 +225,6 @@ export function AllVolunteers(): React.JSX.Element {
                     };
                 }
 
-                if (name.startsWith('event')) {
-                    const id = Number(name.replace('event', ''));
-                    const updatedEventsIdList = checked
-                        ? [...prev.eventIdList, id]
-                        : prev.eventIdList.filter(eventId => eventId !== id);
-
-                    return {
-                        ...prev,
-                        eventIdList: updatedEventsIdList,
-                    };
-                }
-
                 if (name === 'allSteps') {
                     return {
                         ...prev,
@@ -237,6 +251,7 @@ export function AllVolunteers(): React.JSX.Element {
     };
 
 
+
     useEffect(() => {
         (async function() {
             const newFilters = Object.fromEntries(
@@ -253,7 +268,7 @@ export function AllVolunteers(): React.JSX.Element {
                     return [key, value];
                 }).filter(([, value]) => value !== undefined)
             );
-            const result = await fetch("http://195.133.197.53:8082/volunteer", {
+            const result = await fetch(`http://195.133.197.53:8082/${type}_participant/${id}`, {
                 method: "POST",
                 body: JSON.stringify(newFilters),
                 headers: { 'Content-Type': 'application/json' },
@@ -266,53 +281,6 @@ export function AllVolunteers(): React.JSX.Element {
         })()
     }, [isOpenNew, isEditorMode, refresh]);
 
-    useEffect(() => {
-        (async function() {
-            try {
-                const response = await fetch("http://195.133.197.53:8082/center", {
-                    method: "GET",
-                    credentials: "include"
-                })
-                let result = await response.json()
-                setCenters(result)
-                console.log(result)
-            } catch (e) {
-                console.log(e)
-            }
-        })()
-    }, []);
-
-    useEffect(() => {
-        (async function() {
-            try {
-                const response = await fetch("http://195.133.197.53:8082/event", {
-                    method: "GET",
-                    credentials: "include"
-                })
-                let result = await response.json()
-                setEvents(result)
-                console.log(result)
-            } catch (e) {
-                console.log(e)
-            }
-        })()
-    }, []);
-
-    useEffect(() => {
-        (async function() {
-            try {
-                const response = await fetch("http://195.133.197.53:8082/headquarters", {
-                    method: "GET",
-                    credentials: "include"
-                })
-                let result = await response.json()
-                setHeadquarters(result)
-                console.log(result)
-            } catch (e) {
-                console.log(e)
-            }
-        })()
-    }, []);
 
     useEffect(() => {
         const allChecked: boolean = Object.keys(columns).every(key => key === 'all' || columns[key as keyof ColumnsType]);
@@ -328,7 +296,7 @@ export function AllVolunteers(): React.JSX.Element {
         setColumns(prevState => {
             const newAll = !prevState.all;
             const newColumns = {
-                all: newAll, id: newAll, name: newAll, date: newAll, tg: newAll, vk: newAll, color: newAll, events: newAll, comment: newAll, rate: newAll, interview: newAll, step: newAll, headquarters: newAll, center: newAll, delete: newAll
+                all: newAll, id: newAll, name: newAll, date: newAll, tg: newAll, vk: newAll, color: newAll, comment: newAll, rate: newAll, interview: newAll, step: newAll
             };
 
             return newColumns;
@@ -336,7 +304,7 @@ export function AllVolunteers(): React.JSX.Element {
     };
 
     const handleInputChange = (id: number, field: string, value: string | number | boolean) => {
-        setEditedData((prev) => {
+        setEditedData((prev: EditedDataType[]) => {
             const existingData = prev.find(person => person.id === id);
             if (existingData) {
                 return prev.map(person =>
@@ -345,11 +313,12 @@ export function AllVolunteers(): React.JSX.Element {
                         : person
                 );
             } else {
-                return [...prev, { id, [field]: value } as unknown as TableDataType];
+                return [...prev, { id, [field]: value } as EditedDataType];
             }
         });
         console.log(editedData);
     };
+
 
     const getEditedValue = (id: number | undefined, field: string) => {
         const editedPerson = editedData.find(person => person.id === id);
@@ -369,14 +338,6 @@ export function AllVolunteers(): React.JSX.Element {
         setOpenStepCell(openStepCell === cellId ? -1 : cellId);
     };
 
-    const toggleHeadquartersDropdown = (cellId: number) => {
-        setOpenHeadquartersCell(openHeadquartersCell === cellId ? -1 : cellId);
-    };
-
-    const toggleCenterDropdown = (cellId: number) => {
-        setOpenCenterCell(openCenterCell === cellId ? -1 : cellId);
-    };
-
     // const handleColorSelect = (color: string, cellId: number) => {
     //     console.log(color, cellId)
     //     setOpenCell(-1);
@@ -392,26 +353,6 @@ export function AllVolunteers(): React.JSX.Element {
         const step = stepMap[displayStep];
         handleInputChange(id, "level", step);
         toggleStepDropdown(id);
-    };
-
-    const handleHeadquartersSelect = (headquarterId: number, personId: number) => {
-        handleInputChange(personId, 'headquartersId', headquarterId);
-        toggleHeadquartersDropdown(personId);
-    };
-
-    const handleCenterSelect = (headquarterId: number, personId: number) => {
-        handleInputChange(personId, 'centerId', headquarterId);
-        toggleCenterDropdown(personId);
-    };
-
-    const getHeadquartersNameById = (headquartersId: number | undefined) => {
-        const headquarter = headquarters.find(h => h.id === headquartersId);
-        return headquarter ? headquarter.name : 'Не выбрано';
-    };
-
-    const getCenterNameById = (centerId: number | undefined) => {
-        const center = centers.find(c => c.id === centerId);
-        return center ? center.name : 'Не выбрано';
     };
 
     useEffect(() => {
@@ -455,27 +396,27 @@ export function AllVolunteers(): React.JSX.Element {
         }
     };
 
-    const handleDeleteButtonClick = async (id: number) => {
-        try {
-            const response = await fetch(`http://195.133.197.53:8082/volunteer/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-
-            setIsOpenDelete({open: false, id: -1})
-
-            const result = await response.json();
-            console.log('Success:', result);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
+    // const handleDeleteButtonClick = async (id: number) => {
+    //     try {
+    //         const response = await fetch(`http://195.133.197.53:8082/center/${id}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //         });
+    //
+    //         if (!response.ok) {
+    //             throw new Error(`Error: ${response.status}`);
+    //         }
+    //
+    //         setIsOpenDelete({open: false, id: -1})
+    //
+    //         const result = await response.json();
+    //         console.log('Success:', result);
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //     }
+    // }
 
 
     return (
@@ -484,7 +425,7 @@ export function AllVolunteers(): React.JSX.Element {
                 <div className={"flex justify-between"}>
                     <div className={"flex gap-2"}>
                         <img src={document} alt="document"/>
-                        <p className={"text-[18px] md:text-[20px] font-bold"}>Таблица всех волонтеров</p>
+                        <p className={"text-[18px] md:text-[20px] font-bold"}>Таблица участников {type === "headquarters" ? <span>штаба</span>: <span>центра</span>}</p>
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
@@ -499,7 +440,7 @@ export function AllVolunteers(): React.JSX.Element {
                         <div className={"relative w-full md:w-auto"}>
                             {/*<img src={search} alt="search" className={"absolute left-2 top-1"}/>*/}
                             {/*<input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.regionalTeam__input)} />*/}
-                            <img src={filtersImg} alt="filters" className={"right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
+                            <img src={filtersImg} alt="filters" className={" right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
                         </div>
                         <button onClick={() => setIsFilterOpen(true)} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__filterButton)}>
                             <img src={filter} alt="filter"/>Фильтры
@@ -529,21 +470,6 @@ export function AllVolunteers(): React.JSX.Element {
                         </button>
                     </div>
                 }
-                <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenDelete.open ? '' : 'hidden'}`} onClick={() => setIsOpenDelete({open: false, id: -1})}></div>
-                {isOpenDelete.open &&
-                    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[200px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5"}>
-                        <img src={cross} alt={"close"} className={"absolute top-2 right-2 w-7"} onClick={() => setIsOpenDelete({open: false, id: -1})}/>
-                        <p className={"text-center text-[20px]"}>Вы уверены, что хотите удалить данные?</p>
-                        <div className={"flex gap-3"}>
-                            <button onClick={() => setIsOpenDelete({open: false, id: -1})} className={"w-2/4 p-2 text-[#5E5E5E] bg-[#E8E8F0] rounded-lg self-center mt-5"}>
-                                Отмена
-                            </button>
-                            <button onClick={()=> handleDeleteButtonClick(isOpenDelete.id)} className={"w-2/4 p-2 text-white bg-[#FF1818] rounded-lg self-center mt-5"}>
-                                Удалить
-                            </button>
-                        </div>
-                    </div>
-                }
                 <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenNew ? '' : 'hidden'}`} onClick={() => setIsOpenNew(false)}></div>
                 {/*{isOpenNew &&*/}
                 {/*    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[250px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5"}>*/}
@@ -566,14 +492,11 @@ export function AllVolunteers(): React.JSX.Element {
                             {columns.tg && <th className={cn(styles.regionalTeam__tableLink)}>Ссылка Telegram</th>}
                             {columns.vk && <th className={cn(styles.regionalTeam__tableLink)}>Ссылка ВКонтакте</th>}
                             {columns.color && <th className={cn(styles.regionalTeam__tableColor)}>Светофор</th>}
-                            {columns.events && <th className={cn(styles.regionalTeam__tableEvents)}>Мероприятия</th>}
                             {columns.comment && <th className={cn(styles.regionalTeam__tableButton)}>Комментарий по работе</th>}
                             {columns.rate && <th className={cn(styles.regionalTeam__tableButton)}>Рейтинг</th>}
                             {columns.interview && <th className={cn(styles.regionalTeam__tableButton)}>Собеседование для ступени роста</th>}
                             {columns.step && <th className={cn(styles.regionalTeam__tableButton)}>Ступень роста</th>}
-                            {columns.headquarters && <th className={cn(styles.regionalTeam__tableButton)}>Районный штаб</th>}
-                            {columns.center && <th className={cn(styles.regionalTeam__tableButton)}>Общественный центр</th>}
-                            {!isEditorMode && columns.delete &&
+                            {!isEditorMode &&
                                 <th className={cn("min-w-8")}></th>
                             }
                         </tr>
@@ -595,17 +518,18 @@ export function AllVolunteers(): React.JSX.Element {
                                     <InputMask
                                         name="birthday"
                                         mask="99.99.9999"
-                                        value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : formatDateTime(person.birthdayDto.birthday).slice(0, 10)}
+                                        value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : formatDateTime(person.birthday.birthday).slice(0, 10)}
                                         onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
                                         className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]" )}
                                         placeholder={"ДД.ММ.ГГГГ"}
-                                    /> {!isEditorMode && <p className={"h-14 flex flex-col justify-center"}>({person.birthdayDto.age})</p>}
+                                    />
+                                    {!isEditorMode && <p className={"h-14 flex flex-col justify-center"}>({person.birthday.age})</p>}
                                 </th>}
                                 {columns.tg && <th>
                                     <input name={"tgLink"} value={getEditedValue(person.id, "tgLink") ? getEditedValue(person.id, "tgLink") : person.tgLink} onChange={(e) => handleInputChange(person.id, "tgLink", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.vk && <th>
-                                    <input name={"vkLink"} value={getEditedValue(person.id, "vkLink") ? getEditedValue(person.id, "vkLink") : person.vk} onChange={(e) => handleInputChange(person.id, "vkLink", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
+                                    <input name={"vkLink"} value={getEditedValue(person.id, "vkLink") ? getEditedValue(person.id, "vkLink") : person.vkLink} onChange={(e) => handleInputChange(person.id, "vkLink", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
                                 </th>}
                                 {columns.color && <th className={"flex justify-center items-center h-16"}>
                                     <div className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 relative",
@@ -642,9 +566,6 @@ export function AllVolunteers(): React.JSX.Element {
                                             </div>
                                         )}
                                     </div>
-                                </th>}
-                                {columns.events && <th className={cn(styles.regionalTeam__tableEvents)} title={person.eventLinkList.map(event => event.name).join(", ")}>
-                                    {person.eventLinkList.map(event => event.name).join(", ")}
                                 </th>}
                                 {columns.comment && <th>
                                     <input name={"comment"} value={getEditedValue(person.id, "comment") ?? person.comment ?? ""} onChange={(e) => handleInputChange(person.id, "comment", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
@@ -690,78 +611,9 @@ export function AllVolunteers(): React.JSX.Element {
                                         )}
                                     </div>
                                 </th>}
-                                {columns.headquarters &&
-                                    <th className={""}>
-                                        <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#FFFFFF] text-[#141414]")}>
-                                            {
-                                                (() => {
-                                                    const editedHeadquartersId = getEditedValue(person.id, 'headquartersId');
-                                                    const headquartersName = editedHeadquartersId
-                                                        ? getHeadquartersNameById(editedHeadquartersId)
-                                                        : person.headquartersLink?.name;
-
-                                                    return <p>{headquartersName ? headquartersName : 'Не выбрано'}</p>;
-                                                })()
-                                            }
-                                            {isEditorMode &&
-                                                <img src={arrowSmall} alt={"arrow"} onClick={() => toggleHeadquartersDropdown(person.id)} />
-                                            }
-                                            {openHeadquartersCell === person.id && (
-                                                <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                    {headquarters.map(headquarter => (
-                                                        <div
-                                                            key={headquarter.id}
-                                                            className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
-                                                            onClick={() => handleHeadquartersSelect(headquarter.id, person.id)}
-                                                        >
-                                                            {headquarter.name}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </th>
+                                {!isEditorMode &&
+                                    <th className={cn("min-w-8 ")}><button className={"w-full flex justify-center"}><img src={bin} alt="delete" className={"self-center"}/></button></th>
                                 }
-
-                                {columns.center &&
-                                    <th className={""}>
-                                        <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#FFFFFF] text-[#141414]")}>
-                                            {
-                                                (() => {
-                                                    const editedCenterId = getEditedValue(person.id, 'centerId');
-                                                    const centerName = editedCenterId
-                                                        ? getCenterNameById(editedCenterId)
-                                                        : person.centerLink?.name;
-
-                                                    return <p>{centerName ? centerName : 'Не выбрано'}</p>;
-                                                })()
-                                            }
-                                            {isEditorMode &&
-                                                <img src={arrowSmall} alt={"arrow"} onClick={() => toggleCenterDropdown(person.id)} />
-                                            }
-                                            {openCenterCell === person.id && (
-                                                <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                    {centers.map(center => (
-                                                        <div
-                                                            key={center.id}
-                                                            className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
-                                                            onClick={() => handleCenterSelect(center.id, person.id)}
-                                                        >
-                                                            {center.name}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </th>
-                                }
-                                {columns.delete && !isEditorMode && person.id && (
-                                    <td>
-                                        <button onClick={() =>  person.id && setIsOpenDelete({id: person.id, open: true})}>
-                                            <img src={bin} alt="delete" />
-                                        </button>
-                                    </td>
-                                )}
                             </tr>
                         )}
                         </tbody>
@@ -807,10 +659,6 @@ export function AllVolunteers(): React.JSX.Element {
                                 <p>Светофор</p>
                             </div>
                             <div className={"flex gap-2 items-center"}>
-                                <input checked={columns.events} onClick={() => setColumns({...columns, events: !columns.events})} type="checkbox" name={"events"} className={styles.regionalTeam__checkbox}/>
-                                <p>Мероприятия</p>
-                            </div>
-                            <div className={"flex gap-2 items-center"}>
                                 <input checked={columns.comment} onClick={() => setColumns({...columns, comment: !columns.comment})} type="checkbox" name={"comment"} className={styles.regionalTeam__checkbox}/>
                                 <p>Комментарий по работе</p>
                             </div>
@@ -825,18 +673,6 @@ export function AllVolunteers(): React.JSX.Element {
                             <div className={"flex gap-2 items-center"}>
                                 <input checked={columns.step} onClick={() => setColumns({...columns, step: !columns.step})} type="checkbox" name={"step"} className={styles.regionalTeam__checkbox}/>
                                 <p>Ступень роста</p>
-                            </div>
-                            <div className={"flex gap-2 items-center"}>
-                                <input checked={columns.headquarters} onClick={() => setColumns({...columns, headquarters: !columns.headquarters})} type="checkbox" name={"headquarters"} className={styles.regionalTeam__checkbox}/>
-                                <p>Районный штаб</p>
-                            </div>
-                            <div className={"flex gap-2 items-center"}>
-                                <input checked={columns.center} onClick={() => setColumns({...columns, center: !columns.center})} type="checkbox" name={"center"} className={styles.regionalTeam__checkbox}/>
-                                <p>Общественный центр</p>
-                            </div>
-                            <div className={"flex gap-2 items-center"}>
-                                <input checked={columns.delete} onClick={() => setColumns({...columns, delete: !columns.delete})} type="checkbox" name={"delete"} className={styles.regionalTeam__checkbox}/>
-                                <p>Удаление</p>
                             </div>
                         </div>
                         <div className={"flex flex-col gap-2"}>
@@ -926,25 +762,6 @@ export function AllVolunteers(): React.JSX.Element {
                                 />
                                 <p>Not found</p>
                             </div>
-                        </div>
-                        <div className={"flex flex-col gap-2"}>
-                            <p className={styles.regionalTeam__miniTitle}>Мероприятия</p>
-                            {/*<div className={"relative w-full"}>*/}
-                            {/*    <img src={search} alt="search" className={"absolute left-2 top-1"}/>*/}
-                            {/*    <input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.regionalTeam__input)} />*/}
-                            {/*</div>*/}
-                            {events.map((ev) => (
-                                <div key={ev.id} className="flex gap-2 items-center">
-                                    <input
-                                        type="checkbox"
-                                        name={`event${ev.id}`}
-                                        className={styles.regionalTeam__checkbox}
-                                        checked={filters.eventIdList.includes(ev.id)}
-                                        onChange={handleFiltersChange}
-                                    />
-                                    <p>{ev.name}</p>
-                                </div>
-                            ))}
                         </div>
                         <div className={"flex flex-col gap-2"}>
                             <p className={styles.regionalTeam__miniTitle}>Возраст</p>

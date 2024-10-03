@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import document from "../../assets/document.svg"
-import search from "../../assets/search.svg"
+// import search from "../../assets/search.svg"
 import highlight from "../../assets/highlight.svg"
 import lightHighlight from "../../assets/lightHighlight.svg"
 import filter from "../../assets/filter.svg"
@@ -235,11 +235,11 @@ export function AllHeadquarters(): React.JSX.Element {
                     </button>
                 </div>
                 <div className={"flex justify-between gap-5 w-full"}>
-                    <div className={"flex gap-5 w-full md:w-auto"}>
+                    <div className={"flex w-full md:w-auto"}>
                         <div className={"relative w-full md:w-auto"}>
-                            <img src={search} alt="search" className={"absolute left-2 top-1"}/>
-                            <input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.allHeadquarters__input)} />
-                            <img src={filters} alt="filters" className={"absolute right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
+                            {/*<img src={search} alt="search" className={"absolute left-2 top-1"}/>*/}
+                            {/*<input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.allHeadquarters__input)} />*/}
+                            <img src={filters} alt="filters" className={" flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
                         </div>
                         <button onClick={() => setIsFilterOpen(true)} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.allHeadquarters__filterButton)}>
                             <img src={filter} alt="filter"/>Фильтры
@@ -287,7 +287,7 @@ export function AllHeadquarters(): React.JSX.Element {
                                 <input name={"rank"} onChange={handleChangeNewCenter} placeholder={"Рейтинг"} className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}/>
                             </div>
                             <div className={"flex flex-col gap-3"}>
-                                <label className={"text-[#5E5E5E]"}>Введите название центра</label>
+                                <label className={"text-[#5E5E5E]"}>Введите название</label>
                                 <input name={"name"} onChange={handleChangeNewCenter} placeholder={"Название"} className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}/>
                             </div>
                             {/*<div className={"flex flex-col gap-3"}>*/}

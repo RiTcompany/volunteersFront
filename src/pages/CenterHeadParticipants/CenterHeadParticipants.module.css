@@ -1,0 +1,162 @@
+.regionalTeam__container {
+    height: calc(100vh - 80px);
+}
+
+.regionalTeam__input {
+    font-size: 16px;
+    font-weight: 300;
+    text-align: left;
+    border: #ACACAC solid 1px;
+    border-radius: 6px;
+    height: 34px;
+    width: 30vw;
+    max-width: 300px;
+}
+
+.regionalTeam__addButton {
+    width: 133px;
+    height: 32px;
+    padding: 4px 12px 4px 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    /*line-height: 20px;*/
+}
+
+.regionalTeam__tableHead {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.regionalTeam__tableBody th {
+    font-weight: 400;
+}
+
+.regionalTeam__tableBody {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.regionalTeam__tableId {
+    min-width: 50px;
+}
+
+.regionalTeam__tableName {
+    min-width: 180px
+}
+
+.regionalTeam__tableDate {
+    min-width: 150px;
+}
+
+.regionalTeam__tableLink {
+    min-width: 180px;
+}
+
+.regionalTeam__tableColor {
+    min-width: 130px;
+}
+
+.regionalTeam__tableEvents {
+    min-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+}
+
+.regionalTeam__tableButton {
+    min-width: 250px;
+}
+
+.regionalTeam__filterButton, .regionalTeam__highlightButton {
+    padding: 5px 15px 5px 15px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    height: 34px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.regionalTeam__newPassword {
+    width: 90%;
+    height: 26px;
+    padding: 4px 12px 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 12px;
+    text-align: center;
+}
+
+.regionalTeam__filtersTitle {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 20.28px;
+    text-align: center;
+}
+
+.regionalTeam__checkbox {
+    height: 18px;
+    width: 18px;
+    border-radius: 4px;
+}
+
+.regionalTeam__ageInput {
+    background-color: #F1F1F5;
+    border-radius: 4px;
+    padding: 3px;
+}
+
+.regionalTeam__miniTitle {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 21.82px;
+}
+
+.regionalTeam__filterBottomButton {
+    width: 140px;
+    height: 32px;
+    /*padding: 6px 12px 6px 12px;*/
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.custom_checkbox {
+    position: relative;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.custom_checkbox:checked::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 16px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: translate(-50%, -60%) rotate(45deg);
+}
+
+.custom_checkbox:checked {
+    background-color: #49BC5B;
+}
+
+@media (max-width: 767px) {
+    .regionalTeam__input {
+        width: 100%;
+        max-width: none;
+    }
+
+    .regionalTeam__addButton {
+        width: 50px;
+    }
+}

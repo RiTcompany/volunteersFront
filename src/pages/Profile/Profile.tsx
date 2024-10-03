@@ -2,7 +2,7 @@ import styles from './Profile.module.css'
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {parseJwt} from "../../App.tsx";
+import {parseJwt} from "../../utils/parseJWT.ts";
 const cn = classNames;
 
 interface dataType {
@@ -36,6 +36,8 @@ const data: dataType = {
 export function Profile(): React.JSX.Element {
     const navigate = useNavigate()
     const [user, setUser] = useState<string>("")
+
+    // const [volunteerData, setVolunteerData] = useState()
 
     const token = localStorage.getItem("authToken")
 

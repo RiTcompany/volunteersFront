@@ -14,22 +14,10 @@ import {AllEvents} from "./pages/AllEvents/AllEvents.tsx";
 import {AllEquipment} from "./pages/AllEquipment/AllEquipment.tsx";
 import {AllCenters} from "./pages/AllCenters/AllCenters.tsx";
 import {HeadquartersDocuments} from "./pages/HeadquartersDocumets/HeadquartersDocuments.tsx";
-
-
-export function parseJwt(token: string) {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-
-        return JSON.parse(jsonPayload);
-    } catch (error) {
-        console.error('Invalid token:', error);
-        return null;
-    }
-}
+import {VolunteerProfile} from "./pages/VolunteerProfile/VolunteerProfile.tsx";
+import {EventParticipants} from "./pages/EventParticipants/EventParticipants.tsx";
+import {CenterHeadParticipants} from "./pages/CenterHeadParticipants/CenterHeadParticipants.tsx";
+import {HeadCentEquipment} from "./pages/AllEquipment/HeadCentEquipment.tsx";
 
 function App() {
   const location = useLocation()
@@ -44,13 +32,17 @@ function App() {
                 <Route element={<Main/>} path={"/"}/>
                 <Route element={<Profile/>} path={"/profile"}/>
                 <Route element={<Headquarters/>} path={"/:type/:id"}/>
-                <Route element={<RegionalTeam/>} path={"/regional_team"}/>
+                <Route element={<RegionalTeam/>} path={"/participants/regional_team/:id"}/>
+                <Route element={<CenterHeadParticipants/>} path={"/participant/:type/:id"}/>
                 <Route element={<AllHeadquarters/>} path={"/all_headquarters"}/>
                 <Route element={<AllVolunteers/>} path={"/all_volunteers"}/>
                 <Route element={<AllEvents/>} path={"/events"}/>
                 <Route element={<AllEquipment/>} path={"/all_equipment"}/>
+                <Route element={<HeadCentEquipment/>} path={"/equipment/:type/:id"}/>
                 <Route element={<AllCenters/>} path={"/all_centers"}/>
                 <Route element={<HeadquartersDocuments/>} path={"/documents/:type/:id"}/>
+                <Route element={<VolunteerProfile/>} path={"/volunteer/:id"}/>
+                <Route element={<EventParticipants/>} path={"/event_participants/:id"}/>
             </Routes>
         </div>
         {location.pathname === "/" && <Footer/>}

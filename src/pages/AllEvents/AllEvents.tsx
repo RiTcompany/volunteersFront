@@ -1,10 +1,10 @@
 import styles from './AllEvents.module.css'
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import InputMask from "react-input-mask";
 import document from "../../assets/document.svg"
-import search from "../../assets/search.svg"
+// import search from "../../assets/search.svg"
 import highlight from "../../assets/highlight.svg"
 import lightHighlight from "../../assets/lightHighlight.svg"
 import filter from "../../assets/filter.svg"
@@ -268,11 +268,11 @@ export function AllEvents(): React.JSX.Element {
                     </button>
                 </div>
                 <div className={"flex justify-between gap-5 w-full"}>
-                    <div className={"flex gap-5 w-full md:w-auto"}>
+                    <div className={"flex w-full md:w-auto"}>
                         <div className={"relative w-full md:w-auto"}>
-                            <img src={search} alt="search" className={"absolute left-2 top-1"}/>
-                            <input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.allHeadquarters__input)} />
-                            <img src={filters} alt="filters" className={"absolute right-2 top-1 flex md:hidden"}
+                            {/*<img src={search} alt="search" className={"absolute left-2 top-1"}/>*/}
+                            {/*<input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.allHeadquarters__input)} />*/}
+                            <img src={filters} alt="filters" className={"right-2 top-1 flex md:hidden"}
                                  onClick={() => setIsFilterOpen(true)}/>
                         </div>
                         <button onClick={() => setIsFilterOpen(true)} className={cn("hidden md:flex " +
@@ -515,7 +515,7 @@ export function AllEvents(): React.JSX.Element {
                                                                 placeholder={"ДД.ММ.ГГГГ ЧЧ:ММ"}
                                                                 disabled={!isEditorMode}/>
                                                         ) : column.id === "participants" ? (
-                                                            <a href={"#"}>Данные об участниках</a>
+                                                            <Link to={`/event_participants/${hq.id}`}>Данные об участниках</Link>
                                                         ) : column.id !== 'delete' && column.change ? (
                                                             <input
                                                                 value={(hq.id && column.id && getEditedValue(hq.id, column.id)) ?? (column.id in hq ? hq[column.id as keyof typeof hq] : null)}

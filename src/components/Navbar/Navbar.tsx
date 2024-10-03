@@ -14,7 +14,7 @@ import logout from "../../assets/logout.svg"
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
-import {parseJwt} from "../../App.tsx";
+import {parseJwt} from "../../utils/parseJWT.ts";
 const cn = classNames;
 
 interface ModalProps {

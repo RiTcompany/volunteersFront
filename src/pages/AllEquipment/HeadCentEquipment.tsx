@@ -1,7 +1,7 @@
 import styles from './AllEquipment.module.css'
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import InputMask from "react-input-mask";
 import document from "../../assets/document.svg"
 // import search from "../../assets/search.svg"
@@ -32,14 +32,15 @@ interface TableDataType {
     currentOwner: string,
 }
 
-export function AllEquipment(): React.JSX.Element {
+export function HeadCentEquipment(): React.JSX.Element {
+    const {type, id} = useParams()
     const navigate = useNavigate()
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
     const [isOpenDelete, setIsOpenDelete] = useState<{ open: boolean, id: number }>({open: false, id: -1})
     const [tableData, setTableData] = useState<TableDataType[]>([])
-    const [newEvent, setNewEvent] = useState<TableDataType>({equipmentId: 0, type: "", year: "", currentOwner: ""})
+    const [newEquipment, setNewEquipment] = useState<TableDataType>({equipmentId: 0, type: "", year: "", currentOwner: ""})
     const [editedEvents, setEditedEvents] = useState<TableDataType[]>([]);
     const [refresh, setRefresh] = useState<boolean>(true)
     const [columns, setColumns] = useState<ColumnsType>({all: true, equipmentId: true, type: true, year: true, currentOwner: true, history: true})
@@ -109,26 +110,26 @@ export function AllEquipment(): React.JSX.Element {
         !localStorage.getItem("authToken") && navigate("/")
     })
 
-    const handleInputChange = (id: number, field: keyof TableDataType, value: string | number) => {
-        setEditedEvents((prev: TableDataType[]) => {
-            const existingEvent = prev.find(event => event.id === id);
-            if (existingEvent) {
-                return prev.map(event =>
-                    event.id === id
-                        ? { ...event, [field]: value }
-                        : event
-                );
-            } else {
-                return [...prev, { id, [field]: value } as unknown as TableDataType];
-            }
-        });
-    };
+    // const handleInputChange = (id: number, field: keyof TableDataType, value: string | number) => {
+    //     setEditedEvents((prev: TableDataType[]) => {
+    //         const existingEvent = prev.find(event => event.id === id);
+    //         if (existingEvent) {
+    //             return prev.map(event =>
+    //                 event.id === id
+    //                     ? { ...event, [field]: value }
+    //                     : event
+    //             );
+    //         } else {
+    //             return [...prev, { id, [field]: value } as unknown as TableDataType];
+    //         }
+    //     });
+    // };
 
 
-    const getEditedValue = (id: number | undefined, field: keyof TableDataType) => {
-        const editedEvent = editedEvents.find(event => event.id === id);
-        return editedEvent ? editedEvent[field] : null;
-    };
+    // const getEditedValue = (id: number | undefined, field: keyof TableDataType) => {
+    //     const editedEvent = editedEvents.find(event => event.id === id);
+    //     return editedEvent ? editedEvent[field] : null;
+    // };
 
     const handleSave = async () => {
         try {
@@ -159,14 +160,21 @@ export function AllEquipment(): React.JSX.Element {
         (async function() {
             try {
                 console.log(selectedFilters)
-                console.log({typeList: selectedFilters})
+                let req;
+                if (type === "center") {
+                    req = { centerId: id };
+                } else if (type === "headquarters") {
+                    req = { headquartersId: id };
+                }
+                console.log(JSON.stringify({typeList: selectedFilters, ...req}))
+
                 const response = await fetch("http://195.133.197.53:8082/equipment", {
                     method: "POST",
                     credentials: "include",
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({typeList: selectedFilters})
+                    body: JSON.stringify({typeList: selectedFilters, ...req})
                 })
                 let result = await response.json()
                 setTableData(result)
@@ -175,28 +183,24 @@ export function AllEquipment(): React.JSX.Element {
                 console.log(e)
             }
         })()
-    }, [isOpenNew, isOpenDelete, isEditorMode, refresh, filterOptions]);
+    }, [isOpenNew, isOpenDelete, isEditorMode, refresh, filterOptions, type, id]);
 
-    useEffect(() => {
-        console.log(newEvent)
-    })
-
-    const handleChangeNewEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeNewEquipment = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setNewEvent(prevEvent => ({
-            ...prevEvent,
+        setNewEquipment(prevEquipment => ({
+            ...prevEquipment,
             [name]: value
         }));
     };
 
     const handleAddButtonClick = async () => {
         try {
-            const response = await fetch('http://195.133.197.53:8082/equipment', {
+            const response = await fetch(`http://195.133.197.53:8082/equipment_${type}/${id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(newEvent)
+                body: JSON.stringify(newEquipment)
             });
 
             if (!response.ok) {
@@ -206,6 +210,8 @@ export function AllEquipment(): React.JSX.Element {
             const result = await response.json();
             console.log('Success:', result);
             setIsOpenNew(false)
+            setTableData(prevData => [...prevData, result]);
+            setRefresh(prev => !prev)
         } catch (error) {
             console.error('Error:', error);
         }
@@ -308,8 +314,8 @@ export function AllEquipment(): React.JSX.Element {
                                 <label className={"text-[#5E5E5E]"}>Введите ID</label>
                                 <input
                                     name="equipmentId"
-                                    value={newEvent.equipmentId}
-                                    onChange={handleChangeNewEvent}
+                                    value={newEquipment.equipmentId}
+                                    onChange={handleChangeNewEquipment}
                                     placeholder={"ID"}
                                     className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}
                                 />
@@ -318,8 +324,8 @@ export function AllEquipment(): React.JSX.Element {
                                 <label className={"text-[#5E5E5E]"}>Укажите тип</label>
                                 <input
                                     name="type"
-                                    value={newEvent.type}
-                                    onChange={handleChangeNewEvent}
+                                    value={newEquipment.type}
+                                    onChange={handleChangeNewEquipment}
                                     placeholder={"Тип"}
                                     className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}
                                 />
@@ -329,8 +335,8 @@ export function AllEquipment(): React.JSX.Element {
                                 <InputMask
                                     name="year"
                                     mask="9999"
-                                    value={newEvent.year}
-                                    onChange={handleChangeNewEvent}
+                                    value={newEquipment.year}
+                                    onChange={handleChangeNewEquipment}
                                     className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px] text-black"}
                                     placeholder={"Год"}
                                 />
@@ -339,8 +345,8 @@ export function AllEquipment(): React.JSX.Element {
                                 <label className={"text-[#5E5E5E]"}>Укажите текущего владельца</label>
                                 <input
                                     name="currentOwner"
-                                    value={newEvent.currentOwner}
-                                    onChange={handleChangeNewEvent}
+                                    value={newEquipment.currentOwner}
+                                    onChange={handleChangeNewEquipment}
                                     placeholder={"Текущий владелец"}
                                     className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}
                                 />
@@ -382,36 +388,40 @@ export function AllEquipment(): React.JSX.Element {
                         </tr>
                         </thead>
                         <tbody className={""}>
-                        {tableData[0] && tableData.map(event =>
-                            <tr key={event.id} className={cn("h-[50px] border-b-[1px]", styles.allHeadquarters__tableBody)}>
+                        {tableData[0] && tableData.map(eq =>
+                            <tr key={eq.id} className={cn("h-[56px] border-b-[1px]", styles.allHeadquarters__tableBody)}>
                                 {/*<th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{hq.id}</th>*/}
                                 {columns.equipmentId && <th className={cn("sticky z-10 bg-white border-r-[1px] border-b-[1px] left-0")}>
-                                    <input name={"name"} value={getEditedValue(event.id, 'equipmentId') ?? event.equipmentId} onChange={(e) => event.id && handleInputChange(event.id, 'equipmentId', e.target.value)} className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
+                                    <p className={cn("border-0 rounded-none h-full bg-white w-full px-1 text-center")}>{eq.equipmentId}</p>
+                                    {/*<input name={"name"} value={getEditedValue(eq.id, 'equipmentId') ?? eq.equipmentId} onChange={(e) => eq.id && handleInputChange(eq.id, 'equipmentId', e.target.value)} className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>*/}
                                 </th>}
                                 {columns.type && <th>
-                                    <input name={"type"} value={getEditedValue(event.id, 'type') ?? event.type} onChange={(e) => event.id && handleInputChange(event.id, 'type', e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
+                                    <p className={cn("border-0 rounded-none h-full bg-white w-full px-1 text-center")}>{eq.type}</p>
+                                    {/*<input name={"type"} value={getEditedValue(eq.id, 'type') ?? eq.type} onChange={(e) => eq.id && handleInputChange(eq.id, 'type', e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>*/}
                                 </th>}
                                 {columns.year && <th className={""}>
-                                    <InputMask
-                                        name="year"
-                                        mask="9999"
-                                        value={getEditedValue(event.id, 'year') ?? event.year}
-                                        onChange={(e) => event.id && handleInputChange(event.id, 'year', e.target.value)}
-                                        className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )}
-                                        placeholder={"Год"}
-                                        disabled={!isEditorMode}
+                                    <p className={cn("border-0 rounded-none h-full bg-white w-full px-1 text-center")}>{eq.year}</p>
+                                    {/*<InputMask*/}
+                                    {/*    name="year"*/}
+                                    {/*    mask="9999"*/}
+                                    {/*    value={getEditedValue(eq.id, 'year') ?? eq.year}*/}
+                                    {/*    onChange={(e) => eq.id && handleInputChange(eq.id, 'year', e.target.value)}*/}
+                                    {/*    className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )}*/}
+                                    {/*    placeholder={"Год"}*/}
+                                    {/*    disabled={!isEditorMode}*/}
 
-                                    />
+                                    {/*/>*/}
                                     {/*<p className={cn("border-0 bg-white w-full h-full")}>{formatDateTime(event.startTime)}</p>*/}
                                 </th>}
                                 {columns.currentOwner && <th>
-                                    <input name={"currentOwner"} value={getEditedValue(event.id, 'currentOwner') ?? event.currentOwner} onChange={(e) => event.id && handleInputChange(event.id, 'currentOwner', e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
+                                    <p className={cn("border-0 rounded-none h-full bg-white w-full px-1 text-center")}>{eq.currentOwner}</p>
+                                    {/*<input name={"currentOwner"} value={getEditedValue(eq.id, 'currentOwner') ?? eq.currentOwner} onChange={(e) => eq.id && handleInputChange(eq.id, 'currentOwner', e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>*/}
                                 </th>}
                                 {columns.history && <th className={""}>
                                     <a href={"#"} className={cn("border-0 bg-white w-full h-full")}>Смотреть историю</a>
                                 </th>}
                                 {!isEditorMode &&
-                                    <th className={cn("min-w-8")}><button className={"w-full flex justify-center"} onClick={() => setIsOpenDelete({open: true, id: event.id || -1})}><img src={bin} alt="delete" className={"self-center"}/></button></th>
+                                    <th className={cn("min-w-8")}><button className={"w-full flex justify-center"} onClick={() => setIsOpenDelete({open: true, id: eq.id || -1})}><img src={bin} alt="delete" className={"self-center"}/></button></th>
                                 }
                             </tr>
                         )}

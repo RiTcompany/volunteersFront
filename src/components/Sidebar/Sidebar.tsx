@@ -7,26 +7,71 @@ import document from "../../assets/document.svg"
 import {useLocation, useNavigate} from "react-router-dom";
 import darkLogo from "../../assets/darkLogo.svg";
 import cross from "../../assets/darkCross.svg";
-
-const buttons = [
-    {name: "Личный кабинет", icon: profile, link: "/profile"},
-    {name: "Мой штаб", icon: bag, link: "/headquarters/1"},
-    {name: "Мой центр", icon: bag, link: "/center/5"},
-    {name: "Региональная команда", icon: document, link: "/regional_team"},
-    {name: "Волонтёры", icon: document, link: "/all_volunteers"},
-    {name: "Все штабы", icon: document, link: "/all_headquarters"},
-    {name: "Все центры", icon: document, link: "/all_centers"},
-    {name: "Документы", icon: document, link: "/documents/headquarters/1"},
-    {name: "Мероприятия", icon: document, link: "/events"},
-    {name: "Инвентарь", icon: document, link: "/all_equipment"},
-]
+import {parseJwt} from "../../utils/parseJWT.ts";
 
 interface SidebarProps {
     isOpenMenu: boolean,
     onMenuClick: () => void;
 }
 
+interface DataType {
+    headquartersLink?: {
+        id: string;
+    };
+    centerLink?: {
+        id: string;
+    };
+    districtTeamId: number
+}
+
 export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Element {
+    const token = parseJwt(String(localStorage.getItem("authToken")))
+
+    const [data, setData] = useState<DataType | null>(null)
+    console.log(token)
+
+    useEffect(() => {
+        (async function fetchData() {
+            setData(null)
+            try {
+                const response = await fetch(`http://195.133.197.53:8082/personal_account/${token.id}`, {
+                    method: "GET",
+                    credentials: "include",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log(result)
+                setData(result);
+            } catch (e: any) {
+                console.error(e);
+                setData(null);
+            }
+        })();
+    }, []);
+
+    console.log(data)
+
+    const buttons = [
+        {name: "Личный кабинет", icon: profile, link: `/volunteer/${token.id}`},
+        {name: "Мой штаб", icon: bag, link: data?.headquartersLink?.id ? `/headquarters/${data.headquartersLink.id}` : null},
+        {name: "Мой центр", icon: bag, link: data?.centerLink?.id ? `/center/${data.centerLink.id}` : null},
+        {name: "Региональная команда", icon: document, link: data?.districtTeamId ? `/participants/regional_team/${data.districtTeamId}` : null},
+        {name: "Все волонтёры", icon: document, link: "/all_volunteers"},
+        {name: "Все штабы", icon: document, link: "/all_headquarters"},
+        {name: "Все центры", icon: document, link: "/all_centers"},
+        // {name: "Документы штаба", icon: document, link: data?.headquartersLink?.id ? `/documents/headquarters/${data.headquartersLink.id}` : null},
+        // {name: "Документы центра", icon: document, link: data?.headquartersLink?.id ? `/documents/center/${data.centerLink?.id}` : null},
+        {name: "Мероприятия", icon: document, link: "/events"},
+        // {name: "Инвентарь", icon: document, link: "/all_equipment"},
+    ].filter(button => button.link !== null);
+
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -60,7 +105,7 @@ export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Elem
                                'bg-transparent': activeIndex !== index
                            },
                            )}
-                       onClick={() => handleButtonClick(index, button.link, false)}
+                       onClick={() => button.link && handleButtonClick(index, button.link, false)}
                    >
                        <img src={button.icon} alt="icon"/>
                        {isOpenMenu &&
@@ -88,7 +133,7 @@ export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Elem
                                     'bg-transparent': activeIndex !== index
                                 }
                             )}
-                            onClick={() => (handleButtonClick(index, button.link, true))}
+                            onClick={() => (button.link && handleButtonClick(index, button.link, true))}
                         >
                             <img src={button.icon} alt="icon"/>
                             <p className={cn("text-[14px] font-bold whitespace-nowrap")}>{button.name}</p>

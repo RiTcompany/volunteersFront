@@ -3,13 +3,13 @@ import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import document from "../../assets/document.svg"
-import search from "../../assets/search.svg"
+// import search from "../../assets/search.svg"
 import highlight from "../../assets/highlight.svg"
 import lightHighlight from "../../assets/lightHighlight.svg"
 import filter from "../../assets/filter.svg"
 import filters from "../../assets/filters.svg"
 import cross from "../../assets/darkCross.svg";
-// import bin from "../../assets/delete.svg";
+import bin from "../../assets/delete.svg";
 import plus from "../../assets/plus.svg";
 import cancel from "../../assets/cancel.svg";
 const cn = classNames;
@@ -34,12 +34,12 @@ const columnsListFilter = [
     { key: 'recipient', label: 'Получатель'},
     { key: 'createDate', label: 'Дата создания'},
     { key: 'approvalControl', label: 'Контроль согласования' },
-    // { key: 'delete', label: 'Удаление'}
+    { key: 'delete', label: 'Удаление'}
 ];
 
 interface FilterColumnsType {
     all: boolean, name: boolean, sender: boolean, recipient: boolean, createDate: boolean, approvalControl: boolean,
-    // delete: boolean,
+    delete: boolean,
     [key: string]: boolean;
 }
 
@@ -98,7 +98,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
             const newAll = !prevState.all;
             const newColumns = {
                 all: newAll, name: newAll, approvalControl: newAll, createDate: newAll, recipient: newAll, sender: newAll,
-                // delete: newAll
+                delete: newAll
             };
 
             return newColumns;
@@ -227,7 +227,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
 
     // const handleDeleteButtonClick = async (id: number) => {
     //     try {
-    //         const response = await fetch(`http://195.133.197.53:8082/headquarters/${id}`, {
+    //         const response = await fetch(`http://195.133.197.53:8082/document/${id}`, {
     //             method: 'DELETE',
     //             headers: {
     //                 'Content-Type': 'application/json'
@@ -299,7 +299,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
                 console.log(e)
             }
         })()
-    }, [isOpenNew, isOpenDelete, isEditorMode, refresh]);
+    }, [isOpenNew, isOpenDelete, isEditorMode, refresh, type, id]);
 
     return (
         <div className={cn("h-full md:pr-4 mx-auto my-0 flex w-full overflow-hidden", styles.allHeadquarters__container)}>
@@ -307,7 +307,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
                 <div className={"flex justify-between"}>
                     <div className={"flex gap-2"}>
                         <img src={document} alt="document"/>
-                        <p className={"text-[18px] md:text-[20px] font-bold"}>Таблица всех штабов</p>
+                        <p className={"text-[18px] md:text-[20px] font-bold"}>Документы {type === "center" ? <span>центра</span> : <span>штаба</span>}</p>
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
@@ -318,11 +318,11 @@ export function HeadquartersDocuments(): React.JSX.Element {
                     </button>
                 </div>
                 <div className={"flex justify-between gap-5 w-full"}>
-                    <div className={"flex gap-5 w-full md:w-auto"}>
+                    <div className={"flex w-full md:w-auto"}>
                         <div className={"relative w-full md:w-auto"}>
-                            <img src={search} alt="search" className={"absolute left-2 top-1"}/>
-                            <input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.allHeadquarters__input)} />
-                            <img src={filters} alt="filters" className={"absolute right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
+                            {/*<img src={search} alt="search" className={"absolute left-2 top-1"}/>*/}
+                            {/*<input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.allHeadquarters__input)} />*/}
+                            <img src={filters} alt="filters" className={"right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
                         </div>
                         <button onClick={() => setIsFilterOpen(true)} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.allHeadquarters__filterButton)}>
                             <img src={filter} alt="filter"/>Фильтры
@@ -340,10 +340,10 @@ export function HeadquartersDocuments(): React.JSX.Element {
                                         styles.allHeadquarters__highlightButton)}>
                                 Отменить
                             </button>
-                            {/*<button onClick={handleSave} className={cn("hidden md:flex justify-center gap-3 " +*/}
-                            {/*    "border-none bg-[#31AA27] text-white", styles.allHeadquarters__highlightButton)}>*/}
-                            {/*    Сохранить*/}
-                            {/*</button>*/}
+                            <button onClick={() => setIsEditorMode(false)} className={cn("hidden md:flex justify-center gap-3 " +
+                                "border-none bg-[#31AA27] text-white", styles.allHeadquarters__highlightButton)}>
+                                Сохранить
+                            </button>
                         </div>
                     }
                 </div>
@@ -448,9 +448,9 @@ export function HeadquartersDocuments(): React.JSX.Element {
                                                         )}
                                                     </Draggable>
                                                 )})}
-                                            {/*{filterColumns.delete && !isEditorMode && (*/}
-                                            {/*    <th className="min-w-8"/>*/}
-                                            {/*)}*/}
+                                            {filterColumns.delete && !isEditorMode && (
+                                                <th className="min-w-8"/>
+                                            )}
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -484,13 +484,13 @@ export function HeadquartersDocuments(): React.JSX.Element {
                                                         }
                                                     </td>
                                                 ))}
-                                                {/*{filterColumns.delete && !isEditorMode && hq.id && (*/}
-                                                {/*    <td>*/}
-                                                {/*        <button className="w-full flex justify-center" onClick={() => hq.id && setIsOpenDelete({id: hq.id, open: true})}>*/}
-                                                {/*            <img src={bin} alt="delete" />*/}
-                                                {/*        </button>*/}
-                                                {/*    </td>*/}
-                                                {/*)}*/}
+                                                {filterColumns.delete && !isEditorMode && hq.id && (
+                                                    <td>
+                                                        <button className="w-full flex justify-center" onClick={() => hq.id && setIsOpenDelete({id: hq.id, open: true})}>
+                                                            <img src={bin} alt="delete" />
+                                                        </button>
+                                                    </td>
+                                                )}
                                             </tr>
                                         ))}
                                         </tbody>
