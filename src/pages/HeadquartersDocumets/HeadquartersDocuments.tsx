@@ -225,27 +225,27 @@ export function HeadquartersDocuments(): React.JSX.Element {
     //     }
     // };
 
-    // const handleDeleteButtonClick = async (id: number) => {
-    //     try {
-    //         const response = await fetch(`http://195.133.197.53:8082/document/${id}`, {
-    //             method: 'DELETE',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //         });
-    //
-    //         if (!response.ok) {
-    //             throw new Error(`Error: ${response.status}`);
-    //         }
-    //
-    //         setIsOpenDelete({open: false, id: -1})
-    //
-    //         const result = await response.json();
-    //         console.log('Success:', result);
-    //     } catch (error) {
-    //         console.error('Error:', error);
-    //     }
-    // }
+    const handleDeleteButtonClick = async (id: number) => {
+        try {
+            const response = await fetch(`http://195.133.197.53:8082/document/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+
+            setIsOpenDelete({open: false, id: -1})
+
+            const result = await response.json();
+            console.log('Success:', result);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
     const onDragEnd = (result: any) => {
         if (!result.destination) return;
@@ -397,20 +397,20 @@ export function HeadquartersDocuments(): React.JSX.Element {
                     </div>
                 }
                 <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenDelete.open ? '' : 'hidden'}`} onClick={() => setIsOpenDelete({open: false, id: -1})}></div>
-                {/*{isOpenDelete.open &&*/}
-                {/*    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[200px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5"}>*/}
-                {/*        <img src={cross} alt={"close"} className={"absolute top-2 right-2 w-7"} onClick={() => setIsOpenDelete({open: false, id: -1})}/>*/}
-                {/*        <p className={"text-center text-[20px]"}>Вы уверены, что хотите удалить данные?</p>*/}
-                {/*        <div className={"flex gap-3"}>*/}
-                {/*            <button onClick={() => setIsOpenDelete({open: false, id: -1})} className={"w-2/4 p-2 text-[#5E5E5E] bg-[#E8E8F0] rounded-lg self-center mt-5"}>*/}
-                {/*                Отмена*/}
-                {/*            </button>*/}
-                {/*            <button onClick={()=> handleDeleteButtonClick(isOpenDelete.id)} className={"w-2/4 p-2 text-white bg-[#FF1818] rounded-lg self-center mt-5"}>*/}
-                {/*                Удалить*/}
-                {/*            </button>*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*}*/}
+                {isOpenDelete.open &&
+                    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[200px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5"}>
+                        <img src={cross} alt={"close"} className={"absolute top-2 right-2 w-7"} onClick={() => setIsOpenDelete({open: false, id: -1})}/>
+                        <p className={"text-center text-[20px]"}>Вы уверены, что хотите удалить данные?</p>
+                        <div className={"flex gap-3"}>
+                            <button onClick={() => setIsOpenDelete({open: false, id: -1})} className={"w-2/4 p-2 text-[#5E5E5E] bg-[#E8E8F0] rounded-lg self-center mt-5"}>
+                                Отмена
+                            </button>
+                            <button onClick={()=> handleDeleteButtonClick(isOpenDelete.id)} className={"w-2/4 p-2 text-white bg-[#FF1818] rounded-lg self-center mt-5"}>
+                                Удалить
+                            </button>
+                        </div>
+                    </div>
+                }
                 <div className="overflow-y-auto max-h-full">
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="droppable" direction="horizontal">

@@ -10,7 +10,7 @@ import filter from "../../assets/filter.svg"
 import filtersImg from "../../assets/filters.svg"
 import cross from "../../assets/darkCross.svg";
 import arrowSmall from "../../assets/arrowSmall.svg";
-import bin from "../../assets/delete.svg";
+// import bin from "../../assets/delete.svg";
 import cancel from "../../assets/cancel.svg";
 import {convertToISO, formatDateTime} from "../../utils/formatDate.ts";
 import {colorMap, DisplayColor, DisplayStep, reverseColorMap, reverseStepMap, stepMap} from "../../utils/maps.ts";
@@ -49,7 +49,8 @@ interface EditedDataType {
 }
 
 interface ColumnsType {
-    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, comment: boolean, rate: boolean, interview: boolean, step: boolean
+    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, comment: boolean, rate: boolean, interview: boolean, step: boolean,
+    // delete: boolean
 }
 
 export function CenterHeadParticipants(): React.JSX.Element {
@@ -62,7 +63,9 @@ export function CenterHeadParticipants(): React.JSX.Element {
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
     const [centers, setCenters] = useState<{id: number, name: string}[]>([])
     const [headquarters, setHeadquarters] = useState<{id: number, name: string}[]>([])
-    const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, comment: true, rate: true, interview: true, step: true})
+    const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, vk: true, color: true, comment: true, rate: true, interview: true, step: true,
+        // delete: true
+    })
     const [refresh, setRefresh] = useState(false)
 
     const [openCell, setOpenCell] = useState<number>(-1);
@@ -75,6 +78,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
     }
 
     const [filters, setFilters] = useState<FiltersType>(initialFilters)
+    const [isOpenDelete, setIsOpenDelete] = useState<{ id: number, open: boolean }>({id: -1, open: false})
 
     useEffect(() => {
         (async function() {
@@ -296,7 +300,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
         setColumns(prevState => {
             const newAll = !prevState.all;
             const newColumns = {
-                all: newAll, id: newAll, name: newAll, date: newAll, tg: newAll, vk: newAll, color: newAll, comment: newAll, rate: newAll, interview: newAll, step: newAll
+                all: newAll, id: newAll, name: newAll, date: newAll, tg: newAll, vk: newAll, color: newAll, comment: newAll, rate: newAll, interview: newAll, step: newAll, delete: newAll
             };
 
             return newColumns;
@@ -496,9 +500,9 @@ export function CenterHeadParticipants(): React.JSX.Element {
                             {columns.rate && <th className={cn(styles.regionalTeam__tableButton)}>Рейтинг</th>}
                             {columns.interview && <th className={cn(styles.regionalTeam__tableButton)}>Собеседование для ступени роста</th>}
                             {columns.step && <th className={cn(styles.regionalTeam__tableButton)}>Ступень роста</th>}
-                            {!isEditorMode &&
-                                <th className={cn("min-w-8")}></th>
-                            }
+                            {/*{!isEditorMode &&*/}
+                            {/*    <th className={cn("min-w-8")}></th>*/}
+                            {/*}*/}
                         </tr>
                         </thead>
                         <tbody className={""}>
@@ -611,15 +615,34 @@ export function CenterHeadParticipants(): React.JSX.Element {
                                         )}
                                     </div>
                                 </th>}
-                                {!isEditorMode &&
-                                    <th className={cn("min-w-8 ")}><button className={"w-full flex justify-center"}><img src={bin} alt="delete" className={"self-center"}/></button></th>
-                                }
+                                {/*{columns.delete && !isEditorMode && person.id && (*/}
+                                {/*    <td>*/}
+                                {/*        <button onClick={() =>  person.id && setIsOpenDelete({id: person.id, open: true})}>*/}
+                                {/*            <img src={bin} alt="delete" />*/}
+                                {/*        </button>*/}
+                                {/*    </td>*/}
+                                {/*)}*/}
                             </tr>
                         )}
                         </tbody>
                     </table>
                 </div>
             </div>
+            <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenDelete.open ? '' : 'hidden'}`} onClick={() => setIsOpenDelete({open: false, id: -1})}></div>
+            {/*{isOpenDelete.open &&*/}
+            {/*    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[200px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5"}>*/}
+            {/*        <img src={cross} alt={"close"} className={"absolute top-2 right-2 w-7"} onClick={() => setIsOpenDelete({open: false, id: -1})}/>*/}
+            {/*        <p className={"text-center text-[20px]"}>Вы уверены, что хотите удалить данные?</p>*/}
+            {/*        <div className={"flex gap-3"}>*/}
+            {/*            <button onClick={() => setIsOpenDelete({open: false, id: -1})} className={"w-2/4 p-2 text-[#5E5E5E] bg-[#E8E8F0] rounded-lg self-center mt-5"}>*/}
+            {/*                Отмена*/}
+            {/*            </button>*/}
+            {/*            <button onClick={()=> handleDeleteButtonClick(isOpenDelete.id)} className={"w-2/4 p-2 text-white bg-[#FF1818] rounded-lg self-center mt-5"}>*/}
+            {/*                Удалить*/}
+            {/*            </button>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*}*/}
             <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isFilterOpen ? '' : 'hidden'}`} onClick={() => setIsFilterOpen(false)}></div>
             {isFilterOpen &&
                 <div className={"flex flex-col absolute right-0 top-0 bg-[#FCFCFC] h-full w-full sm:w-96 z-50 gap-1 overflow-y-auto"}>
@@ -674,6 +697,10 @@ export function CenterHeadParticipants(): React.JSX.Element {
                                 <input checked={columns.step} onClick={() => setColumns({...columns, step: !columns.step})} type="checkbox" name={"step"} className={styles.regionalTeam__checkbox}/>
                                 <p>Ступень роста</p>
                             </div>
+                            {/*<div className={"flex gap-2 items-center"}>*/}
+                            {/*    <input checked={columns.delete} onClick={() => setColumns({...columns, delete: !columns.delete})} type="checkbox" name={"delete"} className={styles.regionalTeam__checkbox}/>*/}
+                            {/*    <p>Удаление</p>*/}
+                            {/*</div>*/}
                         </div>
                         <div className={"flex flex-col gap-2"}>
                             <p className={styles.regionalTeam__miniTitle}>Рейтинг</p>
@@ -919,8 +946,11 @@ export function CenterHeadParticipants(): React.JSX.Element {
                     </div>
                     <div className={"flex justify-center my-4 items-center sticky z-55 bottom-0 bg-white h-24 p-4 gap-5"}>
                         <button className={cn(styles.regionalTeam__filterBottomButton, "bg-[#F1F1F5] text-[#5E5E5E]")} onClick={() => {
-                            setFilters(initialFilters); setRefresh(prevState => !prevState)}}>Сбросить все</button>
-                        <button className={cn(styles.regionalTeam__filterBottomButton, "bg-[#3B64B3] text-white")} onClick={() => setRefresh(prevState => !prevState)}>Применить</button>
+                            setFilters(initialFilters); setRefresh(prevState => !prevState); setIsFilterOpen(false)}}>Сбросить все</button>
+                        <button className={cn(styles.regionalTeam__filterBottomButton, "bg-[#3B64B3] text-white")} onClick={() => {
+                            setRefresh(prevState => !prevState);
+                            setIsFilterOpen(false)
+                        }}>Применить</button>
                     </div>
                 </div>
             }

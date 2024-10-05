@@ -7,7 +7,7 @@ import document from "../../assets/document.svg"
 import highlight from "../../assets/highlight.svg"
 import lightHighlight from "../../assets/lightHighlight.svg"
 import filter from "../../assets/filter.svg"
-import filters from "../../assets/filters.svg"
+import filtersImg from "../../assets/filters.svg"
 import cross from "../../assets/darkCross.svg";
 import arrowSmall from "../../assets/arrowSmall.svg";
 import bin from "../../assets/delete.svg";
@@ -15,6 +15,7 @@ import plus from "../../assets/plus.svg";
 import cancel from "../../assets/cancel.svg";
 import {formatDateTime} from "../../utils/formatDate.ts";
 import {DisplayFunctional, functionalMap, reverseFunctionalMap} from "../../utils/maps.ts";
+import {FiltersType} from "../../utils/type.ts";
 const cn = classNames;
 
 interface TableDataType {
@@ -45,11 +46,11 @@ interface ColumnsType {
     all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, funk: boolean, test: boolean, comment: boolean, rate: boolean, clothes: boolean
 }
 
-// const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
-//     colorList: ["RED", "YELLOW", "GREEN", "NOT_FOUND"], hasInterview: [true, false], levelList: [], functionalList: [],
-//     testing: [true, false], hasClothes: [true, false], centerIdList: [], orderByDateAsc: true, orderByDateDesc: false,
-//     orderByRankAsc: true, orderByRankDesc: false
-// }
+const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
+    colorList: [], hasInterview: [], levelList: [], functionalList: [],
+    testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
+    orderByRankAsc: true, orderByRankDesc: false
+}
 
 export function EventParticipants(): React.JSX.Element {
     const { id } = useParams();
@@ -62,6 +63,90 @@ export function EventParticipants(): React.JSX.Element {
     const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, funk: true, test: true, comment: true, rate: true, clothes: true})
 
     const [openCell, setOpenCell] = useState<number>(-1);
+    const [filters, setFilters] = useState<FiltersType>(initialFilters)
+    const [refresh, setRefresh] = useState<boolean>(true)
+
+    const areAllTestingSelected = (tests: boolean[]) => {
+        return tests.includes(true) && tests.includes(false);
+    };
+    const isAllTestChecked = areAllTestingSelected(filters.testing);
+
+    const areAllClothesSelected = (clothes: boolean[]) => {
+        return clothes.includes(true) && clothes.includes(false);
+    };
+
+    const isAllClothesChecked = areAllClothesSelected(filters.hasClothes);
+
+
+    const handleFiltersChange = (e: any) => {
+        const { name, value, type, checked } = e.target;
+
+        setFilters((prev) => {
+            if (type === 'checkbox') {
+                if (name === 'allTest') {
+                    return {
+                        ...prev,
+                        testing: checked ? [true, false] : [],
+                    };
+                }
+
+                if (name === 'yes') {
+                    const updatedTesting = checked
+                        ? [...prev.testing, true]
+                        : prev.testing.filter((test) => test !== true);
+
+                    return {
+                        ...prev,
+                        testing: updatedTesting,
+                    };
+                }
+
+                if (name === 'no') {
+                    const updatedTesting = checked
+                        ? [...prev.testing, false]
+                        : prev.testing.filter((test) => test !== false);
+
+                    return {
+                        ...prev,
+                        testing: updatedTesting,
+                    };
+                }
+
+                if (name === 'allClothes') {
+                    return {
+                        ...prev,
+                        hasClothes: checked ? [true, false] : [],
+                    };
+                }
+
+                if (name === 'hasClothes') {
+                    const updatedTesting = checked
+                        ? [...prev.hasClothes, true]
+                        : prev.hasClothes.filter((clothes) => clothes !== true);
+
+                    return {
+                        ...prev,
+                        hasClothes: updatedTesting,
+                    };
+                }
+
+                if (name === 'noClothes') {
+                    const updatedTesting = checked
+                        ? [...prev.hasClothes, false]
+                        : prev.hasClothes.filter((clothes) => clothes !== false);
+
+                    return {
+                        ...prev,
+                        hasClothes: updatedTesting,
+                    };
+                }
+
+                return { ...prev, [name]: checked };
+            }
+
+            return { ...prev, [name]: Number(value) };
+        });
+    };
 
     useEffect(() => {
         (async function() {
@@ -91,9 +176,7 @@ export function EventParticipants(): React.JSX.Element {
             setTableData(res)
             console.log(res)
         })()
-    }, [isOpenNew, isEditorMode,
-        // refresh
-    ]);
+    }, [isOpenNew, isEditorMode, refresh, id]);
 
 
     useEffect(() => {
@@ -206,7 +289,7 @@ export function EventParticipants(): React.JSX.Element {
                         <div className={"relative w-full md:w-auto"}>
                             {/*<img src={search} alt="search" className={"absolute left-2 top-1"}/>*/}
                             {/*<input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.regionalTeam__input)} />*/}
-                            <img src={filters} alt="filters" className={"right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
+                            <img src={filtersImg} alt="filters" className={"right-2 top-1 flex md:hidden"} onClick={() => setIsFilterOpen(true)}/>
                         </div>
                         <button onClick={() => setIsFilterOpen(true)} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__filterButton)}>
                             <img src={filter} alt="filter"/>Фильтры
@@ -388,56 +471,160 @@ export function EventParticipants(): React.JSX.Element {
                             </div>
                         </div>
                         <div className={"flex flex-col gap-2"}>
-                            <p className={styles.regionalTeam__miniTitle}>Возраст</p>
+                            <p className={styles.regionalTeam__miniTitle}>Рейтинг</p>
                             <div className={"flex gap-5 justify-between"}>
                                 <div className={"flex flex-col flex-1 self-start gap-2"}>
                                     <label>От</label>
-                                    <input className={styles.regionalTeam__ageInput} name={"ageFrom"} type={"number"}/>
-                                </div>
-                                <div className={"flex flex-col flex-1 self-start gap-2"}>
-                                    <label>До</label>
-                                    <input className={styles.regionalTeam__ageInput} name={"ageTo"} type={"number"}/>
+                                    <input
+                                        className={styles.regionalTeam__ageInput}
+                                        name="minRank"
+                                        type="number"
+                                        onChange={handleFiltersChange}
+                                        value={filters.minRank}
+                                    />
                                 </div>
                             </div>
-                            <div className={"flex gap-2 items-center"}>
-                                <input type="checkbox" name={"ageAsc"} className={styles.regionalTeam__checkbox}/>
+                            <div className="flex gap-2 items-center">
+                                <input
+                                    type="checkbox"
+                                    name="rankAsc"
+                                    className={styles.regionalTeam__checkbox}
+                                    checked={filters.orderByRankAsc}
+                                    onChange={handleFiltersChange}
+                                />
                                 <p>По возрастанию</p>
                             </div>
-                            <div className={"flex gap-2 items-center"}>
-                                <input type="checkbox" name={"ageDesc"} className={styles.regionalTeam__checkbox}/>
+                            <div className="flex gap-2 items-center">
+                                <input
+                                    type="checkbox"
+                                    name="rankDesc"
+                                    className={styles.regionalTeam__checkbox}
+                                    checked={filters.orderByRankDesc}
+                                    onChange={handleFiltersChange}
+                                />
                                 <p>По убыванию</p>
                             </div>
-                        </div>
-                        <div className={"flex flex-col gap-2"}>
-                            <p className={styles.regionalTeam__miniTitle}>Светофор</p>
-                            <div className={"flex gap-2 items-center"}>
-                                <input type="checkbox" name={"all"} className={styles.regionalTeam__checkbox}/>
-                                <p>Все</p>
-                            </div>
-                            <div className={"flex gap-2 items-center"}>
-                                <input type="checkbox" name={"name"} className={styles.regionalTeam__checkbox}/>
-                                <p>Зелёный</p>
-                            </div>
-                            <div className={"flex gap-2 items-center"}>
-                                <input type="checkbox" name={"date"} className={styles.regionalTeam__checkbox}/>
-                                <p>Жёлтый</p>
-                            </div>
-                            <div className={"flex gap-2 items-center"}>
-                                <input type="checkbox" name={"tg"} className={styles.regionalTeam__checkbox}/>
-                                <p>Красный</p>
-                            </div>
-                        </div>
-                        <div className={"flex flex-col gap-2"}>
-                            <p className={styles.regionalTeam__miniTitle}>Мероприятия</p>
-                            {/*<div className={"relative w-full"}>*/}
-                            {/*    <img src={search} alt="search" className={"absolute left-2 top-1"}/>*/}
-                            {/*    <input placeholder="Поиск по ключевым словам" className={cn("px-10", styles.regionalTeam__input)} />*/}
                             {/*</div>*/}
+                            <div className={"flex flex-col gap-2"}>
+                                <p className={styles.regionalTeam__miniTitle}>Возраст</p>
+                                <div className={"flex gap-5 justify-between"}>
+                                    <div className={"flex flex-col flex-1 self-start gap-2"}>
+                                        <label>От</label>
+                                        <input
+                                            className={styles.regionalTeam__ageInput}
+                                            name="minAge"
+                                            type="number"
+                                            value={filters.minAge}
+                                            onChange={handleFiltersChange}
+                                        />
+                                    </div>
+                                    <div className={"flex flex-col flex-1 self-start gap-2"}>
+                                        <label>До</label>
+                                        <input
+                                            className={styles.regionalTeam__ageInput}
+                                            name="maxAge"
+                                            type="number"
+                                            value={filters.maxAge}
+                                            onChange={handleFiltersChange}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="dateAsc"
+                                        className={styles.regionalTeam__checkbox}
+                                        checked={filters.orderByDateAsc}
+                                        onChange={handleFiltersChange}
+                                    />
+                                    <p>По возрастанию</p>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="dateDesc"
+                                        className={styles.regionalTeam__checkbox}
+                                        checked={filters.orderByDateDesc}
+                                        onChange={handleFiltersChange}
+                                    />
+                                    <p>По убыванию</p>
+                                </div>
+                            </div>
+                            <div className={"flex flex-col gap-2"}>
+                                <p className={styles.regionalTeam__miniTitle}>Тестирование</p>
+                                <div className={"flex gap-2 items-center"}>
+                                    <input
+                                        type="checkbox"
+                                        name="allTest"
+                                        className={styles.regionalTeam__checkbox}
+                                        checked={isAllTestChecked}
+                                        onChange={handleFiltersChange}
+                                    />
+                                    <p>Все</p>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="yes"
+                                        className={styles.regionalTeam__checkbox}
+                                        checked={filters.testing.includes(true)}
+                                        onChange={handleFiltersChange}
+                                    />
+                                    <p>Пройдено</p>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="no"
+                                        className={styles.regionalTeam__checkbox}
+                                        checked={filters.testing.includes(false)}
+                                        onChange={handleFiltersChange}
+                                    />
+                                    <p>Не пройдено</p>
+                                </div>
+                            </div>
+                            <div className={"flex flex-col gap-2"}>
+                                <p className={styles.regionalTeam__miniTitle}>Форма</p>
+                                <div className={"flex gap-2 items-center"}>
+                                    <input
+                                        type="checkbox"
+                                        name="allClothes"
+                                        className={styles.regionalTeam__checkbox}
+                                        checked={isAllClothesChecked}
+                                        onChange={handleFiltersChange}
+                                    />
+                                    <p>Все</p>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="hasClothes"
+                                        className={styles.regionalTeam__checkbox}
+                                        checked={filters.hasClothes.includes(true)}
+                                        onChange={handleFiltersChange}
+                                    />
+                                    <p>Выдана</p>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="noClothes"
+                                        className={styles.regionalTeam__checkbox}
+                                        checked={filters.hasClothes.includes(false)}
+                                        onChange={handleFiltersChange}
+                                    />
+                                    <p>Не выдана</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className={"flex justify-center my-4 items-center sticky z-55 bottom-0 bg-white h-24 p-4 gap-5"}>
-                        <button className={cn(styles.regionalTeam__filterBottomButton, "bg-[#F1F1F5] text-[#5E5E5E]")}>Сбросить все</button>
-                        <button className={cn(styles.regionalTeam__filterBottomButton, "bg-[#3B64B3] text-white")}>Применить</button>
+                        <button className={cn(styles.regionalTeam__filterBottomButton, "bg-[#F1F1F5] text-[#5E5E5E]")} onClick={() => {
+                            setFilters(initialFilters); setRefresh(prevState => !prevState); setIsFilterOpen(false)}}>Сбросить все</button>
+                        <button className={cn(styles.regionalTeam__filterBottomButton, "bg-[#3B64B3] text-white")} onClick={() => {
+                            setRefresh(prevState => !prevState);
+                            setIsFilterOpen(false)
+                        }}>Применить</button>
                     </div>
                 </div>
             }

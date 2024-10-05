@@ -82,6 +82,15 @@
     border-radius: 4px;
 }
 
+.regionalTeam__filterBottomButton {
+    width: 140px;
+    height: 32px;
+    /*padding: 6px 12px 6px 12px;*/
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
 @media (max-width: 767px) {
     .allHeadquarters__input {
         width: 100%;

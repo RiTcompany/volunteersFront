@@ -491,14 +491,14 @@ export function HeadCentEquipment(): React.JSX.Element {
                                 </div>
                             ))}
                             <div className={"flex justify-center my-4 items-center sticky z-55 bottom-0 bg-white h-24 p-4 gap-5"}>
-                                <button className={cn("bg-[#F1F1F5] text-[#5E5E5E]")} onClick={() => {
+                                <button className={cn(styles.regionalTeam__filterBottomButton, "bg-[#F1F1F5] text-[#5E5E5E]")} onClick={() => {
                                     setSelectedFilters(filterOptions);
                                     handleAllColumnsChange()
                                 }}>Сбросить все</button>
                                 <button onClick={() => {
                                     setRefresh(prev => !prev);
                                     setIsFilterOpen(false)
-                                }} className={cn("bg-[#3B64B3] text-white")}>Применить</button>
+                                }} className={cn(styles.regionalTeam__filterBottomButton, "bg-[#3B64B3] text-white")}>Применить</button>
                             </div>
                         </div>
                     </div>
