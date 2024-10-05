@@ -400,6 +400,7 @@ export function RegionalTeam(): React.JSX.Element {
                         </div>
                     </div>
                 }
+                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
                 <div className="overflow-y-auto max-h-full">
                     <table className={"w-full overflow-auto min-w-[900px]"}>
                         <thead>

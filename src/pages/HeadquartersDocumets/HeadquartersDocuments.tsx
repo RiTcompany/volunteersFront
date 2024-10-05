@@ -411,6 +411,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
                         </div>
                     </div>
                 }
+                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
                 <div className="overflow-y-auto max-h-full">
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="droppable" direction="horizontal">

@@ -16,6 +16,7 @@ import cancel from "../../assets/cancel.svg";
 import {formatDateTime} from "../../utils/formatDate.ts";
 import {DisplayFunctional, functionalMap, reverseFunctionalMap} from "../../utils/maps.ts";
 import {FiltersType} from "../../utils/type.ts";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 const cn = classNames;
 
 interface TableDataType {
@@ -51,6 +52,13 @@ const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
     testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
     orderByRankAsc: true, orderByRankDesc: false
 }
+
+const reorder = (list, startIndex, endIndex) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    return result;
+};
 
 export function EventParticipants(): React.JSX.Element {
     const { id } = useParams();
@@ -268,6 +276,29 @@ export function EventParticipants(): React.JSX.Element {
         console.log(isEditorMode)
     })
 
+    const [columnOrder, setColumnOrder] = useState([
+        { id: 'id', title: 'ID' },
+        { id: 'name', title: 'ФИО' },
+        { id: 'date', title: 'Дата рождения' },
+        { id: 'tg', title: 'Ссылка Telegram' },
+        { id: 'funk', title: 'Функционал' },
+        { id: 'test', title: 'Тестирование' },
+        { id: 'comment', title: 'Комментарий' },
+        { id: 'rate', title: 'Оценка' },
+        { id: 'clothes', title: 'Комплект формы выдан' }
+    ]);
+
+    const onDragEnd = (result) => {
+        const { source, destination } = result;
+        if (!destination) return;
+
+        const reorderedColumns = Array.from(columnOrder);
+        const [removed] = reorderedColumns.splice(source.index, 1);
+        reorderedColumns.splice(destination.index, 0, removed);
+
+        setColumnOrder(reorderedColumns);
+    };
+
     return (
         <div className={cn("h-full md:pr-4 mx-auto my-0 flex w-full overflow-hidden", styles.regionalTeam__container)}>
             <div className={"h-11/12 w-full md:my-5 md:mx-2 bg-white rounded-3xl flex flex-col p-2 md:p-8 gap-5"}>
@@ -333,90 +364,110 @@ export function EventParticipants(): React.JSX.Element {
                         </div>
                     </div>
                 }
+                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
                 <div className="overflow-y-auto max-h-full">
-                    <table className={"w-full overflow-auto min-w-[900px]"}>
-                        <thead>
-                        <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]", styles.regionalTeam__tableHead)}>
-                            {columns.id && <th className={cn(styles.regionalTeam__tableId, "sticky left-0 z-20 bg-[#F7F7FD]")}>ID</th>}
-                            {columns.name && <th className={cn(styles.regionalTeam__tableName, "sticky z-10 bg-[#F7F7FD] border-r-[1px]", !columns.id ? "left-0" : "left-[48px]" )}>ФИО</th>}
-                            {columns.date && <th className={cn(styles.regionalTeam__tableDate)}>Дата рождения</th>}
-                            {columns.tg && <th className={cn(styles.regionalTeam__tableLink)}>Ссылка Telegram</th>}
-                            {columns.funk && <th className={cn(styles.regionalTeam__tableColor)}>Функцинал</th>}
-                            {columns.test && <th className={cn(styles.regionalTeam__tableId)}>Тестирование</th>}
-                            {columns.test && <th className={cn(styles.regionalTeam__tableEvents)}>Комментарий</th>}
-                            {columns.test && <th className={cn(styles.regionalTeam__tableId)}>Оценка</th>}
-                            {columns.test && <th className={cn(styles.regionalTeam__tableId)}>Комплект формы выдан</th>}
-                            {!isEditorMode &&
-                                <th className={cn("min-w-8")}></th>
-                            }
-                        </tr>
-                        </thead>
-                        <tbody className={""}>
-                        {tableData && tableData.map(person =>
-                            <tr key={person.id} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
-                                {columns.id && <th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{person.id}</th>}
-                                {columns.name && <th className={cn("sticky z-10 bg-white border-r-[1px] border-b-[1px]", !columns.id ? "left-0" : "left-[48px]")}>
-                                        <a href={`/volunteer/${person.id}`}
-                                           onClick={(e) => {
-                                               e.preventDefault();
-                                               navigate(`/volunteer/${person.id}`);
-                                           }}>{person.fullName}</a>
-                                </th>}
-                                {columns.date && <th className={"flex justify-center"}>
-                                     <p className={"h-14 flex flex-col justify-center"}>{formatDateTime(person.birthdayDto.birthday).slice(0, 10)} ({person.birthdayDto.age})</p>
-                                </th>}
-                                {columns.tg && <th>
-                                    <p className={"h-14 flex flex-col justify-center"}>{person.tgLink}</p>
-                                </th>}
-                                {columns.funk && <th>
-                                    <div className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 relative")}>
-                                        {(() => {
-                                            const colorKey = getEditedValue(person.id, "color");
-                                            if (typeof colorKey === "string" && colorKey in reverseFunctionalMap) {
-                                                return reverseFunctionalMap[colorKey as keyof typeof reverseFunctionalMap];
-                                            }
-                                            return person.functional;
-                                        })()}
 
-                                        {isEditorMode &&
-                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleDropdown(person.id)} />
-                                        }
-                                        {openCell === person.id && (
-                                            <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                {(["Волонтёр", "Организатор"] as DisplayFunctional[]).map(displayFunk => (
-                                                    <div
-                                                        key={displayFunk}
-                                                        className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
-                                                        onClick={() => handleFuncSelect(displayFunk, person.id)}
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="columns-droppable" direction="horizontal">
+                            {(provided) => (
+                                <div ref={provided.innerRef} {...provided.droppableProps}>
+                                    <table className="w-full overflow-auto">
+                                        <thead>
+                                        <tr className="sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]">
+                                            {columnOrder.map((column, index) => (
+                                                <Draggable key={column.id} draggableId={column.id} index={index}>
+                                                    {(provided) => (
+                                                        <th
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className={cn("cursor-move text-center", {
+                                                                "min-w-[100px]": column.id === "id",
+                                                                "min-w-[150px]": column.id === "name",
+                                                            }, 'px-4')}
+                                                        >
+                                                            {column.title}
+                                                        </th>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+                                            {provided.placeholder}
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {tableData.map((person) => (
+                                            <tr key={person.id}>
+                                                {columnOrder.map((column) => (
+                                                    <td
+                                                        key={column.id}
+                                                        // className="flex justify-center items-center h-14"
                                                     >
-                                                        {displayFunk}
-                                                    </div>
+                                                        {column.id === 'id' && <p className="flex justify-center items-center h-14" >{person.id}</p>}
+                                                        {column.id === 'name' && (
+                                                            <a className="flex justify-center items-center h-14" href={`/volunteer/${person.id}`} onClick={(e) => {
+                                                                e.preventDefault();
+                                                                navigate(`/volunteer/${person.id}`);
+                                                            }}>
+                                                                {person.fullName}
+                                                            </a>
+                                                        )}
+                                                        {column.id === 'date' && (
+                                                            <p className="flex justify-center items-center h-14" >{formatDateTime(person.birthdayDto.birthday).slice(0, 10)} ({person.birthdayDto.age})</p>
+                                                        )}
+                                                        {column.id === 'tg' && <p className="flex justify-center items-center h-14" >{person.tgLink}</p>}
+                                                        {column.id === 'funk' && (
+                                                            <div className="flex justify-center items-center h-14 relative" >
+                                                                {(() => {
+                                                                    const colorKey = getEditedValue(person.id, "color");
+                                                                    if (typeof colorKey === "string" && colorKey in reverseFunctionalMap) {
+                                                                        return reverseFunctionalMap[colorKey as keyof typeof reverseFunctionalMap];
+                                                                    }
+                                                                    return person.functional;
+                                                                })()}
+                                                            </div>
+                                                        )}
+                                                        {column.id === 'test' && (
+                                                            <div className="flex justify-center items-center h-14">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={getEditedValue(person.id, "testing") ?? person.testing ?? ""}
+                                                                    onChange={(e) => handleInputChange(person.id, "testing", e.target.checked)}
+                                                                    className={cn("border-0 bg-white px-1 text-center h-7 w-7 flex justify-center items-center", styles.custom_checkbox)}
+                                                                    disabled={!isEditorMode}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                        {column.id === 'comment' && <p className="flex justify-center items-center h-14" >{person.comment}</p>}
+                                                        {column.id === 'rate' && (
+                                                            <input
+                                                                type="number"
+                                                                value={getEditedValue(person.id, "rank") ?? person.rank ?? ""}
+                                                                onChange={(e) => handleInputChange(person.id, "rank", e.target.value)}
+                                                                className={cn("border-0 h-14 bg-white w-full px-1 text-center flex justify-center items-center", isEditorMode && "border-[1px]")}
+                                                                disabled={!isEditorMode}
+                                                            />
+                                                        )}
+                                                        {column.id === 'clothes' && (
+                                                            <div className="flex justify-center items-center h-14">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={getEditedValue(person.id, "hasClothes") ?? person.hasClothes ?? ""}
+                                                                    onChange={(e) => handleInputChange(person.id, "hasClothes", e.target.checked)}
+                                                                    className={cn("border-0 bg-white px-1 text-center h-7 w-7", styles.custom_checkbox)}
+                                                                    disabled={!isEditorMode}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </td>
                                                 ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </th>}
-                                {columns.test && <th className={"flex justify-center items-center h-16"}>
-                                    <input onChange={(e) => handleInputChange(person.id, "testing", e.target.checked)} className={cn("border-0 bg-white px-1 text-center h-7 w-7", styles.custom_checkbox)} type={"checkbox"} disabled={!isEditorMode} name={"testing"}
-                                           checked={getEditedValue(person.id, "testing") ?? person.testing ?? ""}/>
-                                </th>}
-                                {columns.comment && <th className={cn(styles.regionalTeam__tableEvents)}>
-                                    {person.comment}
-                                </th>}
-                                {columns.rate && <th className={cn(styles.regionalTeam__tableEvents)}>
-                                    <input type={"number"} name={"rank"} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} onChange={(e) => handleInputChange(person.id, "rank", e.target.value)} value={getEditedValue(person.id, "rank") ?? person.rank ?? ""} disabled={!isEditorMode}/>
-                                </th>}
-                                {columns.clothes && <th>
-                                    <input onChange={(e) => handleInputChange(person.id, "hasClothes", e.target.checked)} className={cn("border-0 bg-white px-1 text-center h-7 w-7", styles.custom_checkbox)} type={"checkbox"} disabled={!isEditorMode} name={"hasClothes"}
-                                           checked={getEditedValue(person.id, "hasClothes") ?? person.hasClothes ?? ""}/>
-                                </th>}
-                                {!isEditorMode &&
-                                    <th className={cn("min-w-8 ")}><button className={"w-full flex justify-center"}><img src={bin} alt="delete" className={"self-center"}/></button></th>
-                                }
-                            </tr>
-                        )}
-                        </tbody>
-                    </table>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </div>
             </div>
             <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isFilterOpen ? '' : 'hidden'}`} onClick={() => setIsFilterOpen(false)}></div>
