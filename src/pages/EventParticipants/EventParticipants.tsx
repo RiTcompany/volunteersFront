@@ -10,13 +10,13 @@ import filter from "../../assets/filter.svg"
 import filtersImg from "../../assets/filters.svg"
 import cross from "../../assets/darkCross.svg";
 import arrowSmall from "../../assets/arrowSmall.svg";
-import bin from "../../assets/delete.svg";
+// import bin from "../../assets/delete.svg";
 import plus from "../../assets/plus.svg";
 import cancel from "../../assets/cancel.svg";
 import {formatDateTime} from "../../utils/formatDate.ts";
 import {DisplayFunctional, functionalMap, reverseFunctionalMap} from "../../utils/maps.ts";
 import {FiltersType} from "../../utils/type.ts";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {DragDropContext, Draggable, Droppable, DropResult} from "react-beautiful-dnd";
 const cn = classNames;
 
 interface TableDataType {
@@ -44,7 +44,7 @@ interface EditedDataType {
 }
 
 interface ColumnsType {
-    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, funk: boolean, test: boolean, comment: boolean, rate: boolean, clothes: boolean
+    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, functional: boolean, test: boolean, comment: boolean, rate: boolean, clothes: boolean
 }
 
 const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
@@ -52,13 +52,6 @@ const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
     testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
     orderByRankAsc: true, orderByRankDesc: false
 }
-
-const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
-};
 
 export function EventParticipants(): React.JSX.Element {
     const { id } = useParams();
@@ -68,7 +61,7 @@ export function EventParticipants(): React.JSX.Element {
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [editedData, setEditedData] = useState<EditedDataType[]>([]);
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
-    const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, funk: true, test: true, comment: true, rate: true, clothes: true})
+    const [columns, setColumns] = useState<ColumnsType>({all: true, id: true, name: true, date: true, tg: true, functional: true, test: true, comment: true, rate: true, clothes: true})
 
     const [openCell, setOpenCell] = useState<number>(-1);
     const [filters, setFilters] = useState<FiltersType>(initialFilters)
@@ -201,7 +194,7 @@ export function EventParticipants(): React.JSX.Element {
         setColumns(prevState => {
             const newAll = !prevState.all;
             const newColumns = {
-                all: newAll, id: newAll, name: newAll, date: newAll, tg: newAll, funk: newAll, test: newAll, comment: newAll, rate: newAll, clothes: newAll
+                all: newAll, id: newAll, name: newAll, date: newAll, tg: newAll, functional: newAll, test: newAll, comment: newAll, rate: newAll, clothes: newAll
             };
 
             return newColumns;
@@ -221,6 +214,7 @@ export function EventParticipants(): React.JSX.Element {
                 return [...prev, { id, [field]: value } as unknown as TableDataType];
             }
         });
+        console.log(editedData)
     };
 
     const handleSave = async () => {
@@ -262,9 +256,9 @@ export function EventParticipants(): React.JSX.Element {
         setOpenCell(openCell === cellId ? -1 : cellId);
     };
 
-    const handleFuncSelect = (displayFunk: DisplayFunctional, id: number) => {
-        const funk = functionalMap[displayFunk];
-        handleInputChange(id, "functional", funk);
+    const handleFuncSelect = (displayFunctional: DisplayFunctional, id: number) => {
+        const functional = functionalMap[displayFunctional];
+        handleInputChange(id, "functional", functional);
         toggleDropdown(id);
     };
 
@@ -281,14 +275,14 @@ export function EventParticipants(): React.JSX.Element {
         { id: 'name', title: 'ФИО' },
         { id: 'date', title: 'Дата рождения' },
         { id: 'tg', title: 'Ссылка Telegram' },
-        { id: 'funk', title: 'Функционал' },
+        { id: 'functional', title: 'Функционал' },
         { id: 'test', title: 'Тестирование' },
         { id: 'comment', title: 'Комментарий' },
         { id: 'rate', title: 'Оценка' },
         { id: 'clothes', title: 'Комплект формы выдан' }
     ]);
 
-    const onDragEnd = (result) => {
+    const onDragEnd = (result: DropResult) => {
         const { source, destination } = result;
         if (!destination) return;
 
@@ -402,7 +396,7 @@ export function EventParticipants(): React.JSX.Element {
                                                         key={column.id}
                                                         // className="flex justify-center items-center h-14"
                                                     >
-                                                        {column.id === 'id' && <p className="flex justify-center items-center h-14" >{person.id}</p>}
+                                                        {column.id === 'id' && <p className="flex justify-center items-center h-14" >{person.volunteerId}</p>}
                                                         {column.id === 'name' && (
                                                             <a className="flex justify-center items-center h-14" href={`/volunteer/${person.id}`} onClick={(e) => {
                                                                 e.preventDefault();
@@ -415,15 +409,31 @@ export function EventParticipants(): React.JSX.Element {
                                                             <p className="flex justify-center items-center h-14" >{formatDateTime(person.birthdayDto.birthday).slice(0, 10)} ({person.birthdayDto.age})</p>
                                                         )}
                                                         {column.id === 'tg' && <p className="flex justify-center items-center h-14" >{person.tgLink}</p>}
-                                                        {column.id === 'funk' && (
+                                                        {column.id === 'functional' && (
                                                             <div className="flex justify-center items-center h-14 relative" >
                                                                 {(() => {
-                                                                    const colorKey = getEditedValue(person.id, "color");
-                                                                    if (typeof colorKey === "string" && colorKey in reverseFunctionalMap) {
-                                                                        return reverseFunctionalMap[colorKey as keyof typeof reverseFunctionalMap];
+                                                                    const functionalKey = getEditedValue(person.id, "functional") || person.functional;
+                                                                    if (typeof functionalKey === "string" && functionalKey in reverseFunctionalMap) {
+                                                                        return reverseFunctionalMap[functionalKey as keyof typeof reverseFunctionalMap];
                                                                     }
-                                                                    return person.functional;
+                                                                    return "Не выбрано";
                                                                 })()}
+                                                                {isEditorMode &&
+                                                                    <img src={arrowSmall} alt={"arrow"} onClick={() => toggleDropdown(person.id)} />
+                                                                }
+                                                                {openCell === person.id && (
+                                                                    <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
+                                                                        {(["Волонтёр", "Организатор"] as DisplayFunctional[]).map(displayFunk => (
+                                                                            <div
+                                                                                key={displayFunk}
+                                                                                className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
+                                                                                onClick={() => handleFuncSelect(displayFunk, person.id)}
+                                                                            >
+                                                                                {displayFunk}
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         )}
                                                         {column.id === 'test' && (
@@ -501,7 +511,7 @@ export function EventParticipants(): React.JSX.Element {
                                 <p>Ссылка Telegram</p>
                             </div>
                             <div className={"flex gap-2 items-center"}>
-                                <input checked={columns.funk} onClick={() => setColumns({...columns, funk: !columns.funk})} type="checkbox" name={"funk"} className={styles.regionalTeam__checkbox}/>
+                                <input checked={columns.functional} onClick={() => setColumns({...columns, functional: !columns.functional})} type="checkbox" name={"functional"} className={styles.regionalTeam__checkbox}/>
                                 <p>Функционал</p>
                             </div>
                             <div className={"flex gap-2 items-center"}>
