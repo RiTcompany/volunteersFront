@@ -375,10 +375,7 @@ export function EventParticipants(): React.JSX.Element {
                                                             ref={provided.innerRef}
                                                             {...provided.draggableProps}
                                                             {...provided.dragHandleProps}
-                                                            className={cn("cursor-move text-center", {
-                                                                "min-w-[100px]": column.id === "id",
-                                                                "min-w-[150px]": column.id === "name",
-                                                            }, 'px-4')}
+                                                            className={`cursor-move text-center px-4 ${columns[column.id] ? "" : "hidden"}`}
                                                         >
                                                             {column.title}
                                                         </th>
@@ -392,24 +389,31 @@ export function EventParticipants(): React.JSX.Element {
                                         {tableData.map((person) => (
                                             <tr key={person.id}>
                                                 {columnOrder.map((column) => (
-                                                    <td
-                                                        key={column.id}
-                                                        // className="flex justify-center items-center h-14"
-                                                    >
-                                                        {column.id === 'id' && <p className="flex justify-center items-center h-14" >{person.volunteerId}</p>}
-                                                        {column.id === 'name' && (
-                                                            <a className="flex justify-center items-center h-14" href={`/volunteer/${person.id}`} onClick={(e) => {
-                                                                e.preventDefault();
-                                                                navigate(`/volunteer/${person.id}`);
-                                                            }}>
+                                                    <td key={column.id} className={columns[column.id] ? "" : "hidden"}>
+                                                        {column.id === 'id' && columns.id && (
+                                                            <p className="flex justify-center items-center h-14">{person.volunteerId}</p>
+                                                        )}
+                                                        {column.id === 'name' && columns.name && (
+                                                            <a
+                                                                className="flex justify-center items-center h-14"
+                                                                href={`/volunteer/${person.id}`}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    navigate(`/volunteer/${person.id}`);
+                                                                }}
+                                                            >
                                                                 {person.fullName}
                                                             </a>
                                                         )}
-                                                        {column.id === 'date' && (
-                                                            <p className="flex justify-center items-center h-14" >{formatDateTime(person.birthdayDto.birthday).slice(0, 10)} ({person.birthdayDto.age})</p>
+                                                        {column.id === 'date' && columns.date && (
+                                                            <p className="flex justify-center items-center h-14">
+                                                                {formatDateTime(person.birthdayDto.birthday).slice(0, 10)} ({person.birthdayDto.age})
+                                                            </p>
                                                         )}
-                                                        {column.id === 'tg' && <p className="flex justify-center items-center h-14" >{person.tgLink}</p>}
-                                                        {column.id === 'functional' && (
+                                                        {column.id === 'tg' && columns.tg && (
+                                                            <p className="flex justify-center items-center h-14">{person.tgLink}</p>
+                                                        )}
+                                                        {column.id === 'functional' && columns.functional && (
                                                             <div className="flex justify-center items-center h-14 relative" >
                                                                 {(() => {
                                                                     const functionalKey = getEditedValue(person.id, "functional") || person.functional;
@@ -436,7 +440,7 @@ export function EventParticipants(): React.JSX.Element {
                                                                 )}
                                                             </div>
                                                         )}
-                                                        {column.id === 'test' && (
+                                                        {column.id === 'test' && columns.test && (
                                                             <div className="flex justify-center items-center h-14">
                                                                 <input
                                                                     type="checkbox"
@@ -447,8 +451,10 @@ export function EventParticipants(): React.JSX.Element {
                                                                 />
                                                             </div>
                                                         )}
-                                                        {column.id === 'comment' && <p className="flex justify-center items-center h-14" >{person.comment}</p>}
-                                                        {column.id === 'rate' && (
+                                                        {column.id === 'comment' && columns.comment && (
+                                                            <p className="flex justify-center items-center h-14">{person.comment}</p>
+                                                        )}
+                                                        {column.id === 'rate' && columns.rate && (
                                                             <input
                                                                 type="number"
                                                                 value={getEditedValue(person.id, "rank") ?? person.rank ?? ""}
@@ -457,7 +463,7 @@ export function EventParticipants(): React.JSX.Element {
                                                                 disabled={!isEditorMode}
                                                             />
                                                         )}
-                                                        {column.id === 'clothes' && (
+                                                        {column.id === 'clothes' && columns.clothes && (
                                                             <div className="flex justify-center items-center h-14">
                                                                 <input
                                                                     type="checkbox"
