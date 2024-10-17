@@ -13,6 +13,7 @@ import cross from "../../assets/darkCross.svg";
 import bin from "../../assets/delete.svg";
 import plus from "../../assets/plus.svg";
 import cancel from "../../assets/cancel.svg";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 const cn = classNames;
 
 interface ColumnsType {
@@ -21,7 +22,9 @@ interface ColumnsType {
     type: boolean,
     year: boolean,
     currentOwner: boolean,
-    history: boolean
+    history: boolean,
+    delete: boolean,
+    [key: string]: boolean;
 }
 
 interface TableDataType {
@@ -31,6 +34,15 @@ interface TableDataType {
     year: string,
     currentOwner: string,
 }
+
+const initialColumnsOrder = [
+    { id: 'equipmentId', title: 'ID', change: false  },
+    { id: 'type', title: 'Тип', change: false  },
+    { id: 'year', title: 'Год', change: false  },
+    { id: 'currentOwner', title: 'Текущий обладатель', change: false  },
+    { id: 'history', title: 'История обладателей', change: false  },
+    // { id: 'delete', title: '', change: false }
+];
 
 export function HeadCentEquipment(): React.JSX.Element {
     const {type, id} = useParams()
@@ -43,7 +55,8 @@ export function HeadCentEquipment(): React.JSX.Element {
     const [newEquipment, setNewEquipment] = useState<TableDataType>({equipmentId: 0, type: "", year: "", currentOwner: ""})
     const [editedEvents, setEditedEvents] = useState<TableDataType[]>([]);
     const [refresh, setRefresh] = useState<boolean>(true)
-    const [columns, setColumns] = useState<ColumnsType>({all: true, equipmentId: true, type: true, year: true, currentOwner: true, history: true})
+    const [columns, setColumns] = useState<ColumnsType>({all: true, equipmentId: true, type: true, year: true, currentOwner: true, history: true, delete: true})
+    const [columnsOrder, setColumnsOrder] = useState(initialColumnsOrder);
     const [filterOptions, setFilterOptions] = useState<string[]>([]);
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
     const allSelected = selectedFilters.length === filterOptions.length;
@@ -83,7 +96,7 @@ export function HeadCentEquipment(): React.JSX.Element {
         setColumns(prevState => {
             const newAll = !prevState.all;
             const newColumns = {
-                all: newAll, equipmentId: newAll, type: newAll, year: newAll, currentOwner: newAll, history: newAll,
+                all: newAll, equipmentId: newAll, type: newAll, year: newAll, currentOwner: newAll, history: newAll, delete: newAll
             };
 
             return newColumns;
@@ -239,6 +252,14 @@ export function HeadCentEquipment(): React.JSX.Element {
         }
     }
 
+    const onDragEnd = (result: any) => {
+        if (!result.destination) return;
+        const reorderedColumns = Array.from(columnsOrder);
+        const [movedColumn] = reorderedColumns.splice(result.source.index, 1);
+        reorderedColumns.splice(result.destination.index, 0, movedColumn);
+        setColumnsOrder(reorderedColumns);
+    };
+
     return (
         <div className={cn("h-full md:pr-4 mx-auto my-0 flex w-full overflow-hidden", styles.allHeadquarters__container)}>
             <div className={"h-11/12 w-full md:my-5 md:mx-2 bg-white rounded-3xl flex flex-col p-2 md:p-8 gap-5"}>
@@ -373,60 +394,91 @@ export function HeadCentEquipment(): React.JSX.Element {
                     </div>
                 }
                 <div className="overflow-y-auto max-h-full">
-                    <table className={"w-full overflow-auto min-w-[900px]"}>
-                        <thead>
-                        <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]", styles.allHeadquarters__tableHead)}>
-                            {/*<th className={cn(styles.regionalTeam__tableId, "sticky left-0 z-20 bg-[#F7F7FD]")}>ID</th>*/}
-                            {columns.equipmentId && <th className={cn(styles.allHeadquarters__tableName, "sticky z-10 bg-[#F7F7FD] border-r-[1px] left-0")}>ID</th>}
-                            {columns.type && <th className={cn(styles.allHeadquarters__tablePeopleCount, "text-wrap")}>Тип</th>}
-                            {columns.year && <th className={cn(styles.allHeadquarters__tablePeopleCount, "text-wrap")}>Год</th>}
-                            {columns.currentOwner && <th className={cn(styles.allHeadquarters__tableAddress)}>Текущий обладатель</th>}
-                            {columns.history && <th className={cn(styles.allHeadquarters__tableName)}>История обладатлей</th>}
-                            {!isEditorMode &&
-                                <th className={cn("min-w-8")}></th>
-                            }
-                        </tr>
-                        </thead>
-                        <tbody className={""}>
-                        {tableData[0] && tableData.map(eq =>
-                            <tr key={eq.id} className={cn("h-[56px] border-b-[1px]", styles.allHeadquarters__tableBody)}>
-                                {/*<th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{hq.id}</th>*/}
-                                {columns.equipmentId && <th className={cn("sticky z-10 bg-white border-r-[1px] border-b-[1px] left-0")}>
-                                    <p className={cn("border-0 rounded-none h-full bg-white w-full px-1 text-center")}>{eq.equipmentId}</p>
-                                    {/*<input name={"name"} value={getEditedValue(eq.id, 'equipmentId') ?? eq.equipmentId} onChange={(e) => eq.id && handleInputChange(eq.id, 'equipmentId', e.target.value)} className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>*/}
-                                </th>}
-                                {columns.type && <th>
-                                    <p className={cn("border-0 rounded-none h-full bg-white w-full px-1 text-center")}>{eq.type}</p>
-                                    {/*<input name={"type"} value={getEditedValue(eq.id, 'type') ?? eq.type} onChange={(e) => eq.id && handleInputChange(eq.id, 'type', e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>*/}
-                                </th>}
-                                {columns.year && <th className={""}>
-                                    <p className={cn("border-0 rounded-none h-full bg-white w-full px-1 text-center")}>{eq.year}</p>
-                                    {/*<InputMask*/}
-                                    {/*    name="year"*/}
-                                    {/*    mask="9999"*/}
-                                    {/*    value={getEditedValue(eq.id, 'year') ?? eq.year}*/}
-                                    {/*    onChange={(e) => eq.id && handleInputChange(eq.id, 'year', e.target.value)}*/}
-                                    {/*    className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )}*/}
-                                    {/*    placeholder={"Год"}*/}
-                                    {/*    disabled={!isEditorMode}*/}
-
-                                    {/*/>*/}
-                                    {/*<p className={cn("border-0 bg-white w-full h-full")}>{formatDateTime(event.startTime)}</p>*/}
-                                </th>}
-                                {columns.currentOwner && <th>
-                                    <p className={cn("border-0 rounded-none h-full bg-white w-full px-1 text-center")}>{eq.currentOwner}</p>
-                                    {/*<input name={"currentOwner"} value={getEditedValue(eq.id, 'currentOwner') ?? eq.currentOwner} onChange={(e) => eq.id && handleInputChange(eq.id, 'currentOwner', e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>*/}
-                                </th>}
-                                {columns.history && <th className={""}>
-                                    <a href={"#"} className={cn("border-0 bg-white w-full h-full")}>Смотреть историю</a>
-                                </th>}
-                                {!isEditorMode &&
-                                    <th className={cn("min-w-8")}><button className={"w-full flex justify-center"} onClick={() => setIsOpenDelete({open: true, id: eq.id || -1})}><img src={bin} alt="delete" className={"self-center"}/></button></th>
-                                }
-                            </tr>
-                        )}
-                        </tbody>
-                    </table>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="droppable" direction="horizontal">
+                            {(provided) => (
+                                <table className={"w-full overflow-auto min-w-[900px]"} {...provided.droppableProps} ref={provided.innerRef}>
+                                    <thead>
+                                    <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]")}>
+                                        {columnsOrder.map((column, index) => (
+                                            columns[column.id] && (
+                                                <Draggable key={column.id} draggableId={column.id} index={index}>
+                                                    {(provided) => (
+                                                        <th
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className={cn("bg-[#F7F7FD]", {
+                                                                "sticky left-0 z-10": column.id === "equipmentId"
+                                                            })}
+                                                        >
+                                                            {column.title}
+                                                        </th>
+                                                    )}
+                                                </Draggable>
+                                            )
+                                        ))}
+                                        {columns.delete && !isEditorMode && (
+                                            <th className={cn("bg-[#F7F7FD] border-r-[1px]")}><div className="min-w-8"></div></th>
+                                        )}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {tableData.map(eq => (
+                                        <tr key={eq.id} className={cn("h-[56px] border-b-[1px]")}>
+                                            {columnsOrder.map(column => (
+                                                columns[column.id] && (
+                                                    <td key={column.id} className={cn({
+                                                        "sticky left-0 z-10 bg-white border-b-[1px]": column.id === "equipmentId"
+                                                    })}>
+                                                        {column.id === 'equipmentId' && (
+                                                            <p className="border-0 rounded-none h-full bg-white w-full px-1 text-center">
+                                                                {eq.equipmentId}
+                                                            </p>
+                                                        )}
+                                                        {column.id === 'type' && (
+                                                            <p className="border-0 rounded-none h-full bg-white w-full px-1 text-center">
+                                                                {eq.type}
+                                                            </p>
+                                                        )}
+                                                        {column.id === 'year' && (
+                                                            <p className="border-0 rounded-none h-full bg-white w-full px-1 text-center">
+                                                                {eq.year}
+                                                            </p>
+                                                        )}
+                                                        {column.id === 'currentOwner' && (
+                                                            <p className="border-0 rounded-none h-full bg-white w-full px-1 text-center">
+                                                                {eq.currentOwner}
+                                                            </p>
+                                                        )}
+                                                        {column.id === 'history' && (
+                                                            <a href="#" className="border-0 bg-white w-full h-full text-center flex justify-center">
+                                                                Смотреть историю
+                                                            </a>
+                                                        )}
+                                                        {/*{column.id === 'delete' && !isEditorMode && (*/}
+                                                        {/*    <button className="w-full flex justify-center" onClick={() => setIsOpenDelete({ open: true, id: eq.id || -1 })}>*/}
+                                                        {/*        <img src={bin} alt="delete" className="self-center" />*/}
+                                                        {/*    </button>*/}
+                                                        {/*)}*/}
+                                                    </td>
+                                                )
+                                            ))}
+                                            {columns.delete && !isEditorMode && (
+                                                <td className={"flex justify-center items-center h-14"}>
+                                                    <button onClick={() => eq.id && setIsOpenDelete({id: eq.id, open: true})}>
+                                                        <img src={bin} alt="delete" />
+                                                    </button>
+                                                </td>
+                                            )}
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                    {provided.placeholder} {/* Нужно для работы react-beautiful-dnd */}
+                                </table>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </div>
             </div>
             <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isFilterOpen ? '' : 'hidden'}`} onClick={() => setIsFilterOpen(false)}></div>
@@ -462,6 +514,10 @@ export function HeadCentEquipment(): React.JSX.Element {
                             <div className={"flex gap-2 items-center"}>
                                 <input checked={columns.history} onClick={() => setColumns({...columns, history: !columns.history})} type="checkbox" name={"history"} className={styles.regionalTeam__checkbox}/>
                                 <p>Истрия обладателей</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input checked={columns.delete} onClick={() => setColumns({...columns, delete: !columns.delete})} type="checkbox" name={"delete"} className={styles.regionalTeam__checkbox}/>
+                                <p>Удаление</p>
                             </div>
                         </div>
                     </div>

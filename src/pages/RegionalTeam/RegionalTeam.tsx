@@ -17,6 +17,8 @@ import InputMask from "react-input-mask";
 import {convertToISO, formatDateTime} from "../../utils/formatDate.ts";
 import {colorMap, DisplayColor, reverseColorMap} from "../../utils/maps.ts";
 import {FiltersType} from "../../utils/type.ts";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {getColumnWidth} from "../../utils/widths.ts";
 const cn = classNames;
 
 interface TableDataType {
@@ -44,7 +46,7 @@ interface EditedDataType {
 }
 
 interface ColumnsType {
-    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, events: boolean, button: boolean, delete: boolean
+    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, events: boolean, button: boolean, delete: boolean, [key: string]: boolean;
 }
 
 const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
@@ -304,9 +306,17 @@ export function RegionalTeam(): React.JSX.Element {
         !localStorage.getItem("authToken") && navigate("/")
     })
 
-    useEffect(() => {
-        console.log(isEditorMode)
-    })
+    const [columnOrder, setColumnOrder] = useState([
+        'id', 'name', 'date', 'tg', 'vk', 'color', 'events', 'comment', 'rate', 'interview', 'step', 'headquarters', 'center',
+    ]);
+
+    const handleDragEnd = (result: any) => {
+        if (!result.destination) return;
+        const reorderedColumns = Array.from(columnOrder);
+        const [movedColumn] = reorderedColumns.splice(result.source.index, 1);
+        reorderedColumns.splice(result.destination.index, 0, movedColumn);
+        setColumnOrder(reorderedColumns);
+    };
 
     return (
         <div className={cn("h-full md:pr-4 mx-auto my-0 flex w-full overflow-hidden", styles.regionalTeam__container)}>
@@ -402,98 +412,171 @@ export function RegionalTeam(): React.JSX.Element {
                 }
                 <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
                 <div className="overflow-y-auto max-h-full">
-                    <table className={"w-full overflow-auto min-w-[900px]"}>
-                        <thead>
-                        <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]", styles.regionalTeam__tableHead)}>
-                            {columns.id && <th className={cn(styles.regionalTeam__tableId, "sticky left-0 z-20 bg-[#F7F7FD]")}>ID</th>}
-                            {columns.name && <th className={cn(styles.regionalTeam__tableName, "sticky z-10 bg-[#F7F7FD] border-r-[1px]", !columns.id ? "left-0" : "left-[48px]" )}>ФИО</th>}
-                            {columns.date && <th className={cn(styles.regionalTeam__tableDate)}>Дата рождения</th>}
-                            {columns.tg && <th className={cn(styles.regionalTeam__tableLink)}>Ссылка Telegram</th>}
-                            {columns.vk && <th className={cn(styles.regionalTeam__tableLink)}>Ссылка ВКонтакте</th>}
-                            {columns.color && <th className={cn(styles.regionalTeam__tableColor)}>Светофор</th>}
-                            {columns.events && <th className={cn(styles.regionalTeam__tableEvents)}>Мероприятия</th>}
-                            {columns.button && <th className={cn(styles.regionalTeam__tableButton)}></th>}
-                            {!isEditorMode &&
-                                <th className={cn("min-w-8")}></th>
-                            }
-                        </tr>
-                        </thead>
-                        <tbody className={""}>
-                        {tableData && tableData.map(person =>
-                            <tr key={person.id} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
-                                {columns.id && <th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{person.volunteerId}</th>}
-                                {columns.name && <th className={cn("sticky z-10 bg-white border-r-[1px] border-b-[1px]", !columns.id ? "left-0" : "left-[48px]")}>
-                                    {isEditorMode ? <input name={"fullName"} value={getEditedValue(person.id, "fullName") ? getEditedValue(person.id, "fullName") : person.fullName} onChange={(e) => handleInputChange(person.id, "fullName", e.target.value)} className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/> :
-                                        <a href={`/volunteer/${person.id}`}
-                                           onClick={(e) => {
-                                               e.preventDefault();
-                                               navigate(`/volunteer/${person.id}`);
-                                           }}>{person.fullName}</a>}
-                                </th>}
-                                {columns.date && <th className={"flex"}>
-                                    {/*<input name={"birthday"} value={getEditedValue(person.volunteerId, "birthday") ? getEditedValue(person.volunteerId, "birthday") : formatDateTime(person.birthdayDto.birthday).slice(0, 10)} onChange={(e) => handleInputChange(person.volunteerId, "birthday", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>*/}
-                                    <InputMask
-                                        name="birthday"
-                                        mask="99.99.9999"
-                                        value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : formatDateTime(person.birthdayDto.birthday).slice(0, 10)}
-                                        onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
-                                        className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]" )}
-                                        placeholder={"ДД.ММ.ГГГГ"}
-                                    /> {!isEditorMode && <p className={"h-14 flex flex-col justify-center"}>({person.birthdayDto.age})</p>}
-                                </th>}
-                                {columns.tg && <th>
-                                    <input name={"tgLink"} value={getEditedValue(person.id, "tgLink") ? getEditedValue(person.id, "tgLink") : person.tgLink} onChange={(e) => handleInputChange(person.id, "tgLink", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
-                                </th>}
-                                {columns.vk && <th>
-                                    <input name={"vkLink"} value={getEditedValue(person.id, "vkLink") ? getEditedValue(person.id, "vkLink") : person.vkLink} onChange={(e) => handleInputChange(person.id, "vkLink", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
-                                </th>}
-                                {columns.color && <th className={"flex justify-center items-center h-16"}>
-                                    <div className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 relative",
-                                        reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Жёлтый" ? "bg-[#FFF4E4] text-[#E99518]"
-                                            : reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Зелёный" ? "bg-[#EBF6EB] text-[#31AA27]"
-                                                : reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
-                                                    : person.color === "Жёлтый" ? "bg-[#FFF4E4] text-[#E99518]"
-                                                        : person.color === "Зелёный" ? "bg-[#EBF6EB] text-[#31AA27]"
-                                                            : person.color === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
-                                                                : "bg-[#F1F1F1] text-[#777777]"
-                                    )}>
-                                        {(() => {
-                                            const colorKey = getEditedValue(person.id, "color");
-                                            if (typeof colorKey === "string" && colorKey in reverseColorMap) {
-                                                return reverseColorMap[colorKey as keyof typeof reverseColorMap];
-                                            }
-                                            return person.color;
-                                        })()}
-
-                                        {isEditorMode &&
-                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleDropdown(person.id)} />
-                                        }
-                                        {openCell === person.id && (
-                                            <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                {(["Жёлтый", "Зелёный", "Красный", "Not found"] as DisplayColor[]).map(displayColor => (
-                                                    <div
-                                                        key={displayColor}
-                                                        className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(colorMap[displayColor]))}
-                                                        onClick={() => handleColorSelect(displayColor, person.id)}
-                                                    >
-                                                        {displayColor}
-                                                    </div>
-                                                ))}
-                                            </div>
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                        <Droppable droppableId="droppable" direction="horizontal">
+                            {(provided) => (
+                                <table
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                    className={"w-full overflow-y-auto min-w-[900px]"}
+                                >
+                                    <thead>
+                                    <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]", styles.regionalTeam__tableHead)}>
+                                        {columnOrder.map((columnKey, index) =>
+                                            columns[columnKey] ? (
+                                                <Draggable key={columnKey} draggableId={columnKey} index={index}>
+                                                    {(provided) => (
+                                                        <th
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className={cn(`cursor-move`, `min-w-[${getColumnWidth(columnKey)}]`)}
+                                                        >
+                                                            {columnKey === 'id' && "ID"}
+                                                            {columnKey === 'name' && "ФИО"}
+                                                            {columnKey === 'date' && "Дата рождения"}
+                                                            {columnKey === 'tg' && "Ссылка Telegram"}
+                                                            {columnKey === 'vk' && "Ссылка ВКонтакте"}
+                                                            {columnKey === 'color' && "Светофор"}
+                                                            {columnKey === 'events' && "Мероприятия"}
+                                                            {columnKey === 'comment' && "Комментарий по работе"}
+                                                            {columnKey === 'rate' && "Рейтинг"}
+                                                            {columnKey === 'interview' && "Собеседование для ступени роста"}
+                                                            {columnKey === 'step' && "Ступень роста"}
+                                                            {columnKey === 'headquarters' && "Районный штаб"}
+                                                            {columnKey === 'center' && "Общественный центр"}
+                                                        </th>
+                                                    )}
+                                                </Draggable>
+                                            ) : null
                                         )}
-                                    </div>
-                                </th>}
-                                {columns.events && <th className={cn(styles.regionalTeam__tableEvents)} title={person.eventLinkList.map(event => event.name).join(", ")}>
-                                    {person.eventLinkList.map(event => event.name).join(", ")}
-                                </th>}
-                                {columns.button && <th><button className={cn("bg-[#4471C9] text-white", isEditorMode && "cursor-no-drop bg-[#ABABAB]", styles.regionalTeam__newPassword)} disabled={!isEditorMode}>Выдать новый логин/пароль</button></th>}
-                                {!isEditorMode && columns.delete &&
-                                    <th className={cn("min-w-8 ")}><button className={"w-full flex justify-center"} onClick={() => person.id && setIsOpenDelete({id: person.volunteerId, open: true})}><img src={bin} alt="delete" className={"self-center"}/></button></th>
-                                }
-                            </tr>
-                        )}
-                        </tbody>
-                    </table>
+                                        {columns.button && <th className={cn("min-w-[250px]")}></th>}
+                                        {!isEditorMode && columns.delete && <th className={cn("min-w-10")}></th>}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {tableData && tableData.map(person => (
+                                        <tr key={person.id} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
+                                            {columnOrder.map((columnKey) => (
+                                                columns[columnKey] ? (
+                                                    <td key={columnKey}>
+                                                        {columnKey === 'id' &&
+                                                            <p className={"text-center"}>
+                                                                {person.volunteerId}
+                                                            </p>}
+                                                        {columnKey === 'name' && (
+                                                            isEditorMode ? (
+                                                                <input
+                                                                    name={"fullName"}
+                                                                    value={getEditedValue(person.id, "fullName") || person.fullName}
+                                                                    onChange={(e) => handleInputChange(person.id, "fullName", e.target.value)}
+                                                                    className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
+                                                                    disabled={!isEditorMode}
+                                                                />
+                                                            ) : (
+                                                                <a
+                                                                    href={`/volunteer/${person.id}`}
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        navigate(`/volunteer/${person.id}`);
+                                                                    }}
+                                                                    className={"text-center flex justify-center text-blue-400"}
+                                                                >
+                                                                    {person.fullName}
+                                                                </a>
+                                                            )
+                                                        )}
+                                                        {columnKey === 'date' && (
+                                                            <div className={"flex gap-0"}>
+                                                                <InputMask
+                                                                    name="birthday"
+                                                                    mask="99.99.9999"
+                                                                    value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : formatDateTime(person.birthdayDto.birthday).slice(0, 10)}
+                                                                    onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
+                                                                    className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]")}
+                                                                    placeholder={"ДД.ММ.ГГГГ"}
+                                                                /> {!isEditorMode && <p className={"h-14 flex flex-col justify-center mr-3"}>({person.birthdayDto.age})</p>}
+                                                            </div>
+                                                        )}
+                                                        {columnKey === 'tg' && (
+                                                            <input
+                                                                name={"tgLink"}
+                                                                value={getEditedValue(person.id, "tgLink") ? getEditedValue(person.id, "tgLink") : person.tgLink}
+                                                                onChange={(e) => handleInputChange(person.id, "tgLink", e.target.value)}
+                                                                className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
+                                                                disabled={!isEditorMode}
+                                                            />
+                                                        )}
+                                                        {columnKey === 'vk' && (
+                                                            <input
+                                                                name={"vkLink"}
+                                                                value={getEditedValue(person.id, "vkLink") ? getEditedValue(person.id, "vkLink") : person.vkLink}
+                                                                onChange={(e) => handleInputChange(person.id, "vkLink", e.target.value)}
+                                                                className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
+                                                                disabled={!isEditorMode}
+                                                            />
+                                                        )}
+                                                        {columnKey === 'color' && (
+                                                            <div className={cn("flex justify-center items-center h-16")}>
+                                                                <div className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 relative",
+                                                                    reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Жёлтый" ? "bg-[#FFF4E4] text-[#E99518]"
+                                                                        : reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Зелёный" ? "bg-[#EBF6EB] text-[#31AA27]"
+                                                                            : reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
+                                                                                : person.color === "Жёлтый" ? "bg-[#FFF4E4] text-[#E99518]"
+                                                                                    : person.color === "Зелёный" ? "bg-[#EBF6EB] text-[#31AA27]"
+                                                                                        : person.color === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
+                                                                                            : "bg-[#F1F1F1] text-[#777777]"
+                                                                )}>
+                                                                    {(() => {
+                                                                        const colorKey = getEditedValue(person.id, "color");
+                                                                        if (typeof colorKey === "string" && colorKey in reverseColorMap) {
+                                                                            return reverseColorMap[colorKey as keyof typeof reverseColorMap];
+                                                                        }
+                                                                        return person.color;
+                                                                    })()}
+
+                                                                    {isEditorMode &&
+                                                                        <img src={arrowSmall} alt={"arrow"} onClick={() => toggleDropdown(person.id)} />
+                                                                    }
+                                                                    {openCell === person.id && (
+                                                                        <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
+                                                                            {(["Жёлтый", "Зелёный", "Красный", "Not found"] as DisplayColor[]).map(displayColor => (
+                                                                                <div
+                                                                                    key={displayColor}
+                                                                                    className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(colorMap[displayColor]))}
+                                                                                    onClick={() => handleColorSelect(displayColor, person.id)}
+                                                                                >
+                                                                                    {displayColor}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {columnKey === 'events' && (
+                                                            <div className={"text-center"} title={person.eventLinkList.map(event => event.name).join(", ")}>
+                                                                {person.eventLinkList.map(event => event.name).join(", ")}
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                ) : null
+                                            ))}
+                                            {columns.button && <td className={"w-full"}><button className={cn("bg-[#4471C9] text-white", isEditorMode && "cursor-no-drop bg-[#ABABAB]", styles.regionalTeam__newPassword)} disabled={!isEditorMode}>Выдать новый логин/пароль</button></td>}
+                                            {columns.delete && !isEditorMode && person.id && (
+                                                <td className={"flex justify-center items-center h-14"}>
+                                                    <button onClick={() => person.id && setIsOpenDelete({ id: person.id, open: true })}>
+                                                        <img src={bin} alt="delete" />
+                                                    </button>
+                                                </td>
+                                            )}
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </div>
             </div>
             <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isFilterOpen ? '' : 'hidden'}`} onClick={() => setIsFilterOpen(false)}></div>
@@ -541,6 +624,10 @@ export function RegionalTeam(): React.JSX.Element {
                             <div className={"flex gap-2 items-center"}>
                                 <input checked={columns.button}  onClick={() => setColumns({...columns, button: !columns.button})} type="checkbox" name={"button"} className={styles.regionalTeam__checkbox}/>
                                 <p>Выдать новый логин/пароль</p>
+                            </div>
+                            <div className={"flex gap-2 items-center"}>
+                                <input checked={columns.delete}  onClick={() => setColumns({...columns, delete: !columns.delete})} type="checkbox" name={"delete"} className={styles.regionalTeam__checkbox}/>
+                                <p>Удаление</p>
                             </div>
                         </div>
                         <div className={"flex flex-col gap-2"}>

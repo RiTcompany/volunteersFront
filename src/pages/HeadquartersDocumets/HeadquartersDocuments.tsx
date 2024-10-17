@@ -1,9 +1,10 @@
 import styles from './HeadquartersDocuments.module.css'
 import classNames from 'classnames'
-import React, {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import React, { useEffect, useRef, useState} from "react";
+import { useNavigate, useParams} from "react-router-dom";
 import document from "../../assets/document.svg"
 // import search from "../../assets/search.svg"
+import { saveAs } from 'file-saver';
 import highlight from "../../assets/highlight.svg"
 import lightHighlight from "../../assets/lightHighlight.svg"
 import filter from "../../assets/filter.svg"
@@ -150,6 +151,19 @@ export function HeadquartersDocuments(): React.JSX.Element {
         }));
     };
 
+    const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+    const formData = new FormData()
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files?.[0]) {
+            setSelectedFileName(e.target?.files[0].name);
+            setSelectedFile(e.target?.files[0]);
+        }
+    };
+
     const handleAddButtonClick = async () => {
         const request = `add_${type}_document/${id}`
         const [day, month, year] = newDoc.createDate.split('.');
@@ -159,7 +173,6 @@ export function HeadquartersDocuments(): React.JSX.Element {
             createDate: formattedDate
         };
         try {
-            console.log(updatedDoc)
             const response = await fetch(`http://195.133.197.53:8082/${request}`, {
                 method: 'POST',
                 headers: {
@@ -173,7 +186,36 @@ export function HeadquartersDocuments(): React.JSX.Element {
             }
 
             const result = await response.json();
-            console.log('Success:', result);
+
+            console.log(formData)
+
+            formData.forEach((value, key) => {
+                console.log(key, value);
+            });
+
+            if (selectedFile && response.ok && result) {
+                const formData = new FormData();
+                formData.append("file", selectedFile);
+
+                formData.forEach((value, key) => {
+                    console.log(key, value);
+                });
+
+                const fileResponse = await fetch(`http://195.133.197.53:8082/save_document/${result}`, {
+                    method: 'POST',
+                    credentials: "include",
+                    body: formData
+                });
+
+                if (!fileResponse.ok) {
+                    console.log(await fileResponse.json());
+                    throw new Error(`File upload error: ${fileResponse.status}`);
+                }
+
+                const fileResult = await fileResponse.json();
+                console.log('File upload success:', fileResult);
+            }
+
             setIsOpenNew(false)
         } catch (error) {
             console.error('Error:', error);
@@ -247,6 +289,33 @@ export function HeadquartersDocuments(): React.JSX.Element {
         }
     }
 
+    const handleShowDocument = async (docId: 1 | undefined) => {
+        try {
+            const response = await fetch(`http://195.133.197.53:8082/document/${docId}/file`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (response.ok) {
+                const arrayBuffer = await response.arrayBuffer();
+                const bytes = new Uint8Array(arrayBuffer);
+
+                const isPdf = bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46;
+
+                const blob = new Blob([arrayBuffer], {type: isPdf ? 'application/pdf' : 'application/octet-stream'});
+
+                if (isPdf) {
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                } else {
+                    saveAs(blob, 'document');
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const onDragEnd = (result: any) => {
         if (!result.destination) return;
         const reorderedColumns = Array.from(columns);
@@ -295,11 +364,15 @@ export function HeadquartersDocuments(): React.JSX.Element {
                 })
                 let result = await response.json()
                 setTableData(result)
+
             } catch (e) {
                 console.log(e)
             }
         })()
     }, [isOpenNew, isOpenDelete, isEditorMode, refresh, type, id]);
+    useEffect(() => {
+        console.log(tableData)
+    }, tableData)
 
     return (
         <div className={cn("h-full md:pr-4 mx-auto my-0 flex w-full overflow-hidden", styles.allHeadquarters__container)}>
@@ -361,6 +434,17 @@ export function HeadquartersDocuments(): React.JSX.Element {
                         <img src={cross} alt={"close"} className={"absolute top-2 right-2 w-7"} onClick={() => setIsOpenNew(false)}/>
                         <p className={"text-center text-[20px]"}>Добавить данные</p>
                         <div className={"flex flex-col gap-3"}>
+                            <div>
+                                <input type="file" id="fileInput" onChange={handleFileChange} className={"hidden"}/>
+                                <label htmlFor="fileInput" className={"w-full text-center flex justify-center items-center h-10 bg-[#4a76cb] text-white rounded-lg cursor-pointer hover:bg-[#2a76ff]"}>
+                                    Выбрать файл
+                                </label>
+                                {selectedFileName && (
+                                    <div >
+                                        Выбран файл: {selectedFileName}
+                                    </div>
+                                )}
+                            </div>
                             <div className={"flex flex-col gap-3"}>
                                 <label className={"text-[#5E5E5E]"}>Название документа</label>
                                 <input name={"name"} onChange={handleChangeNew} placeholder={"Название"} className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}/>
@@ -463,7 +547,11 @@ export function HeadquartersDocuments(): React.JSX.Element {
                                                             <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300" )}>
                                                                 {formatDateTime(hq[column.id]).slice(0, 10)}
                                                             </p>
-                                                        ) :column.id === 'approvalControl' ? (
+                                                        ) : column.id === 'name' ? (
+                                                            <button onClick={() => handleShowDocument(hq.id)} className={cn("border-0 h-full bg-white w-full px-1 flex justify-center text-center text-blue-400 cursor-pointer", isEditorMode && "text-gray-300" )}>
+                                                                {hq[column.id]}
+                                                            </button>
+                                                        ) : column.id === 'approvalControl' ? (
                                                             <div className={"w-full flex justify-center"}>
                                                                 <input type={"checkbox"} checked={hq.approvalControl} className={cn("border-0 bg-white px-1 text-center h-7 w-7 mx-auto", styles.custom_checkbox)} disabled/>
                                                             </div>

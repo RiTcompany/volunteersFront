@@ -11,7 +11,7 @@ import {RegionalTeam} from "./pages/RegionalTeam/RegionalTeam.tsx";
 import {AllHeadquarters} from "./pages/AllHeadquarters/AllHeadquarters.tsx";
 import {AllVolunteers} from "./pages/AllVolunteers/AllVolunteers.tsx";
 import {AllEvents} from "./pages/AllEvents/AllEvents.tsx";
-import {AllEquipment} from "./pages/AllEquipment/AllEquipment.tsx";
+// import {AllEquipment} from "./pages/AllEquipment/AllEquipment.tsx";
 import {AllCenters} from "./pages/AllCenters/AllCenters.tsx";
 import {HeadquartersDocuments} from "./pages/HeadquartersDocumets/HeadquartersDocuments.tsx";
 import {VolunteerProfile} from "./pages/VolunteerProfile/VolunteerProfile.tsx";
@@ -37,7 +37,7 @@ function App() {
                 <Route element={<AllHeadquarters/>} path={"/all_headquarters"}/>
                 <Route element={<AllVolunteers/>} path={"/all_volunteers"}/>
                 <Route element={<AllEvents/>} path={"/events"}/>
-                <Route element={<AllEquipment/>} path={"/all_equipment"}/>
+                {/*<Route element={<AllEquipment/>} path={"/all_equipment"}/>*/}
                 <Route element={<HeadCentEquipment/>} path={"/equipment/:type/:id"}/>
                 <Route element={<AllCenters/>} path={"/all_centers"}/>
                 <Route element={<HeadquartersDocuments/>} path={"/documents/:type/:id"}/>

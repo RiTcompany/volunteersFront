@@ -44,7 +44,7 @@ interface EditedDataType {
 }
 
 interface ColumnsType {
-    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, functional: boolean, test: boolean, comment: boolean, rate: boolean, clothes: boolean
+    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, functional: boolean, test: boolean, comment: boolean, rate: boolean, clothes: boolean, [key: string]: boolean;
 }
 
 const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],

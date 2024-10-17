@@ -119,3 +119,8 @@
     width: 18px;
     border-radius: 4px;
 }
+
+.addFileButton {
+    background-color: #1b3c6c;
+    color: white;
+}
