@@ -1,6 +1,6 @@
 import styles from './HeadquartersDocuments.module.css'
 import classNames from 'classnames'
-import React, { useEffect, useRef, useState} from "react";
+import React, { useEffect, useState} from "react";
 import { useNavigate, useParams} from "react-router-dom";
 import document from "../../assets/document.svg"
 // import search from "../../assets/search.svg"
