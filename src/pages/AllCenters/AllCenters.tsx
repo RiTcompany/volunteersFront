@@ -274,7 +274,7 @@ export function AllCenters(): React.JSX.Element {
                 }
                 <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenNew ? '' : 'hidden'}`} onClick={() => setIsOpenNew(false)}></div>
                 {isOpenNew &&
-                    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[850px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5"}>
+                    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[850px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5 overflow-y-auto"}>
                         <img src={cross} alt={"close"} className={"absolute top-2 right-2 w-7"} onClick={() => setIsOpenNew(false)}/>
                         <p className={"text-center text-[20px]"}>Добавить данные</p>
                         <div className={"flex flex-col gap-3"}>
