@@ -26,7 +26,7 @@ interface TableDataType {
     birthdayDto: {
         birthday: string,
         age: number
-    },
+    } | null,
     tgLink: string,
     functional: string,
     testing: boolean,
@@ -47,7 +47,7 @@ interface ColumnsType {
     all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, functional: boolean, test: boolean, comment: boolean, rate: boolean, clothes: boolean, [key: string]: boolean;
 }
 
-const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
+const initialFilters = {minAge: "", maxAge: "", minRank: "", eventIdList: [],
     colorList: [], hasInterview: [], levelList: [], functionalList: [],
     testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
     orderByRankAsc: true, orderByRankDesc: false
@@ -163,7 +163,7 @@ export function EventParticipants(): React.JSX.Element {
                         return [key, value[0]];
                     }
                     return [key, value];
-                }).filter(([, value]) => value !== undefined)
+                }).filter(([, value]) => value !== undefined && value !== '')
             );
             console.log(id)
             const result = await fetch(`http://195.133.197.53:8082/event_participant/${id}`, {
@@ -173,9 +173,13 @@ export function EventParticipants(): React.JSX.Element {
                 credentials: "include",
             })
             console.log(newFilters)
-            const res = await result.json()
-            setTableData(res)
-            console.log(res)
+            if (result.ok) {
+                const res = await result.json()
+                setTableData(res)
+                console.log(res)
+            } else {
+                throw Error
+            }
         })()
     }, [isOpenNew, isEditorMode, refresh, id]);
 
@@ -386,7 +390,7 @@ export function EventParticipants(): React.JSX.Element {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {tableData.map((person) => (
+                                        {tableData && tableData.map((person) => (
                                             <tr key={person.id}>
                                                 {columnOrder.map((column) => (
                                                     <td key={column.id} className={columns[column.id] ? "" : "hidden"}>
@@ -407,7 +411,8 @@ export function EventParticipants(): React.JSX.Element {
                                                         )}
                                                         {column.id === 'date' && columns.date && (
                                                             <p className="flex justify-center items-center h-14">
-                                                                {formatDateTime(person.birthdayDto.birthday).slice(0, 10)} ({person.birthdayDto.age})
+                                                                {/*@ts-ignore*/}
+                                                                {(person.birthdayDto ? formatDateTime(person.birthdayDto.birthday).slice(0, 10) : "")} ({person.birthdayDto?.age})
                                                             </p>
                                                         )}
                                                         {column.id === 'tg' && columns.tg && (

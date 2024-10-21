@@ -545,7 +545,8 @@ export function HeadquartersDocuments(): React.JSX.Element {
                                                     <td key={column.id}>
                                                         {column.id === 'createDate' ? (
                                                             <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300" )}>
-                                                                {formatDateTime(hq[column.id]).slice(0, 10)}
+                                                                {/*@ts-ignore*/}
+                                                                {hq[column.id] && formatDateTime(hq[column.id]).slice(0, 10)}
                                                             </p>
                                                         ) : column.id === 'name' ? (
                                                             <button onClick={() => handleShowDocument(hq.id)} className={cn("border-0 h-full bg-white w-full px-1 flex justify-center text-center text-blue-400 cursor-pointer", isEditorMode && "text-gray-300" )}>

@@ -19,7 +19,8 @@ export const convertToISO = (dateStr: string | undefined): string => {
     return utcDate.toISOString();
 };
 
-export function formatDateTime(inputDate: string) {
+export function formatDateTime(inputDate: string | undefined) {
+    if (inputDate == undefined) return
     const date = new Date(inputDate);
     const formattedDate = date.toLocaleDateString('ru-RU', {
         day: '2-digit',

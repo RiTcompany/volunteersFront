@@ -23,7 +23,7 @@ interface TableDataType {
     id: number,
     volunteerId: number,
     fullName: string,
-    birthday: { birthday: string, age: number },
+    birthday: { birthday: string, age: number } | null,
     tgLink: string,
     vkLink: string,
     color: string,
@@ -71,7 +71,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
     const [openCell, setOpenCell] = useState<number>(-1);
     const [openStepCell, setOpenStepCell] = useState<number>(-1);
 
-    const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
+    const initialFilters = {minAge: "", maxAge: "", minRank: "", eventIdList: [],
         colorList: [], hasInterview: [], levelList: [], functionalList: [],
         testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
         orderByRankAsc: true, orderByRankDesc: false
@@ -270,7 +270,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
                         return [key, value[0]];
                     }
                     return [key, value];
-                }).filter(([, value]) => value !== undefined)
+                }).filter(([, value]) => value !== undefined && value !== '')
             );
             const result = await fetch(`http://195.133.197.53:8082/${type}_participant/${id}`, {
                 method: "POST",
@@ -279,9 +279,13 @@ export function CenterHeadParticipants(): React.JSX.Element {
                 credentials: "include",
             })
             console.log(newFilters)
-            const res = await result.json()
-            setTableData(res)
-            console.log(res)
+            if (result.ok) {
+                const res = await result.json()
+                setTableData(res)
+                console.log(res)
+            } else {
+                throw Error
+            }
         })()
     }, [isOpenNew, isEditorMode, refresh]);
 
@@ -523,12 +527,13 @@ export function CenterHeadParticipants(): React.JSX.Element {
                                     <InputMask
                                         name="birthday"
                                         mask="99.99.9999"
-                                        value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : formatDateTime(person.birthday.birthday).slice(0, 10)}
+                                        //@ts-ignore
+                                        value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : (person.birthday ? formatDateTime(person.birthday.birthday).slice(0, 10) : "")}
                                         onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
                                         className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]" )}
                                         placeholder={"ДД.ММ.ГГГГ"}
                                     />
-                                    {!isEditorMode && <p className={"h-14 flex flex-col justify-center"}>({person.birthday.age})</p>}
+                                    {!isEditorMode && <p className={"h-14 flex flex-col justify-center"}>({person.birthday?.age})</p>}
                                 </th>}
                                 {columns.tg && <th>
                                     <input name={"tgLink"} value={getEditedValue(person.id, "tgLink") ? getEditedValue(person.id, "tgLink") : person.tgLink} onChange={(e) => handleInputChange(person.id, "tgLink", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
