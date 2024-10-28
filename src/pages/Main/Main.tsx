@@ -2,6 +2,8 @@ import styles from './Main.module.css'
 import classNames from 'classnames'
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import visibility from "../../assets/visibility.svg"
+import visibility_off from "../../assets/visibility_off.svg"
 const cn = classNames;
 
 export function Main(): React.JSX.Element {
@@ -92,8 +94,8 @@ export function Main(): React.JSX.Element {
                                name="password" onChange={handleLoginDataChange}/>
                         <button type="button" onClick={() => setShowPassword(prev => !prev)}
                                 className="password-toggle-button absolute right-4 top-12">
-                            {showPassword ? <span className="material-symbols-outlined">visibility_off</span>
-                                : <span className="material-symbols-outlined">visibility</span>}
+                            {showPassword ? <span className="material-symbols-outlined"><img src={visibility_off}/></span>
+                                : <span className="material-symbols-outlined"><img src={visibility}/></span>}
                         </button>
                         <div className={cn(styles.main__errorContainer)}>
                             {error && <div className={cn("mt-2 ml-1")}>{error}</div>}
