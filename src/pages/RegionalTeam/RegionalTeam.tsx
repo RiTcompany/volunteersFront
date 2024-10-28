@@ -59,6 +59,7 @@ export function RegionalTeam(): React.JSX.Element {
     const { id } = useParams();
     const navigate = useNavigate()
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLength] = useState<number>(0)
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [isOpenDelete, setIsOpenDelete] = useState<{ id: number, open: boolean }>({id: -1, open: false})
@@ -102,7 +103,7 @@ export function RegionalTeam(): React.JSX.Element {
             if (result.ok) {
                 const res = await result.json()
                 setTableData(res)
-                console.log(res)
+                setTableDataLength(res.length)
             } else {
                 throw Error
             }
@@ -414,7 +415,7 @@ export function RegionalTeam(): React.JSX.Element {
                         </div>
                     </div>
                 }
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
                     <DragDropContext onDragEnd={handleDragEnd}>
                         <Droppable droppableId="droppable" direction="horizontal">
@@ -496,7 +497,7 @@ export function RegionalTeam(): React.JSX.Element {
                                                                     name="birthday"
                                                                     mask="99.99.9999"
                                                                     //@ts-ignore
-                                                                    value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : (person.birthdayDto ? formatDateTime(person.birthdayDto.birthday).slice(0, 10) : "")}
+                                                                    value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : (person.birthdayDto ? formatDateTime(person.birthdayDto.birthday)?.slice(0, 10) : "")}
                                                                     onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
                                                                     className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]")}
                                                                     placeholder={"ДД.ММ.ГГГГ"}

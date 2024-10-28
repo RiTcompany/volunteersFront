@@ -57,6 +57,7 @@ export function EventParticipants(): React.JSX.Element {
     const { id } = useParams();
     const navigate = useNavigate()
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLength] = useState<number>(0)
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [editedData, setEditedData] = useState<EditedDataType[]>([]);
@@ -176,6 +177,7 @@ export function EventParticipants(): React.JSX.Element {
             if (result.ok) {
                 const res = await result.json()
                 setTableData(res)
+                setTableDataLength(res.length)
                 console.log(res)
             } else {
                 throw Error
@@ -362,7 +364,7 @@ export function EventParticipants(): React.JSX.Element {
                         </div>
                     </div>
                 }
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
 
                     <DragDropContext onDragEnd={onDragEnd}>
@@ -412,7 +414,7 @@ export function EventParticipants(): React.JSX.Element {
                                                         {column.id === 'date' && columns.date && (
                                                             <p className="flex justify-center items-center h-14">
                                                                 {/*@ts-ignore*/}
-                                                                {(person.birthdayDto ? formatDateTime(person.birthdayDto.birthday).slice(0, 10) : "")} ({person.birthdayDto?.age})
+                                                                {(person.birthdayDto ? formatDateTime(person.birthdayDto.birthday)?.slice(0, 10) : "")} ({person.birthdayDto?.age})
                                                             </p>
                                                         )}
                                                         {column.id === 'tg' && columns.tg && (

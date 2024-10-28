@@ -59,6 +59,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
     const navigate = useNavigate()
     const {type, id} = useParams()
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLenght] = useState<number>(0)
     const [editedData, setEditedData] = useState<EditedDataType[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
@@ -284,6 +285,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
             if (result.ok) {
                 const res = await result.json()
                 setTableData(res)
+                setTableDataLenght(res.length)
                 console.log(res)
             } else {
                 throw Error
@@ -504,7 +506,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
                 {/*        </div>*/}
                 {/*    </div>*/}
                 {/*}*/}
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
                     <DragDropContext onDragEnd={handleDragEnd}>
                         <Droppable droppableId="droppable" direction="horizontal">

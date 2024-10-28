@@ -76,6 +76,7 @@ export function AllEvents(): React.JSX.Element {
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
     const [isOpenDelete, setIsOpenDelete] = useState<{ open: boolean, id: number }>({open: false, id: -1})
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLenght, setTableDataLength] = useState<number>(0)
     const [newEvent, setNewEvent] = useState<TableDataType>({
         setParticipantLink: "",
         answerableVolunteerId: 0,
@@ -171,7 +172,7 @@ export function AllEvents(): React.JSX.Element {
                 })
                 let result = await response.json()
                 setTableData(result)
-                console.log(result)
+                setTableDataLength(result.length)
             } catch (e) {
                 console.log(e)
             }
@@ -312,7 +313,7 @@ export function AllEvents(): React.JSX.Element {
                         </button>
                     </div>
                 }
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLenght}</p>
                 <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenNew ? '' : 'hidden'}`}
                      onClick={() => setIsOpenNew(false)}></div>
                 {isOpenNew &&
