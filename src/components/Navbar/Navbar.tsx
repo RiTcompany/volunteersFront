@@ -76,7 +76,9 @@ export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
     const token = localStorage.getItem("authToken")
 
     useEffect(() => {
-        if (!token) {
+        if (location === "/event_check" || location === "/return_equipment") {
+            return
+        } else if (!token) {
             navigate("/");
         } else {
             const parsedToken = parseJwt(token);
@@ -112,7 +114,7 @@ export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
     return (
         <header className={cn("w-full flex justify-center", styles.navbar__container)} style={user ? {backgroundColor: "#F7F8FC"} : {backgroundColor: "#0C428C"}}>
             {
-                location === "/" ?
+                location === "/" || location === "/event_check" || location === "/return_equipment" ?
                 <div className={cn("flex justify-between items-center", styles.navbar__content)}>
                     <img src={whiteLogo} alt="logo"/>
                     <div className={cn("hidden md:flex gap-10 relative")}>
