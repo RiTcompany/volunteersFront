@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import style from "./EventCheck.module.css"
 import classNames from "classnames";
+import {useParams} from "react-router-dom";
 const cn = classNames;
 
 interface DataType {
@@ -13,7 +14,10 @@ interface DataType {
 }
 
 export function EventCheck(): React.JSX.Element {
-    const [data, setData] = useState<DataType>({volunteerId: '', volunteerName: '', eventId: '', eventName: '', cloths: false, equipmentId: ''})
+    const {volunid, eventid} = useParams()
+    console.log(volunid, eventid)
+
+    const [data, setData] = useState<DataType>({volunteerId: Number(volunid), volunteerName: '', eventId: Number(eventid), eventName: '', cloths: false, equipmentId: ''})
 
     const handleChange = (e: any) => {
         if (e.target.name === 'cloths') {

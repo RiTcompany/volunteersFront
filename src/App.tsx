@@ -29,7 +29,7 @@ function App() {
     <>
         <Navbar onMenuClick={() => setIsMenuOpen(prev => !prev)}/>
         <div className={"flex h-full md:bg-[#F6F8FC]"}>
-            {location.pathname !== "/" && location.pathname !== "/event_check" && location.pathname !== "/return_equipment"
+            {location.pathname !== "/" && !/^\/volunteer\/\d+\/event\/\d+\/mark$/.test(location.pathname) && location.pathname !== "/return_equipment"
                 && <Sidebar isOpenMenu={isMenuOpen} onMenuClick={() => setIsMenuOpen(prev => !prev)}/>}
             <Routes>
                 <Route element={<Main/>} path={"/"}/>
@@ -46,11 +46,11 @@ function App() {
                 <Route element={<HeadquartersDocuments/>} path={"/documents/:type/:id"}/>
                 <Route element={<VolunteerProfile/>} path={"/volunteer/:id"}/>
                 <Route element={<EventParticipants/>} path={"/event_participants/:id"}/>
-                <Route element={<EventCheck/>} path={"/event_check"}/>
+                <Route element={<EventCheck/>} path={"/volunteer/:volunid/event/:eventid/mark"}/>
                 <Route element={<EquipmentReturn/>} path={"/return_equipment"}/>
             </Routes>
         </div>
-        {(location.pathname === "/" || location.pathname === "/event_check" || location.pathname === "/return_equipment") && <Footer/>}
+        {(location.pathname === "/" || /^\/volunteer\/\d+\/event\/\d+\/mark$/.test(location.pathname) || location.pathname === "/return_equipment") && <Footer/>}
     </>
   )
 }
