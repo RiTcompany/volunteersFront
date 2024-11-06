@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import style from "./EventCheck.module.css"
 import classNames from "classnames";
 import {useParams} from "react-router-dom";
 const cn = classNames;
 
 interface DataType {
+    adminId: number | '',
     volunteerId: number | '',
     volunteerName: string,
     eventId: number | '',
@@ -15,9 +16,30 @@ interface DataType {
 
 export function EventCheck(): React.JSX.Element {
     const {volunid, eventid} = useParams()
-    console.log(volunid, eventid)
 
-    const [data, setData] = useState<DataType>({volunteerId: Number(volunid), volunteerName: '', eventId: Number(eventid), eventName: '', cloths: false, equipmentId: ''})
+    const [data, setData] = useState<DataType>({adminId: '', volunteerId: Number(volunid), volunteerName: '', eventId: Number(eventid), eventName: '', cloths: false, equipmentId: ''})
+
+    const [error, setError] = useState<string>('')
+
+    useEffect(() => {
+        (async function() {
+            try {
+                const response = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}`, {
+                    method: "GET",
+                    credentials: "include"
+                })
+                let result = await response.json()
+
+                setData((prevState) => ({
+                    ...prevState,
+                    volunteerName: result.volunteerName,
+                    eventName: result.eventName
+                }))
+            } catch (e) {
+                console.log(e)
+            }
+        })()
+    }, []);
 
     const handleChange = (e: any) => {
         if (e.target.name === 'cloths') {
@@ -27,19 +49,52 @@ export function EventCheck(): React.JSX.Element {
             }))
         } else
             setData({
-            ...data,
-            [e.target.name]: e.target.value
+                ...data,
+                [e.target.name]: e.target.value
             })
     }
 
     const handleSubmit = async () => {
         try {
-            const res = await fetch('', {
-                method: 'POST',
-                body: JSON.stringify(data)
-            })
+            if (data.cloths && data.equipmentId) {
+                setError('')
+                const res = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}/mark`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        adminId: data.adminId,
+                        equipmentId: data.equipmentId
+                    })
+                })
+                console.log(await res.json())
+                if (res.ok) {
+                    setError('Данные отправлены')
+                } else {
+                    setError('Ошибка отправки данных')
+                }
+            } else if (!data.cloths && !data.equipmentId) {
+                setError('')
+                const res = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}/mark`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        adminId: data.adminId,
+                    })
+                })
+                console.log(await res.json())
+                if (res.ok) {
+                    setError('Данные отправлены')
+                } else {
+                    setError('Ошибка отправки данных')
+                }
+            } else {
+                setError('Некорректное заполение полей')
+            }
 
-            console.log(await res.json())
         } catch (error) {
             console.log(error)
         }
@@ -51,6 +106,9 @@ export function EventCheck(): React.JSX.Element {
             <div className={"flex flex-col justify-center gap-5 md:w-[500px] p-5"}>
                 <p className={"text-center text-[20px]"}>Отметка участника на мероприятии</p>
                 <div className={"flex flex-col gap-3 overflow-y-auto"}>
+                    <label className={"text-[#5E5E5E]"}>Введите ID админа</label>
+                    <input onChange={(e) => handleChange(e)} name={'adminId'} type={"number"} value={data.adminId} placeholder={"ID админа"} className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}/>
+
                     <label className={"text-[#5E5E5E]"}>Введите ID волонтера</label>
                     <input onChange={(e) => handleChange(e)} name={'volunteerId'} type={"number"} value={data.volunteerId} placeholder={"ID волонтера"} className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}/>
 
@@ -70,6 +128,11 @@ export function EventCheck(): React.JSX.Element {
 
                     <label className={"text-[#5E5E5E]"}>Укажите ID выданного инвентаря</label>
                     <input onChange={(e) => handleChange(e)} name={'equipmentId'} type={"number"} value={data.equipmentId} placeholder={"ID инвентаря"} className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}/>
+
+                    <div className={"h-5"}>
+                        <p>{error}</p>
+                    </div>
+
                     <button onClick={handleSubmit} className={"w-2/4 p-2 text-[#5E5E5E] bg-[#EDEDF1] rounded-lg self-center mt-5"}>Сохранить</button>
                 </div>
             </div>
