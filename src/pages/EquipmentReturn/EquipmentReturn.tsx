@@ -20,7 +20,7 @@ export function EquipmentReturn(): React.JSX.Element {
     }
 
     const handleSubmit = async () => {
-        if (!data.adminId || !data.volunteerId || !data.equipmentId || !data.volunteerId) {
+        if (!data.adminId || !data.volunteerId || !data.equipmentId || !data.eventId) {
             setError('Заполните все данные')
             return
         } else

@@ -55,49 +55,53 @@ export function EventCheck(): React.JSX.Element {
     }
 
     const handleSubmit = async () => {
-        try {
-            if (data.cloths && data.equipmentId) {
-                setError('')
-                const res = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}/mark`, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'PATCH',
-                    body: JSON.stringify({
-                        adminId: data.adminId,
-                        equipmentId: data.equipmentId
+        if (!data.adminId || !data.volunteerId || !data.eventName || !data.volunteerName) {
+            setError('Некорректное заполение полей')
+            return
+        } else
+            try {
+                if (data.cloths && data.equipmentId) {
+                    setError('')
+                    const res = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}/mark`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            adminId: data.adminId,
+                            equipmentId: data.equipmentId
+                        })
                     })
-                })
-                console.log(await res.json())
-                if (res.ok) {
-                    setError('Данные отправлены')
-                } else {
-                    setError('Ошибка отправки данных')
-                }
-            } else if (!data.cloths && !data.equipmentId) {
-                setError('')
-                const res = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}/mark`, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'PATCH',
-                    body: JSON.stringify({
-                        adminId: data.adminId,
+                    console.log(await res.json())
+                    if (res.ok) {
+                        setError('Данные отправлены')
+                    } else {
+                        setError('Ошибка отправки данных')
+                    }
+                } else if (!data.cloths && !data.equipmentId) {
+                    setError('')
+                    const res = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}/mark`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            adminId: data.adminId,
+                        })
                     })
-                })
-                console.log(await res.json())
-                if (res.ok) {
-                    setError('Данные отправлены')
+                    console.log(await res.json())
+                    if (res.ok) {
+                        setError('Данные отправлены')
+                    } else {
+                        setError('Ошибка отправки данных')
+                    }
                 } else {
-                    setError('Ошибка отправки данных')
+                    setError('Некорректное заполение полей')
                 }
-            } else {
-                setError('Некорректное заполение полей')
-            }
 
-        } catch (error) {
-            console.log(error)
-        }
+            } catch (error) {
+                console.log(error)
+            }
     }
 
 
