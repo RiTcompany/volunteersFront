@@ -234,6 +234,7 @@ export function RegionalTeam(): React.JSX.Element {
             console.log('Изменения сохранены:', result);
             setEditedData([]);
             setIsEditorMode(false);
+            setOpenCell(-1)
         } catch (error) {
             console.error('Ошибка при сохранении изменений:', error);
         }
@@ -333,7 +334,10 @@ export function RegionalTeam(): React.JSX.Element {
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
-                            <img src={cancel} alt={"cancel"} onClick={() => setIsEditorMode(false)}/>
+                            <img src={cancel} alt={"cancel"} onClick={() => {
+                                setIsEditorMode(false);
+                                setOpenCell(-1)
+                            }}/>
                             : <img src={lightHighlight} alt={"highlight"} onClick={() => setIsEditorMode(true)}/>
                         }
 
@@ -359,7 +363,8 @@ export function RegionalTeam(): React.JSX.Element {
                         <div className={"flex gap-5"}>
                             <button onClick={() => {
                                 setIsEditorMode(false);
-                                setEditedData([])
+                                setEditedData([]);
+                                setOpenCell(-1)
                             }} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__highlightButton)}>
                                 Отменить
                             </button>

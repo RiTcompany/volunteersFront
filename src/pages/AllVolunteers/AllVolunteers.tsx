@@ -461,6 +461,10 @@ export function AllVolunteers(): React.JSX.Element {
             console.log('Изменения сохранены:', result);
             setEditedData([]);
             setIsEditorMode(false);
+            setOpenCell(-1)
+            setOpenStepCell(-1)
+            setOpenHeadquartersCell(-1)
+            setOpenCenterCell(-1)
         } catch (error) {
             console.error('Ошибка при сохранении изменений:', error);
         }
@@ -511,7 +515,13 @@ export function AllVolunteers(): React.JSX.Element {
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
-                            <img src={cancel} alt={"cancel"} onClick={() => setIsEditorMode(false)}/>
+                            <img src={cancel} alt={"cancel"} onClick={() => {
+                                setIsEditorMode(false);
+                                setOpenCell(-1)
+                                setOpenStepCell(-1)
+                                setOpenHeadquartersCell(-1)
+                                setOpenCenterCell(-1)
+                            }}/>
                             : <img src={lightHighlight} alt={"highlight"} onClick={() => setIsEditorMode(true)}/>
                         }
 
@@ -535,7 +545,9 @@ export function AllVolunteers(): React.JSX.Element {
                     }
                     {isEditorMode &&
                         <div className={"flex gap-5"}>
-                            <button onClick={() => {setIsEditorMode(false); setEditedData([])}} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__highlightButton)}>
+                            <button onClick={() => {setIsEditorMode(false); setEditedData([]);
+                                setOpenCell(-1); setOpenStepCell(-1); setOpenHeadquartersCell(-1);
+                                setOpenCenterCell(-1)}} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__highlightButton)}>
                                 Отменить
                             </button>
                             <button onClick={() => handleSave()} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#31AA27] text-white", styles.regionalTeam__highlightButton)}>
