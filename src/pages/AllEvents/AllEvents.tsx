@@ -26,6 +26,7 @@ const initialColumns = [
     { id: 'teamLeader', title: 'Тим-лидер', change: false  },
     { id: 'participants', title: 'Данные об участниках', change: false  },
     { id: 'registrationLink', title: 'Регистрация', change: false  },
+    { id: 'availableForRegistration', title: '', change: false  },
     { id: 'delete', title: '', change: false }
 ];
 
@@ -37,6 +38,7 @@ const columnsListFilter = [
     { key: 'teamLeader', label: 'Тим-лидер' },
     { key: 'participants', label: 'Данные об участниках' },
     { key: 'registrationLink', label: 'Регистрация'},
+    { key: 'availableForRegistration', label: 'Разрешение на рег.'},
     { key: 'delete', label: 'Удаление'}
 ];
 
@@ -49,6 +51,7 @@ interface ColumnsType {
     participants: boolean,
     registrationLink: boolean,
     teamLeader: boolean,
+    availableForRegistration: boolean,
     delete: boolean,
     [key: string]: boolean
 }
@@ -66,6 +69,7 @@ interface TableDataType {
     settingParticipantLink: string,
     answerableVolunteerId: number,
     registrationLink: string,
+    availableForRegistration?: boolean,
     [key: string]: any;
 }
 
@@ -87,8 +91,9 @@ export function AllEvents(): React.JSX.Element {
         settingParticipantLink: "",
         name: "", startTime: "", endTime: "", location: "", teamLeader: ""})
     const [editedEvents, setEditedEvents] = useState<TableDataType[]>([]);
+    const [refresh, setRefresh] = useState<boolean>(true)
 
-    const [filterColumns, setFilterColumns] = useState<ColumnsType>({all: true, name: true, startTime: true, endTime: true, location: true, participants: true, registrationLink: true, teamLeader: true, delete: true})
+    const [filterColumns, setFilterColumns] = useState<ColumnsType>({all: true, name: true, startTime: true, endTime: true, location: true, participants: true, registrationLink: true, teamLeader: true, availableForRegistration: true, delete: true})
     const [columns, setColumns] = useState(initialColumns);
 
     useEffect(() => {
@@ -105,7 +110,7 @@ export function AllEvents(): React.JSX.Element {
         setFilterColumns(prevState => {
             const newAll = !prevState.all;
             const newColumns = {
-                all: newAll, name: newAll, startTime: newAll, endTime: newAll, location: newAll, participants: newAll, registrationLink: newAll, teamLeader: newAll, delete: newAll
+                all: newAll, name: newAll, startTime: newAll, endTime: newAll, location: newAll, participants: newAll, registrationLink: newAll, teamLeader: newAll, availableForRegistration: newAll, delete: newAll
             };
 
             return newColumns;
@@ -140,7 +145,6 @@ export function AllEvents(): React.JSX.Element {
     const handleSave = async () => {
         const formattedEvents = editedEvents.map(event => ({...event, startTime: convertToISO(event.startTime), endTime: convertToISO(event.endTime) }));
         try {
-            console.log(editedEvents)
             const response = await fetch('http://195.133.197.53:8082/event', {
                 method: 'PATCH',
                 headers: {
@@ -171,17 +175,14 @@ export function AllEvents(): React.JSX.Element {
                     credentials: "include"
                 })
                 let result = await response.json()
+                console.log(result)
                 setTableData(result)
                 setTableDataLength(result.length)
             } catch (e) {
                 console.log(e)
             }
         })()
-    }, [isOpenNew, isOpenDelete, isEditorMode]);
-
-    useEffect(() => {
-        console.log(newEvent)
-    })
+    }, [isOpenNew, isOpenDelete, isEditorMode, refresh]);
 
     const handleChangeNewEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -241,6 +242,25 @@ export function AllEvents(): React.JSX.Element {
             console.log('Success:', result);
         } catch (error) {
             console.error('Error:', error);
+        }
+    }
+
+    const handleRegistrationChange = async (id: number, status: string) => {
+        console.log(status)
+        try {
+            const response = await fetch(`http://195.133.197.53:8082/event/${id}?status=${status === "allowed"}`, {
+                method: "PATCH",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+
+            console.log(response.json())
+
+            setRefresh((prev) => !prev)
+        } catch (e) {
+            console.log(e)
         }
     }
 
@@ -470,7 +490,6 @@ export function AllEvents(): React.JSX.Element {
                                         <thead>
                                         <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]")}>
                                             {columns.filter(column => filterColumns[column.id as keyof ColumnsType] && column.id !== 'delete').map((column, index) => {
-                                                console.log(columns, filterColumns)
                                                 if (!filterColumns[column.id as keyof ColumnsType]) return null;
                                                 return (
                                                     <Draggable key={column.id} draggableId={column.id} index={index}>
@@ -487,6 +506,7 @@ export function AllEvents(): React.JSX.Element {
                                                                     [styles.allHeadquarters__tablePhone + " min-w-[200px]"]: column.id === 'participants',
                                                                     [styles.allHeadquarters__tablePhone + " min-w-[150px]"]: column.id === 'registrationLink',
                                                                     [styles.allHeadquarters__tablePhone + " min-w-[200px]"]: column.id === 'teamLeader',
+                                                                    [styles.allHeadquarters__tablePhone + " min-w-[120px]"]: column.id === 'availableForRegistration',
                                                                     ['min-w-8']: column.id === 'delete',
                                                                     ["hidden"]: column.id === 'delete' && isEditorMode
                                                                 })}
@@ -505,7 +525,7 @@ export function AllEvents(): React.JSX.Element {
                                         {tableData && tableData.map((hq, index) => (
                                             <tr key={index} className={cn("h-[50px] border-b-[1px]")}>
                                                 {columns.filter(column => filterColumns[column.id] && column.id !== 'delete').map((column) => (
-                                                    <td key={column.id}>
+                                                    <td key={column.id} className={"text-center"}>
                                                         {column.id === "endTime" || column.id === "startTime" ? (
                                                             <InputMask
                                                                 name={column.id}
@@ -517,6 +537,20 @@ export function AllEvents(): React.JSX.Element {
                                                                 disabled={!isEditorMode}/>
                                                         ) : column.id === "participants" ? (
                                                             <Link to={`/event_participants/${hq.id}`}>Данные об участниках</Link>
+                                                        ) : column.id === 'availableForRegistration' ? (
+                                                            <div className={cn(
+                                                                "border-0 h-full bg-white w-full px-1 text-center text-black",
+                                                                isEditorMode && "text-gray-300"
+                                                            )}>
+                                                                <select
+                                                                    value={hq[column.id] ? 'allowed' : 'forbidden'}
+                                                                    onChange={(e) => hq.id && handleRegistrationChange(hq.id, e.target.value)}
+                                                                    className="w-full h-full border bg-white text-black text-center max-w-[230px]"
+                                                                >
+                                                                    <option value="allowed">Регистрация разрешена</option>
+                                                                    <option value="forbidden">Регистрация запрещена</option>
+                                                                </select>
+                                                            </div>
                                                         ) : column.id !== 'delete' && column.change ? (
                                                             <input
                                                                 value={(hq.id && column.id && getEditedValue(hq.id, column.id)) ?? (column.id in hq ? hq[column.id as keyof typeof hq] : null)}

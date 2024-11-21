@@ -369,7 +369,7 @@ export function AllCenters(): React.JSX.Element {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {tableData && tableData.map((hq, index) => (
+                                        {tableData[0] && tableData.map((hq, index) => (
                                             <tr key={index} className={cn("h-[50px] border-b-[1px]")}>
                                                 {columns.filter(column => filterColumns[column.id]).filter(column => column.id !== 'delete').map((column) => (
                                                     <td key={column.id}>

@@ -99,11 +99,11 @@ export function AllVolunteers(): React.JSX.Element {
     };
 
     const areAllHeadsSelected = (headquartersIdList: number[], headquarters: {id: number, name: string}[]) => {
-        return headquarters.every((hq) => headquartersIdList.includes(hq.id));
+        return headquarters[0] && headquarters.every((hq) => headquartersIdList.includes(hq.id));
     };
 
     const areAllCentersSelected = (centerIdList: number[], centers: {id: number, name: string}[]) => {
-        return centers.every((cen) => centerIdList.includes(cen.id));
+        return centers[0] && centers.every((cen) => centerIdList.includes(cen.id));
     };
 
     const isAllStepsSelected = (levelList: string[]) => {
@@ -811,7 +811,7 @@ export function AllVolunteers(): React.JSX.Element {
                                                                     }
                                                                     {openHeadquartersCell === person.id && (
                                                                         <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                                            {headquarters.map(headquarter => (
+                                                                            {headquarters[0] && headquarters?.map(headquarter => (
                                                                                 <div
                                                                                     key={headquarter.id}
                                                                                     className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
@@ -841,7 +841,7 @@ export function AllVolunteers(): React.JSX.Element {
                                                                     }
                                                                     {openCenterCell === person.id && (
                                                                         <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                                            {centers.map(center => (
+                                                                            {centers[0] && centers?.map(center => (
                                                                                 <div
                                                                                     key={center.id}
                                                                                     className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
@@ -1141,7 +1141,7 @@ export function AllVolunteers(): React.JSX.Element {
                                 />
                                 <p>Все</p>
                             </div>
-                            {headquarters.map((hq) => (
+                            {headquarters[0] && headquarters.map((hq) => (
                                 <div key={hq.id} className="flex gap-2 items-center">
                                     <input
                                         type="checkbox"
@@ -1166,7 +1166,7 @@ export function AllVolunteers(): React.JSX.Element {
                                 />
                                 <p>Все</p>
                             </div>
-                            {centers.map((cen) => (
+                            {centers[0] && centers.map((cen) => (
                                 <div key={cen.id} className="flex gap-2 items-center">
                                     <input
                                         type="checkbox"

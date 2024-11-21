@@ -371,7 +371,7 @@ export function AllHeadquarters(): React.JSX.Element {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {tableData && tableData.map((hq: TableDataType) => (
+                                        {tableData[0] && tableData.map((hq: TableDataType) => (
                                             <tr key={hq.id} className={cn("h-[50px] border-b-[1px]")}>
                                                 {columns.filter(column => filterColumns[column.id]).filter(column => column.id !== 'delete').map((column) => (
                                                     <td key={column.id}>
