@@ -26,7 +26,7 @@ interface TableDataType {
     birthdayDto: {
         birthday: string,
         age: number
-    },
+    } | null,
     tgLink: string,
     functional: string,
     testing: boolean,
@@ -47,7 +47,7 @@ interface ColumnsType {
     all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, functional: boolean, test: boolean, comment: boolean, rate: boolean, clothes: boolean, [key: string]: boolean;
 }
 
-const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
+const initialFilters = {minAge: "", maxAge: "", minRank: "", eventIdList: [],
     colorList: [], hasInterview: [], levelList: [], functionalList: [],
     testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
     orderByRankAsc: true, orderByRankDesc: false
@@ -57,6 +57,7 @@ export function EventParticipants(): React.JSX.Element {
     const { id } = useParams();
     const navigate = useNavigate()
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLength] = useState<number>(0)
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [editedData, setEditedData] = useState<EditedDataType[]>([]);
@@ -163,7 +164,7 @@ export function EventParticipants(): React.JSX.Element {
                         return [key, value[0]];
                     }
                     return [key, value];
-                }).filter(([, value]) => value !== undefined)
+                }).filter(([, value]) => value !== undefined && value !== '')
             );
             console.log(id)
             const result = await fetch(`https://rit-test.ru/api/v1/event_participant/${id}`, {
@@ -173,9 +174,14 @@ export function EventParticipants(): React.JSX.Element {
                 credentials: "include",
             })
             console.log(newFilters)
-            const res = await result.json()
-            setTableData(res)
-            console.log(res)
+            if (result.ok) {
+                const res = await result.json()
+                setTableData(res)
+                setTableDataLength(res.length)
+                console.log(res)
+            } else {
+                throw Error
+            }
         })()
     }, [isOpenNew, isEditorMode, refresh, id]);
 
@@ -358,7 +364,7 @@ export function EventParticipants(): React.JSX.Element {
                         </div>
                     </div>
                 }
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
 
                     <DragDropContext onDragEnd={onDragEnd}>
@@ -386,7 +392,7 @@ export function EventParticipants(): React.JSX.Element {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {tableData.map((person) => (
+                                        {tableData && tableData.map((person) => (
                                             <tr key={person.id}>
                                                 {columnOrder.map((column) => (
                                                     <td key={column.id} className={columns[column.id] ? "" : "hidden"}>
@@ -407,7 +413,8 @@ export function EventParticipants(): React.JSX.Element {
                                                         )}
                                                         {column.id === 'date' && columns.date && (
                                                             <p className="flex justify-center items-center h-14">
-                                                                {formatDateTime(person.birthdayDto.birthday).slice(0, 10)} ({person.birthdayDto.age})
+                                                                {/*@ts-ignore*/}
+                                                                {(person.birthdayDto ? formatDateTime(person.birthdayDto.birthday)?.slice(0, 10) : "")} ({person.birthdayDto?.age})
                                                             </p>
                                                         )}
                                                         {column.id === 'tg' && columns.tg && (

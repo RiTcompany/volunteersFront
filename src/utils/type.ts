@@ -1,7 +1,7 @@
 export type FiltersType = {
-    minAge: number;
-    maxAge: number;
-    minRank: number;
+    minAge: number | string;
+    maxAge: number | string;
+    minRank: number | string;
     eventIdList: number[];
     colorList: string[];
     hasInterview: boolean[];

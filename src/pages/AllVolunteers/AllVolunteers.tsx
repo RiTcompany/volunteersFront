@@ -25,7 +25,7 @@ interface TableDataType {
     id: number,
     volunteerId: number,
     fullName: string,
-    birthdayDto: { birthday: string, age: number },
+    birthdayDto: { birthday: string, age: number } | null,
     tgLink: string,
     vk: string,
     color: string,
@@ -59,6 +59,7 @@ interface ColumnsType {
 export function AllVolunteers(): React.JSX.Element {
     const navigate = useNavigate()
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLength] = useState<number>(0)
     const [editedData, setEditedData] = useState<EditedDataType[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
@@ -76,11 +77,15 @@ export function AllVolunteers(): React.JSX.Element {
 
     const [isOpenDelete, setIsOpenDelete] = useState<{ id: number, open: boolean }>({id: -1, open: false})
 
-    const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
+    const initialFilters = {minAge: "", maxAge: "", minRank: "", eventIdList: [],
         colorList: [], hasInterview: [], levelList: [], functionalList: [],
         testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
         orderByRankAsc: true, orderByRankDesc: false
     }
+
+    useEffect(() => {
+        console.log(tableData)
+    })
 
     const [filters, setFilters] = useState<FiltersType>(initialFilters)
 
@@ -94,11 +99,11 @@ export function AllVolunteers(): React.JSX.Element {
     };
 
     const areAllHeadsSelected = (headquartersIdList: number[], headquarters: {id: number, name: string}[]) => {
-        return headquarters.every((hq) => headquartersIdList.includes(hq.id));
+        return headquarters[0] && headquarters.every((hq) => headquartersIdList.includes(hq.id));
     };
 
     const areAllCentersSelected = (centerIdList: number[], centers: {id: number, name: string}[]) => {
-        return centers.every((cen) => centerIdList.includes(cen.id));
+        return centers[0] && centers.every((cen) => centerIdList.includes(cen.id));
     };
 
     const isAllStepsSelected = (levelList: string[]) => {
@@ -253,7 +258,7 @@ export function AllVolunteers(): React.JSX.Element {
                         return [key, value[0]];
                     }
                     return [key, value];
-                }).filter(([, value]) => value !== undefined)
+                }).filter(([, value]) => value !== undefined && value !== '')
             );
             const result = await fetch("https://rit-test.ru/api/v1/volunteer", {
                 method: "POST",
@@ -262,9 +267,13 @@ export function AllVolunteers(): React.JSX.Element {
                 credentials: "include",
             })
             console.log(newFilters)
-            const res = await result.json()
-            setTableData(res)
-            console.log(res)
+            if (result.ok) {
+                const res = await result.json()
+                setTableData(res)
+                setTableDataLength(res.length)
+            } else {
+                throw Error
+            }
         })()
     }, [isOpenNew, isEditorMode, refresh]);
 
@@ -452,6 +461,10 @@ export function AllVolunteers(): React.JSX.Element {
             console.log('Изменения сохранены:', result);
             setEditedData([]);
             setIsEditorMode(false);
+            setOpenCell(-1)
+            setOpenStepCell(-1)
+            setOpenHeadquartersCell(-1)
+            setOpenCenterCell(-1)
         } catch (error) {
             console.error('Ошибка при сохранении изменений:', error);
         }
@@ -502,7 +515,13 @@ export function AllVolunteers(): React.JSX.Element {
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
-                            <img src={cancel} alt={"cancel"} onClick={() => setIsEditorMode(false)}/>
+                            <img src={cancel} alt={"cancel"} onClick={() => {
+                                setIsEditorMode(false);
+                                setOpenCell(-1)
+                                setOpenStepCell(-1)
+                                setOpenHeadquartersCell(-1)
+                                setOpenCenterCell(-1)
+                            }}/>
                             : <img src={lightHighlight} alt={"highlight"} onClick={() => setIsEditorMode(true)}/>
                         }
 
@@ -526,7 +545,9 @@ export function AllVolunteers(): React.JSX.Element {
                     }
                     {isEditorMode &&
                         <div className={"flex gap-5"}>
-                            <button onClick={() => {setIsEditorMode(false); setEditedData([])}} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__highlightButton)}>
+                            <button onClick={() => {setIsEditorMode(false); setEditedData([]);
+                                setOpenCell(-1); setOpenStepCell(-1); setOpenHeadquartersCell(-1);
+                                setOpenCenterCell(-1)}} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__highlightButton)}>
                                 Отменить
                             </button>
                             <button onClick={() => handleSave()} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#31AA27] text-white", styles.regionalTeam__highlightButton)}>
@@ -570,7 +591,7 @@ export function AllVolunteers(): React.JSX.Element {
                 {/*        </div>*/}
                 {/*    </div>*/}
                 {/*}*/}
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
                     <DragDropContext onDragEnd={handleDragEnd}>
                         <Droppable droppableId="droppable" direction="horizontal">
@@ -650,11 +671,12 @@ export function AllVolunteers(): React.JSX.Element {
                                                                 <InputMask
                                                                     name="birthday"
                                                                     mask="99.99.9999"
-                                                                    value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : formatDateTime(person.birthdayDto.birthday).slice(0, 10)}
+                                                                    //@ts-ignore
+                                                                    value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : (person.birthdayDto ? formatDateTime(person.birthdayDto.birthday)?.slice(0, 10) : "")}
                                                                     onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
                                                                     className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]")}
                                                                     placeholder={"ДД.ММ.ГГГГ"}
-                                                                /> {!isEditorMode && <p className={"h-14 flex flex-col justify-center mr-3"}>({person.birthdayDto.age})</p>}
+                                                                /> {!isEditorMode && <p className={"h-14 flex flex-col justify-center mr-3"}>({person.birthdayDto?.age})</p>}
                                                             </div>
                                                         )}
                                                         {columnKey === 'tg' && (
@@ -789,7 +811,7 @@ export function AllVolunteers(): React.JSX.Element {
                                                                     }
                                                                     {openHeadquartersCell === person.id && (
                                                                         <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                                            {headquarters.map(headquarter => (
+                                                                            {headquarters[0] && headquarters?.map(headquarter => (
                                                                                 <div
                                                                                     key={headquarter.id}
                                                                                     className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
@@ -819,7 +841,7 @@ export function AllVolunteers(): React.JSX.Element {
                                                                     }
                                                                     {openCenterCell === person.id && (
                                                                         <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                                            {centers.map(center => (
+                                                                            {centers[0] && centers?.map(center => (
                                                                                 <div
                                                                                     key={center.id}
                                                                                     className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
@@ -1119,7 +1141,7 @@ export function AllVolunteers(): React.JSX.Element {
                                 />
                                 <p>Все</p>
                             </div>
-                            {headquarters.map((hq) => (
+                            {headquarters[0] && headquarters.map((hq) => (
                                 <div key={hq.id} className="flex gap-2 items-center">
                                     <input
                                         type="checkbox"
@@ -1144,7 +1166,7 @@ export function AllVolunteers(): React.JSX.Element {
                                 />
                                 <p>Все</p>
                             </div>
-                            {centers.map((cen) => (
+                            {centers[0] && centers.map((cen) => (
                                 <div key={cen.id} className="flex gap-2 items-center">
                                     <input
                                         type="checkbox"

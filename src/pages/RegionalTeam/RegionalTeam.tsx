@@ -28,7 +28,7 @@ interface TableDataType {
     birthdayDto: {
         birthday: string,
         age: number
-    },
+    } | null,
     tgLink: string,
     vkLink: string,
     color: string,
@@ -49,7 +49,7 @@ interface ColumnsType {
     all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, events: boolean, button: boolean, delete: boolean, [key: string]: boolean;
 }
 
-const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
+const initialFilters = {minAge: "", maxAge: "", minRank: "", eventIdList: [],
     colorList: [], hasInterview: [], levelList: [], functionalList: [],
     testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
     orderByRankAsc: true, orderByRankDesc: false
@@ -59,6 +59,7 @@ export function RegionalTeam(): React.JSX.Element {
     const { id } = useParams();
     const navigate = useNavigate()
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLength] = useState<number>(0)
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
     const [isOpenDelete, setIsOpenDelete] = useState<{ id: number, open: boolean }>({id: -1, open: false})
@@ -89,7 +90,7 @@ export function RegionalTeam(): React.JSX.Element {
                         return [key, value[0]];
                     }
                     return [key, value];
-                }).filter(([, value]) => value !== undefined)
+                }).filter(([, value]) => value !== undefined && value !== '')
             );
             console.log(id)
             const result = await fetch(`https://rit-test.ru/api/v1/district_team_participant/${id}`, {
@@ -99,9 +100,13 @@ export function RegionalTeam(): React.JSX.Element {
                 credentials: "include",
             })
             console.log(newFilters)
-            const res = await result.json()
-            setTableData(res)
-            console.log(res)
+            if (result.ok) {
+                const res = await result.json()
+                setTableData(res)
+                setTableDataLength(res.length)
+            } else {
+                throw Error
+            }
         })()
     }, [isOpenNew, isEditorMode, isOpenDelete, refresh]);
 
@@ -229,6 +234,7 @@ export function RegionalTeam(): React.JSX.Element {
             console.log('Изменения сохранены:', result);
             setEditedData([]);
             setIsEditorMode(false);
+            setOpenCell(-1)
         } catch (error) {
             console.error('Ошибка при сохранении изменений:', error);
         }
@@ -328,7 +334,10 @@ export function RegionalTeam(): React.JSX.Element {
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
-                            <img src={cancel} alt={"cancel"} onClick={() => setIsEditorMode(false)}/>
+                            <img src={cancel} alt={"cancel"} onClick={() => {
+                                setIsEditorMode(false);
+                                setOpenCell(-1)
+                            }}/>
                             : <img src={lightHighlight} alt={"highlight"} onClick={() => setIsEditorMode(true)}/>
                         }
 
@@ -354,7 +363,8 @@ export function RegionalTeam(): React.JSX.Element {
                         <div className={"flex gap-5"}>
                             <button onClick={() => {
                                 setIsEditorMode(false);
-                                setEditedData([])
+                                setEditedData([]);
+                                setOpenCell(-1)
                             }} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__highlightButton)}>
                                 Отменить
                             </button>
@@ -410,7 +420,7 @@ export function RegionalTeam(): React.JSX.Element {
                         </div>
                     </div>
                 }
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
                     <DragDropContext onDragEnd={handleDragEnd}>
                         <Droppable droppableId="droppable" direction="horizontal">
@@ -491,11 +501,12 @@ export function RegionalTeam(): React.JSX.Element {
                                                                 <InputMask
                                                                     name="birthday"
                                                                     mask="99.99.9999"
-                                                                    value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : formatDateTime(person.birthdayDto.birthday).slice(0, 10)}
+                                                                    //@ts-ignore
+                                                                    value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : (person.birthdayDto ? formatDateTime(person.birthdayDto.birthday)?.slice(0, 10) : "")}
                                                                     onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
                                                                     className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]")}
                                                                     placeholder={"ДД.ММ.ГГГГ"}
-                                                                /> {!isEditorMode && <p className={"h-14 flex flex-col justify-center mr-3"}>({person.birthdayDto.age})</p>}
+                                                                /> {!isEditorMode && <p className={"h-14 flex flex-col justify-center mr-3"}>({person.birthdayDto?.age})</p>}
                                                             </div>
                                                         )}
                                                         {columnKey === 'tg' && (

@@ -18,6 +18,8 @@ import {VolunteerProfile} from "./pages/VolunteerProfile/VolunteerProfile.tsx";
 import {EventParticipants} from "./pages/EventParticipants/EventParticipants.tsx";
 import {CenterHeadParticipants} from "./pages/CenterHeadParticipants/CenterHeadParticipants.tsx";
 import {HeadCentEquipment} from "./pages/AllEquipment/HeadCentEquipment.tsx";
+import {EventCheck} from "./pages/EventCheck/EventCheck.tsx";
+import {EquipmentReturn} from "./pages/EquipmentReturn/EquipmentReturn.tsx";
 
 function App() {
   const location = useLocation()
@@ -27,7 +29,8 @@ function App() {
     <>
         <Navbar onMenuClick={() => setIsMenuOpen(prev => !prev)}/>
         <div className={"flex h-full md:bg-[#F6F8FC]"}>
-            {location.pathname !== "/" && <Sidebar isOpenMenu={isMenuOpen} onMenuClick={() => setIsMenuOpen(prev => !prev)}/>}
+            {location.pathname !== "/" && !/^\/volunteer\/\d+\/event\/\d+\/mark$/.test(location.pathname) && location.pathname !== "/return_equipment"
+                && <Sidebar isOpenMenu={isMenuOpen} onMenuClick={() => setIsMenuOpen(prev => !prev)}/>}
             <Routes>
                 <Route element={<Main/>} path={"/"}/>
                 <Route element={<Profile/>} path={"/profile"}/>
@@ -43,9 +46,11 @@ function App() {
                 <Route element={<HeadquartersDocuments/>} path={"/documents/:type/:id"}/>
                 <Route element={<VolunteerProfile/>} path={"/volunteer/:id"}/>
                 <Route element={<EventParticipants/>} path={"/event_participants/:id"}/>
+                <Route element={<EventCheck/>} path={"/volunteer/:volunid/event/:eventid/mark"}/>
+                <Route element={<EquipmentReturn/>} path={"/return_equipment"}/>
             </Routes>
         </div>
-        {location.pathname === "/" && <Footer/>}
+        {(location.pathname === "/" || /^\/volunteer\/\d+\/event\/\d+\/mark$/.test(location.pathname) || location.pathname === "/return_equipment") && <Footer/>}
     </>
   )
 }

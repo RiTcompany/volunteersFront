@@ -52,6 +52,7 @@ export function HeadCentEquipment(): React.JSX.Element {
     const [isOpenNew, setIsOpenNew] = useState<boolean>(false)
     const [isOpenDelete, setIsOpenDelete] = useState<{ open: boolean, id: number }>({open: false, id: -1})
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLength] = useState<number>(0)
     const [newEquipment, setNewEquipment] = useState<TableDataType>({equipmentId: 0, type: "", year: "", currentOwner: ""})
     const [editedEvents, setEditedEvents] = useState<TableDataType[]>([]);
     const [refresh, setRefresh] = useState<boolean>(true)
@@ -191,6 +192,7 @@ export function HeadCentEquipment(): React.JSX.Element {
                 })
                 let result = await response.json()
                 setTableData(result)
+                setTableDataLength(result.length)
                 console.log(result)
             } catch (e) {
                 console.log(e)
@@ -224,6 +226,7 @@ export function HeadCentEquipment(): React.JSX.Element {
             console.log('Success:', result);
             setIsOpenNew(false)
             setTableData(prevData => [...prevData, result]);
+            setTableDataLength(prevState => prevState + 1)
             setRefresh(prev => !prev)
         } catch (error) {
             console.error('Error:', error);
@@ -321,7 +324,7 @@ export function HeadCentEquipment(): React.JSX.Element {
                         </button>
                     </div>
                 }
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenNew ? '' : 'hidden'}`}
                      onClick={() => setIsOpenNew(false)}></div>
                 {isOpenNew &&

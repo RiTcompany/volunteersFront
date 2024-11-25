@@ -16,6 +16,8 @@ import {convertToISO, formatDateTime} from "../../utils/formatDate.ts";
 import {colorMap, DisplayColor, DisplayStep, reverseColorMap, reverseStepMap, stepMap} from "../../utils/maps.ts";
 import InputMask from "react-input-mask";
 import {FiltersType} from "../../utils/type.ts";
+import {getColumnWidth} from "../../utils/widths.ts";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 const cn = classNames;
 
@@ -23,7 +25,7 @@ interface TableDataType {
     id: number,
     volunteerId: number,
     fullName: string,
-    birthday: { birthday: string, age: number },
+    birthday: { birthday: string, age: number } | null,
     tgLink: string,
     vkLink: string,
     color: string,
@@ -49,7 +51,7 @@ interface EditedDataType {
 }
 
 interface ColumnsType {
-    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, comment: boolean, rate: boolean, interview: boolean, step: boolean,
+    all: boolean, id: boolean, name: boolean, date: boolean, tg: boolean, vk: boolean, color: boolean, comment: boolean, rate: boolean, interview: boolean, step: boolean, [key: string]: boolean
     // delete: boolean
 }
 
@@ -57,6 +59,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
     const navigate = useNavigate()
     const {type, id} = useParams()
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLenght] = useState<number>(0)
     const [editedData, setEditedData] = useState<EditedDataType[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
     const [isEditorMode, setIsEditorMode] = useState<boolean>(false)
@@ -71,7 +74,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
     const [openCell, setOpenCell] = useState<number>(-1);
     const [openStepCell, setOpenStepCell] = useState<number>(-1);
 
-    const initialFilters = {minAge: 0, maxAge: 100, minRank: 0, eventIdList: [],
+    const initialFilters = {minAge: "", maxAge: "", minRank: "", eventIdList: [],
         colorList: [], hasInterview: [], levelList: [], functionalList: [],
         testing: [], hasClothes: [], centerIdList: [], headquartersIdList: [], orderByDateAsc: true, orderByDateDesc: false,
         orderByRankAsc: true, orderByRankDesc: false
@@ -270,7 +273,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
                         return [key, value[0]];
                     }
                     return [key, value];
-                }).filter(([, value]) => value !== undefined)
+                }).filter(([, value]) => value !== undefined && value !== '')
             );
             const result = await fetch(`https://rit-test.ru/api/v1/${type}_participant/${id}`, {
                 method: "POST",
@@ -279,9 +282,14 @@ export function CenterHeadParticipants(): React.JSX.Element {
                 credentials: "include",
             })
             console.log(newFilters)
-            const res = await result.json()
-            setTableData(res)
-            console.log(res)
+            if (result.ok) {
+                const res = await result.json()
+                setTableData(res)
+                setTableDataLenght(res.length)
+                console.log(res)
+            } else {
+                throw Error
+            }
         })()
     }, [isOpenNew, isEditorMode, refresh]);
 
@@ -395,6 +403,8 @@ export function CenterHeadParticipants(): React.JSX.Element {
             console.log('Изменения сохранены:', result);
             setEditedData([]);
             setIsEditorMode(false);
+            setOpenStepCell(-1);
+            setOpenCell(-1)
         } catch (error) {
             console.error('Ошибка при сохранении изменений:', error);
         }
@@ -422,6 +432,18 @@ export function CenterHeadParticipants(): React.JSX.Element {
     //     }
     // }
 
+    const [columnOrder, setColumnOrder] = useState([
+        'id', 'name', 'date', 'tg', 'vk', 'color', 'comment', 'rate', 'interview', 'step',
+    ]);
+
+    const handleDragEnd = (result: any) => {
+        if (!result.destination) return;
+        const reorderedColumns = Array.from(columnOrder);
+        const [movedColumn] = reorderedColumns.splice(result.source.index, 1);
+        reorderedColumns.splice(result.destination.index, 0, movedColumn);
+        setColumnOrder(reorderedColumns);
+    };
+
 
     return (
         <div className={cn("h-full md:pr-4 mx-auto my-0 flex w-full overflow-hidden", styles.regionalTeam__container)}>
@@ -433,7 +455,11 @@ export function CenterHeadParticipants(): React.JSX.Element {
                     </div>
                     <button className={"flex md:hidden"}>
                         {isEditorMode ?
-                            <img src={cancel} alt={"cancel"} onClick={() => setIsEditorMode(false)}/>
+                            <img src={cancel} alt={"cancel"} onClick={() => {
+                                setIsEditorMode(false)
+                                setOpenStepCell(-1);
+                                setOpenCell(-1)
+                            }}/>
                             : <img src={lightHighlight} alt={"highlight"} onClick={() => setIsEditorMode(true)}/>
                         }
 
@@ -457,7 +483,8 @@ export function CenterHeadParticipants(): React.JSX.Element {
                     }
                     {isEditorMode &&
                         <div className={"flex gap-5"}>
-                            <button onClick={() => {setIsEditorMode(false); setEditedData([])}} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__highlightButton)}>
+                            <button onClick={() => {setIsEditorMode(false); setEditedData([]); setOpenStepCell(-1);
+                                setOpenCell(-1)}} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]", styles.regionalTeam__highlightButton)}>
                                 Отменить
                             </button>
                             <button onClick={() => handleSave()} className={cn("hidden md:flex justify-center gap-3 border-none bg-[#31AA27] text-white", styles.regionalTeam__highlightButton)}>
@@ -486,147 +513,210 @@ export function CenterHeadParticipants(): React.JSX.Element {
                 {/*        </div>*/}
                 {/*    </div>*/}
                 {/*}*/}
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
-                    <table className={"w-full overflow-auto min-w-[900px]"}>
-                        <thead>
-                        <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]", styles.regionalTeam__tableHead)}>
-                            {columns.id && <th className={cn(styles.regionalTeam__tableId, "sticky left-0 z-20 bg-[#F7F7FD]")}>ID</th>}
-                            {columns.name && <th className={cn(styles.regionalTeam__tableName, "sticky z-10 bg-[#F7F7FD] border-r-[1px]", !columns.id ? "left-0" : "left-[48px]" )}>ФИО</th>}
-                            {columns.date && <th className={cn(styles.regionalTeam__tableDate)}>Дата рождения</th>}
-                            {columns.tg && <th className={cn(styles.regionalTeam__tableLink)}>Ссылка Telegram</th>}
-                            {columns.vk && <th className={cn(styles.regionalTeam__tableLink)}>Ссылка ВКонтакте</th>}
-                            {columns.color && <th className={cn(styles.regionalTeam__tableColor)}>Светофор</th>}
-                            {columns.comment && <th className={cn(styles.regionalTeam__tableButton)}>Комментарий по работе</th>}
-                            {columns.rate && <th className={cn(styles.regionalTeam__tableButton)}>Рейтинг</th>}
-                            {columns.interview && <th className={cn(styles.regionalTeam__tableButton)}>Собеседование для ступени роста</th>}
-                            {columns.step && <th className={cn(styles.regionalTeam__tableButton)}>Ступень роста</th>}
-                            {/*{!isEditorMode &&*/}
-                            {/*    <th className={cn("min-w-8")}></th>*/}
-                            {/*}*/}
-                        </tr>
-                        </thead>
-                        <tbody className={""}>
-                        {tableData && tableData.map(person =>
-                            <tr key={person.id} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
-                                {columns.id && <th className={cn("sticky left-0 z-10 bg-white border-b-[1px]")}>{person.volunteerId}</th>}
-                                {columns.name && <th className={cn("sticky z-10 bg-white border-r-[1px] border-b-[1px]", !columns.id ? "left-0" : "left-[48px]")}>
-                                    {isEditorMode ? <input name={"fullName"} value={getEditedValue(person.id, "fullName") ? getEditedValue(person.id, "fullName") : person.fullName} onChange={(e) => handleInputChange(person.id, "fullName", e.target.value)} className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/> :
-                                    <a href={`/volunteer/${person.id}`}
-                                       onClick={(e) => {
-                                        e.preventDefault();
-                                        navigate(`/volunteer/${person.id}`);
-                                    }}>{person.fullName}</a>}
-                                </th>}
-                                {columns.date && <th className={"flex"}>
-                                    {/*<input name={"birthday"} value={getEditedValue(person.volunteerId, "birthday") ? getEditedValue(person.volunteerId, "birthday") : formatDateTime(person.birthdayDto.birthday).slice(0, 10)} onChange={(e) => handleInputChange(person.volunteerId, "birthday", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>*/}
-                                    <InputMask
-                                        name="birthday"
-                                        mask="99.99.9999"
-                                        value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : formatDateTime(person.birthday.birthday).slice(0, 10)}
-                                        onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
-                                        className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]" )}
-                                        placeholder={"ДД.ММ.ГГГГ"}
-                                    />
-                                    {!isEditorMode && <p className={"h-14 flex flex-col justify-center"}>({person.birthday.age})</p>}
-                                </th>}
-                                {columns.tg && <th>
-                                    <input name={"tgLink"} value={getEditedValue(person.id, "tgLink") ? getEditedValue(person.id, "tgLink") : person.tgLink} onChange={(e) => handleInputChange(person.id, "tgLink", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
-                                </th>}
-                                {columns.vk && <th>
-                                    <input name={"vkLink"} value={getEditedValue(person.id, "vkLink") ? getEditedValue(person.id, "vkLink") : person.vkLink} onChange={(e) => handleInputChange(person.id, "vkLink", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
-                                </th>}
-                                {columns.color && <th className={"flex justify-center items-center h-16"}>
-                                    <div className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 relative",
-                                        reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Жёлтый" ? "bg-[#FFF4E4] text-[#E99518]"
-                                            : reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Зелёный" ? "bg-[#EBF6EB] text-[#31AA27]"
-                                                : reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
-                                                    : person.color === "Жёлтый" ? "bg-[#FFF4E4] text-[#E99518]"
-                                                        : person.color === "Зелёный" ? "bg-[#EBF6EB] text-[#31AA27]"
-                                                            : person.color === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
-                                                                : "bg-[#F1F1F1] text-[#777777]"
-                                    )}>
-                                        {(() => {
-                                            const colorKey = getEditedValue(person.id, "color");
-                                            if (typeof colorKey === "string" && colorKey in reverseColorMap) {
-                                                return reverseColorMap[colorKey as keyof typeof reverseColorMap];
-                                            }
-                                            return person.color;
-                                        })()}
-
-                                        {isEditorMode &&
-                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleDropdown(person.id)} />
-                                        }
-                                        {openCell === person.id && (
-                                            <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                {(["Жёлтый", "Зелёный", "Красный", "Not found"] as DisplayColor[]).map(displayColor => (
-                                                    <div
-                                                        key={displayColor}
-                                                        className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(colorMap[displayColor]))}
-                                                        onClick={() => handleColorSelect(displayColor, person.id)}
-                                                    >
-                                                        {displayColor}
-                                                    </div>
-                                                ))}
-                                            </div>
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                        <Droppable droppableId="droppable" direction="horizontal">
+                            {(provided) => (
+                                <table
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                    className={"w-full overflow-y-auto min-w-[900px]"}
+                                >
+                                    <thead>
+                                    <tr className={cn("sticky top-0 z-30 h-[60px] bg-[#F7F7FD] border-b-[1px]", styles.regionalTeam__tableHead)}>
+                                        {columnOrder.map((columnKey, index) =>
+                                            columns[columnKey] ? (
+                                                <Draggable key={columnKey} draggableId={columnKey} index={index}>
+                                                    {(provided) => (
+                                                        <th
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className={cn(`cursor-move`, `min-w-[${getColumnWidth(columnKey)}]`)}
+                                                        >
+                                                            {columnKey === 'id' && "ID"}
+                                                            {columnKey === 'name' && "ФИО"}
+                                                            {columnKey === 'date' && "Дата рождения"}
+                                                            {columnKey === 'tg' && "Ссылка Telegram"}
+                                                            {columnKey === 'vk' && "Ссылка ВКонтакте"}
+                                                            {columnKey === 'color' && "Светофор"}
+                                                            {columnKey === 'comment' && "Комментарий по работе"}
+                                                            {columnKey === 'rate' && "Рейтинг"}
+                                                            {columnKey === 'interview' && "Собеседование для ступени роста"}
+                                                            {columnKey === 'step' && "Ступень роста"}
+                                                        </th>
+                                                    )}
+                                                </Draggable>
+                                            ) : null
                                         )}
-                                    </div>
-                                </th>}
-                                {columns.comment && <th>
-                                    <input name={"comment"} value={getEditedValue(person.id, "comment") ?? person.comment ?? ""} onChange={(e) => handleInputChange(person.id, "comment", e.target.value)} className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]" )} disabled={!isEditorMode}/>
-                                </th>}
-                                {columns.rate && <th>
-                                    <p className={cn("border-0 bg-white w-full px-1 text-center", isEditorMode && "" )}>{person.rank}</p>
-                                </th>}
-                                {columns.interview && <th>
-                                    <input
-                                        type={"checkbox"}
-                                        name={"hasInterview"}
-                                        checked={getEditedValue(person.id, "hasInterview") ?? person.hasInterview }
-                                        onChange={(e) => handleInputChange(person.id, "hasInterview", e.target.checked)}
-                                        className={cn("border-0 bg-white px-1 text-center h-7 w-7", styles.custom_checkbox)}
-                                        disabled={!isEditorMode}
-                                    />
-                                </th>}
-                                {columns.step && <th className={""}>
-                                    <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#F1F1F1] text-[#141414]")}>
-                                        {(() => {
-                                            const levelKey = getEditedValue(person.id, "level") || person.level;
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {tableData && tableData.map(person => (
+                                        <tr key={person.id} className={cn("h-[50px] border-b-[1px]", styles.regionalTeam__tableBody)}>
+                                            {columnOrder.map((columnKey) => (
+                                                columns[columnKey] ? (
+                                                    <td key={columnKey}>
+                                                        {columnKey === 'id' &&
+                                                            <p className={"text-center"}>
+                                                                {person.volunteerId}
+                                                            </p>}
+                                                        {columnKey === 'name' && (
+                                                            isEditorMode ? (
+                                                                <input
+                                                                    name={"fullName"}
+                                                                    value={getEditedValue(person.id, "fullName") || person.fullName}
+                                                                    onChange={(e) => handleInputChange(person.id, "fullName", e.target.value)}
+                                                                    className={cn("border-0 rounded-none h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
+                                                                    disabled={!isEditorMode}
+                                                                />
+                                                            ) : (
+                                                                <a
+                                                                    href={`/volunteer/${person.id}`}
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        navigate(`/volunteer/${person.id}`);
+                                                                    }}
+                                                                    className={"text-center flex justify-center text-blue-400"}
+                                                                >
+                                                                    {person.fullName}
+                                                                </a>
+                                                            )
+                                                        )}
+                                                        {columnKey === 'date' && (
+                                                            <div className={"flex gap-0"}>
+                                                                <InputMask
+                                                                    name="birthday"
+                                                                    mask="99.99.9999"
+                                                                    //@ts-ignore
+                                                                    value={getEditedValue(person.id, "birthday") ? getEditedValue(person.id, "birthday") : (person.birthday ? formatDateTime(person.birthday.birthday)?.slice(0, 10) : "")}
+                                                                    onChange={(e) => handleInputChange(person.id, "birthday", e.target.value)}
+                                                                    className={cn("border-0 h-14 bg-white px-1 text-center w-full", isEditorMode && "border-[1px]")}
+                                                                    placeholder={"ДД.ММ.ГГГГ"}
+                                                                /> {!isEditorMode && <p className={"h-14 flex flex-col justify-center mr-3"}>({person.birthday?.age})</p>}
+                                                            </div>
+                                                        )}
+                                                        {columnKey === 'tg' && (
+                                                            <input
+                                                                name={"tgLink"}
+                                                                value={getEditedValue(person.id, "tgLink") ? getEditedValue(person.id, "tgLink") : person.tgLink}
+                                                                onChange={(e) => handleInputChange(person.id, "tgLink", e.target.value)}
+                                                                className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
+                                                                disabled={!isEditorMode}
+                                                            />
+                                                        )}
+                                                        {columnKey === 'vk' && (
+                                                            <input
+                                                                name={"vkLink"}
+                                                                value={getEditedValue(person.id, "vkLink") ? getEditedValue(person.id, "vkLink") : person.vkLink}
+                                                                onChange={(e) => handleInputChange(person.id, "vkLink", e.target.value)}
+                                                                className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
+                                                                disabled={!isEditorMode}
+                                                            />
+                                                        )}
+                                                        {columnKey === 'color' && (
+                                                            <div className={cn("flex justify-center items-center h-16")}>
+                                                                <div className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 relative",
+                                                                    reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Жёлтый" ? "bg-[#FFF4E4] text-[#E99518]"
+                                                                        : reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Зелёный" ? "bg-[#EBF6EB] text-[#31AA27]"
+                                                                            : reverseColorMap[getEditedValue(person.id, "color") as keyof typeof reverseColorMap] === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
+                                                                                : person.color === "Жёлтый" ? "bg-[#FFF4E4] text-[#E99518]"
+                                                                                    : person.color === "Зелёный" ? "bg-[#EBF6EB] text-[#31AA27]"
+                                                                                        : person.color === "Красный" ? "bg-[#FFE3DD] text-[#FF2E00]"
+                                                                                            : "bg-[#F1F1F1] text-[#777777]"
+                                                                )}>
+                                                                    {(() => {
+                                                                        const colorKey = getEditedValue(person.id, "color");
+                                                                        if (typeof colorKey === "string" && colorKey in reverseColorMap) {
+                                                                            return reverseColorMap[colorKey as keyof typeof reverseColorMap];
+                                                                        }
+                                                                        return person.color;
+                                                                    })()}
 
-                                            if (typeof levelKey === "string" && levelKey in reverseStepMap) {
-                                                return reverseStepMap[levelKey as keyof typeof reverseStepMap];
-                                            }
-                                            return "Не выбрано";
-                                        })()}
-                                        {isEditorMode &&
-                                            <img src={arrowSmall} alt={"arrow"} onClick={() => toggleStepDropdown(person.id)} />
-                                        }
-                                        {openStepCell === person.id && (
-                                            <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
-                                                {(["Ступень 1", "Ступень 2", "Ступень 3", "Ступень 4"] as DisplayStep[]).map(displayStep => (
-                                                    <div
-                                                        key={displayStep}
-                                                        className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
-                                                        onClick={() => handleStepSelect(displayStep, person.id)}
-                                                    >
-                                                        {displayStep}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </th>}
-                                {/*{columns.delete && !isEditorMode && person.id && (*/}
-                                {/*    <td>*/}
-                                {/*        <button onClick={() =>  person.id && setIsOpenDelete({id: person.id, open: true})}>*/}
-                                {/*            <img src={bin} alt="delete" />*/}
-                                {/*        </button>*/}
-                                {/*    </td>*/}
-                                {/*)}*/}
-                            </tr>
-                        )}
-                        </tbody>
-                    </table>
+                                                                    {isEditorMode &&
+                                                                        <img src={arrowSmall} alt={"arrow"} onClick={() => toggleDropdown(person.id)} />
+                                                                    }
+                                                                    {openCell === person.id && (
+                                                                        <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
+                                                                            {(["Жёлтый", "Зелёный", "Красный", "Not found"] as DisplayColor[]).map(displayColor => (
+                                                                                <div
+                                                                                    key={displayColor}
+                                                                                    className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer", getColorClass(colorMap[displayColor]))}
+                                                                                    onClick={() => handleColorSelect(displayColor, person.id)}
+                                                                                >
+                                                                                    {displayColor}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {columnKey === 'comment' && (
+                                                            <input
+                                                                name={"comment"}
+                                                                value={getEditedValue(person.id, "comment") ?? person.comment ?? ""}
+                                                                onChange={(e) => handleInputChange(person.id, "comment", e.target.value)}
+                                                                className={cn("border-0 h-14 bg-white w-full px-1 text-center", isEditorMode && "border-[1px]")}
+                                                                disabled={!isEditorMode}
+                                                            />
+                                                        )}
+                                                        {columnKey === 'rate' && (
+                                                            <p className={cn("border-0 bg-white w-full px-1 text-center", isEditorMode && "")}>
+                                                                {person.rank}
+                                                            </p>
+                                                        )}
+                                                        {columnKey === 'interview' && (
+                                                            <div className={"flex w-full justify-center"}>
+                                                                <input
+                                                                    type={"checkbox"}
+                                                                    name={"hasInterview"}
+                                                                    checked={getEditedValue(person.id, "hasInterview") ?? person.hasInterview}
+                                                                    onChange={(e) => handleInputChange(person.id, "hasInterview", e.target.checked)}
+                                                                    className={cn("border-0 bg-white px-1 text-center h-7 w-7", styles.custom_checkbox)}
+                                                                    disabled={!isEditorMode}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                        {columnKey === 'step' && (
+                                                            <div className={cn("w-3/4 mx-auto my-0 rounded-2xl text-[12px] flex justify-center gap-2 relative bg-[#F1F1F1] text-[#141414]")}>
+                                                                {(() => {
+                                                                    const levelKey = getEditedValue(person.id, "level") || person.level;
+
+                                                                    if (typeof levelKey === "string" && levelKey in reverseStepMap) {
+                                                                        return reverseStepMap[levelKey as keyof typeof reverseStepMap];
+                                                                    }
+                                                                    return "Не выбрано";
+                                                                })()}
+                                                                {isEditorMode &&
+                                                                    <img src={arrowSmall} alt={"arrow"} onClick={() => toggleStepDropdown(person.id)} />
+                                                                }
+                                                                {openStepCell === person.id && (
+                                                                    <div className="absolute z-50 w-32 mt-7 pb-2 flex flex-col items-center gap-2 bg-white">
+                                                                        {(["Ступень 1", "Ступень 2", "Ступень 3", "Ступень 4"] as DisplayStep[]).map(displayStep => (
+                                                                            <div
+                                                                                key={displayStep}
+                                                                                className={cn("w-3/4 rounded-2xl text-[12px] flex justify-center gap-2 cursor-pointer")}
+                                                                                onClick={() => handleStepSelect(displayStep, person.id)}
+                                                                            >
+                                                                                {displayStep}
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                ) : null
+                                            ))}
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </div>
             </div>
             <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenDelete.open ? '' : 'hidden'}`} onClick={() => setIsOpenDelete({open: false, id: -1})}></div>

@@ -80,6 +80,7 @@ export function VolunteerProfile(): React.JSX.Element {
                 <div className={"flex flex-col gap-2 bg-[#F6F8FC] rounded-2xl p-8"}>
                     <p className={styles.profile__title}>Личные данные:</p>
                     <p className={styles.profile__data}>ID: {data?.volunteerId}</p>
+                    {/*@ts-ignore*/}
                     {data?.birthdayDto && <p className={styles.profile__data}>Дата рождения: {formatDateTime(data.birthdayDto.birthday).slice(0, 10)} (Возраст: {data.birthdayDto.age})</p>}
                     <p className={styles.profile__data}>Telegram: <a>{data?.tgLink}</a></p>
                     <p className={styles.profile__data}>ВКонтакте:  <a>{data?.vkLink}</a></p>

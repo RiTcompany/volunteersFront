@@ -58,6 +58,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
     const {type, id} = useParams()
 
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLength] = useState<number>(0)
 
     const [editedCenters, setEditedCenters] = useState<TableDataType[]>([]);
 
@@ -364,6 +365,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
                 })
                 let result = await response.json()
                 setTableData(result)
+                setTableDataLength(result.length)
 
             } catch (e) {
                 console.log(e)
@@ -495,7 +497,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
                         </div>
                     </div>
                 }
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="droppable" direction="horizontal">
@@ -545,7 +547,8 @@ export function HeadquartersDocuments(): React.JSX.Element {
                                                     <td key={column.id}>
                                                         {column.id === 'createDate' ? (
                                                             <p className={cn("border-0 h-full bg-white w-full px-1 text-center text-black", isEditorMode && "text-gray-300" )}>
-                                                                {formatDateTime(hq[column.id]).slice(0, 10)}
+                                                                {/*@ts-ignore*/}
+                                                                {hq[column.id] && formatDateTime(hq[column.id])?.slice(0, 10)}
                                                             </p>
                                                         ) : column.id === 'name' ? (
                                                             <button onClick={() => handleShowDocument(hq.id)} className={cn("border-0 h-full bg-white w-full px-1 flex justify-center text-center text-blue-400 cursor-pointer", isEditorMode && "text-gray-300" )}>

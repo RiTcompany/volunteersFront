@@ -53,6 +53,7 @@ interface TableDataType {
 
 export function AllCenters(): React.JSX.Element {
     const [tableData, setTableData] = useState<TableDataType[]>([])
+    const [tableDataLength, setTableDataLength] = useState<number>(0)
 
     const [editedCenters, setEditedCenters] = useState<TableDataType[]>([]);
 
@@ -211,7 +212,7 @@ export function AllCenters(): React.JSX.Element {
                 })
                 let result = await response.json()
                 setTableData(result)
-                console.log(result)
+                setTableDataLength(result.length)
             } catch (e) {
                 console.log(e)
             }
@@ -325,7 +326,7 @@ export function AllCenters(): React.JSX.Element {
                         </div>
                     </div>
                 }
-                <p className={"text-gray-500"}>Всего результатов: {tableData.length}</p>
+                <p className={"text-gray-500"}>Всего результатов: {tableDataLength}</p>
                 <div className="overflow-y-auto max-h-full">
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="droppable" direction="horizontal">
@@ -368,7 +369,7 @@ export function AllCenters(): React.JSX.Element {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {tableData && tableData.map((hq, index) => (
+                                        {tableData[0] && tableData.map((hq, index) => (
                                             <tr key={index} className={cn("h-[50px] border-b-[1px]")}>
                                                 {columns.filter(column => filterColumns[column.id]).filter(column => column.id !== 'delete').map((column) => (
                                                     <td key={column.id}>

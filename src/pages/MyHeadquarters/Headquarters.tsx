@@ -80,6 +80,7 @@ export function Headquarters(): React.JSX.Element {
                         <div className={"flex flex-col gap-2 bg-[#F6F8FC] rounded-2xl p-8"}>
                             <p className={styles.profile__title}>Данные {type === "headquarters" ? <span>штаба:</span> : <span>центра:</span>}</p>
                             <p className={styles.profile__data}>ID: {data.federalId}</p>
+                            {/*@ts-ignore*/}
                             <p className={styles.profile__data}>Дата создания: {formatDateTime(data.createDate).slice(0, 10)}</p>
                             <p className={styles.profile__data}>Telegram:
                                 {data.tgLinkList && data.tgLinkList.map((link) => <Link key={link} to={link}> {link} </Link>)}
