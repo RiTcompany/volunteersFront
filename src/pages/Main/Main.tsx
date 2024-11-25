@@ -33,7 +33,7 @@ export function Main(): React.JSX.Element {
         // localStorage.setItem("auth", "true");
         // navigate("/profile")
         try {
-            const response = await fetch("http://195.133.197.53:8082/auth/sign-in", {
+            const response = await fetch("https://rit-test.ru/api/v1/auth/sign-in", {
                 method: "POST",
                 body: JSON.stringify(loginData),
                 headers: { 'Content-Type': 'application/json' },

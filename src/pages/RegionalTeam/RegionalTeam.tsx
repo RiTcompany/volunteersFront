@@ -92,7 +92,7 @@ export function RegionalTeam(): React.JSX.Element {
                 }).filter(([, value]) => value !== undefined)
             );
             console.log(id)
-            const result = await fetch(`http://195.133.197.53:8082/district_team_participant/${id}`, {
+            const result = await fetch(`https://rit-test.ru/api/v1/district_team_participant/${id}`, {
                 method: "POST",
                 body: JSON.stringify(newFilters),
                 headers: { 'Content-Type': 'application/json' },
@@ -119,7 +119,7 @@ export function RegionalTeam(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const response = await fetch("http://195.133.197.53:8082/event", {
+                const response = await fetch("https://rit-test.ru/api/v1/event", {
                     method: "GET",
                     credentials: "include"
                 })
@@ -212,7 +212,7 @@ export function RegionalTeam(): React.JSX.Element {
         const updatedData = editedData.map(person => (person.birthday ? {...person, birthday: convertToISO(`${person.birthday} 00:00`)} : {...person} ))
         try {
             console.log(editedData)
-            const response = await fetch('http://195.133.197.53:8082/volunteer', {
+            const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -241,7 +241,7 @@ export function RegionalTeam(): React.JSX.Element {
 
     const handleAddNewParticipant = async () => {
         try {
-            const response = await fetch(`http://195.133.197.53:8082/district_team_participant/change`, {
+            const response = await fetch(`https://rit-test.ru/api/v1/district_team_participant/change`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
@@ -264,7 +264,7 @@ export function RegionalTeam(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (volId: number) => {
         try {
-            const response = await fetch(`http://195.133.197.53:8082/district_team_participant/change`, {
+            const response = await fetch(`https://rit-test.ru/api/v1/district_team_participant/change`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'

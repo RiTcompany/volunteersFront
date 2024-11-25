@@ -34,7 +34,7 @@ export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Elem
         (async function fetchData() {
             setData(null)
             try {
-                const response = await fetch(`http://195.133.197.53:8082/personal_account/${token.id}`, {
+                const response = await fetch(`https://rit-test.ru/api/v1/personal_account/${token.id}`, {
                     method: "GET",
                     credentials: "include",
                     headers: {

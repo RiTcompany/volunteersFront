@@ -61,7 +61,7 @@
 //         (async function() {
 //             try {
 //                 console.log(selectedFilters)
-//                 const response = await fetch("http://195.133.197.53:8082/equipment/type_names", {
+//                 const response = await fetch("https://rit-test.ru/api/v1/equipment/type_names", {
 //                     method: "GET",
 //                     credentials: "include",
 //                     headers: {
@@ -133,7 +133,7 @@
 //     const handleSave = async () => {
 //         try {
 //             console.log(editedEvents)
-//             const response = await fetch('http://195.133.197.53:8082/event', {
+//             const response = await fetch('https://rit-test.ru/api/v1/event', {
 //                 method: 'PATCH',
 //                 headers: {
 //                     'Content-Type': 'application/json',
@@ -160,7 +160,7 @@
 //             try {
 //                 console.log(selectedFilters)
 //                 console.log({typeList: selectedFilters})
-//                 const response = await fetch("http://195.133.197.53:8082/equipment", {
+//                 const response = await fetch("https://rit-test.ru/api/v1/equipment", {
 //                     method: "POST",
 //                     credentials: "include",
 //                     headers: {
@@ -191,7 +191,7 @@
 //
 //     const handleAddButtonClick = async () => {
 //         try {
-//             const response = await fetch('http://195.133.197.53:8082/equipment', {
+//             const response = await fetch('https://rit-test.ru/api/v1/equipment', {
 //                 method: 'POST',
 //                 headers: {
 //                     'Content-Type': 'application/json'
@@ -213,7 +213,7 @@
 //
 //     const handleDeleteButtonClick = async (id: number) => {
 //         try {
-//             const response = await fetch(`http://195.133.197.53:8082/equipment/${id}`, {
+//             const response = await fetch(`https://rit-test.ru/api/v1/equipment/${id}`, {
 //                 method: 'DELETE',
 //                 headers: {
 //                     'Content-Type': 'application/json'

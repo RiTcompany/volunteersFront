@@ -36,7 +36,7 @@ export function Headquarters(): React.JSX.Element {
             setIsLoading(true)
             const request = `${type}/${id}`;
             try {
-                const response = await fetch(`http://195.133.197.53:8082/${request}`, {
+                const response = await fetch(`https://rit-test.ru/api/v1/${request}`, {
                     method: "GET",
                     credentials: "include",
                     headers: {

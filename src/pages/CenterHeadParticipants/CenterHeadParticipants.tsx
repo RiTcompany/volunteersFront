@@ -83,7 +83,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const response = await fetch("http://195.133.197.53:8082/center", {
+                const response = await fetch("https://rit-test.ru/api/v1/center", {
                     method: "GET",
                     credentials: "include"
                 })
@@ -99,7 +99,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const response = await fetch("http://195.133.197.53:8082/headquarters", {
+                const response = await fetch("https://rit-test.ru/api/v1/headquarters", {
                     method: "GET",
                     credentials: "include"
                 })
@@ -272,7 +272,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
                     return [key, value];
                 }).filter(([, value]) => value !== undefined)
             );
-            const result = await fetch(`http://195.133.197.53:8082/${type}_participant/${id}`, {
+            const result = await fetch(`https://rit-test.ru/api/v1/${type}_participant/${id}`, {
                 method: "POST",
                 body: JSON.stringify(newFilters),
                 headers: { 'Content-Type': 'application/json' },
@@ -378,7 +378,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
         const updatedData = editedData.map(person => (person.birthday ? {...person, birthday: convertToISO(`${person.birthday} 00:00`)} : {...person} ))
         try {
             console.log(editedData)
-            const response = await fetch('http://195.133.197.53:8082/volunteer', {
+            const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -402,7 +402,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
 
     // const handleDeleteButtonClick = async (id: number) => {
     //     try {
-    //         const response = await fetch(`http://195.133.197.53:8082/center/${id}`, {
+    //         const response = await fetch(`https://rit-test.ru/api/v1/center/${id}`, {
     //             method: 'DELETE',
     //             headers: {
     //                 'Content-Type': 'application/json'

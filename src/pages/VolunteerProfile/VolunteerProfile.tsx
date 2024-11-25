@@ -35,7 +35,7 @@ export function VolunteerProfile(): React.JSX.Element {
             setData(null)
             setIsLoading(true)
             try {
-                const response = await fetch(`http://195.133.197.53:8082/personal_account/${id}`, {
+                const response = await fetch(`https://rit-test.ru/api/v1/personal_account/${id}`, {
                     method: "GET",
                     credentials: "include",
                     headers: {

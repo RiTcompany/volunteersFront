@@ -98,7 +98,7 @@ export function AllHeadquarters(): React.JSX.Element {
     const handleAddButtonClick = async () => {
         console.log(newCenter)
         try {
-            const response = await fetch('http://195.133.197.53:8082/headquarters', {
+            const response = await fetch('https://rit-test.ru/api/v1/headquarters', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -141,7 +141,7 @@ export function AllHeadquarters(): React.JSX.Element {
     const handleSave = async () => {
         try {
             console.log(editedCenters)
-            const response = await fetch('http://195.133.197.53:8082/headquarters', {
+            const response = await fetch('https://rit-test.ru/api/v1/headquarters', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export function AllHeadquarters(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
-            const response = await fetch(`http://195.133.197.53:8082/headquarters/${id}`, {
+            const response = await fetch(`https://rit-test.ru/api/v1/headquarters/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -205,7 +205,7 @@ export function AllHeadquarters(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const response = await fetch("http://195.133.197.53:8082/headquarters", {
+                const response = await fetch("https://rit-test.ru/api/v1/headquarters", {
                     method: "GET",
                     credentials: "include"
                 })

@@ -166,7 +166,7 @@ export function EventParticipants(): React.JSX.Element {
                 }).filter(([, value]) => value !== undefined)
             );
             console.log(id)
-            const result = await fetch(`http://195.133.197.53:8082/event_participant/${id}`, {
+            const result = await fetch(`https://rit-test.ru/api/v1/event_participant/${id}`, {
                 method: "POST",
                 body: JSON.stringify(newFilters),
                 headers: { 'Content-Type': 'application/json' },
@@ -220,7 +220,7 @@ export function EventParticipants(): React.JSX.Element {
     const handleSave = async () => {
         try {
             console.log(editedData)
-            const response = await fetch('http://195.133.197.53:8082/volunteer', {
+            const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
