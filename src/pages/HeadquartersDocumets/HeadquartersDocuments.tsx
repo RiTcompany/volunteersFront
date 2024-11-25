@@ -174,9 +174,11 @@ export function HeadquartersDocuments(): React.JSX.Element {
             createDate: formattedDate
         };
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/${request}`, {
                 method: 'POST',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(updatedDoc)
@@ -202,9 +204,13 @@ export function HeadquartersDocuments(): React.JSX.Element {
                     console.log(key, value);
                 });
 
+                const token: string | null = localStorage.getItem("authToken");
                 const fileResponse = await fetch(`https://rit-test.ru/api/v1/save_document/${result}`, {
                     method: 'POST',
                     credentials: "include",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
                     body: formData
                 });
 
@@ -270,9 +276,12 @@ export function HeadquartersDocuments(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/document/${id}`, {
                 method: 'DELETE',
+
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             });
@@ -292,8 +301,13 @@ export function HeadquartersDocuments(): React.JSX.Element {
 
     const handleShowDocument = async (docId: 1 | undefined) => {
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/document/${docId}/file`, {
                 method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+
+                },
                 credentials: "include",
             });
 
@@ -355,10 +369,12 @@ export function HeadquartersDocuments(): React.JSX.Element {
             );
 
             try {
+                const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch(`https://rit-test.ru/api/v1/${request}`, {
                     method: "POST",
                     credentials: "include",
                     headers: {
+                        "Authorization": `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(newFilters)

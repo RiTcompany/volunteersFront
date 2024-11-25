@@ -35,10 +35,12 @@ export function VolunteerProfile(): React.JSX.Element {
             setData(null)
             setIsLoading(true)
             try {
+                const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch(`https://rit-test.ru/api/v1/personal_account/${id}`, {
                     method: "GET",
                     credentials: "include",
                     headers: {
+                        "Authorization": `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                 });

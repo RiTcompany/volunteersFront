@@ -74,12 +74,14 @@ export function HeadCentEquipment(): React.JSX.Element {
 
     useEffect(() => {
         (async function() {
+            const token: string | null = localStorage.getItem("authToken");
             try {
                 console.log(selectedFilters)
                 const response = await fetch("https://rit-test.ru/api/v1/equipment/type_names", {
                     method: "GET",
                     credentials: "include",
                     headers: {
+                        "Authorization": `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                 })
@@ -146,14 +148,17 @@ export function HeadCentEquipment(): React.JSX.Element {
     // };
 
     const handleSave = async () => {
+        const token: string | null = localStorage.getItem("authToken");
         try {
             console.log(editedEvents)
             const response = await fetch('https://rit-test.ru/api/v1/event', {
                 method: 'PATCH',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json',
-                    credentials: "include"
+
                 },
+                credentials: "include",
                 body: JSON.stringify(editedEvents),
             });
 
@@ -181,11 +186,12 @@ export function HeadCentEquipment(): React.JSX.Element {
                     req = { headquartersId: id };
                 }
                 console.log(JSON.stringify({typeList: selectedFilters, ...req}))
-
+                const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch("https://rit-test.ru/api/v1/equipment", {
                     method: "POST",
                     credentials: "include",
                     headers: {
+                        "Authorization": `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({typeList: selectedFilters, ...req})
@@ -210,9 +216,11 @@ export function HeadCentEquipment(): React.JSX.Element {
 
     const handleAddButtonClick = async () => {
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/equipment_${type}/${id}`, {
                 method: 'POST',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(newEquipment)
@@ -235,9 +243,11 @@ export function HeadCentEquipment(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/equipment/${id}`, {
                 method: 'DELETE',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             });

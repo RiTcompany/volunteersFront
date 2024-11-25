@@ -36,11 +36,12 @@ export function Headquarters(): React.JSX.Element {
             setIsLoading(true)
             const request = `${type}/${id}`;
             try {
+                const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch(`https://rit-test.ru/api/v1/${request}`, {
                     method: "GET",
                     credentials: "include",
                     headers: {
-                        'Content-Type': 'application/json'
+                        "Authorization": `Bearer ${token}`,
                     },
                 });
 

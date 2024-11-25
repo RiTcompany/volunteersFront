@@ -99,9 +99,11 @@ export function AllHeadquarters(): React.JSX.Element {
     const handleAddButtonClick = async () => {
         console.log(newCenter)
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/headquarters', {
                 method: 'POST',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(newCenter)
@@ -142,12 +144,15 @@ export function AllHeadquarters(): React.JSX.Element {
     const handleSave = async () => {
         try {
             console.log(editedCenters)
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/headquarters', {
                 method: 'PATCH',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json',
-                    credentials: "include"
+
                 },
+                credentials: "include",
                 body: JSON.stringify(editedCenters),
             });
 
@@ -166,9 +171,11 @@ export function AllHeadquarters(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/headquarters/${id}`, {
                 method: 'DELETE',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             });
@@ -206,8 +213,12 @@ export function AllHeadquarters(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
+                const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch("https://rit-test.ru/api/v1/headquarters", {
                     method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
                     credentials: "include"
                 })
                 let result = await response.json()

@@ -93,10 +93,11 @@ export function RegionalTeam(): React.JSX.Element {
                 }).filter(([, value]) => value !== undefined && value !== '')
             );
             console.log(id)
+            const token: string | null = localStorage.getItem("authToken");
             const result = await fetch(`https://rit-test.ru/api/v1/district_team_participant/${id}`, {
                 method: "POST",
                 body: JSON.stringify(newFilters),
-                headers: { 'Content-Type': 'application/json' },
+                headers: {  "Authorization": `Bearer ${token}`, },
                 credentials: "include",
             })
             console.log(newFilters)
@@ -124,8 +125,12 @@ export function RegionalTeam(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
+                const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch("https://rit-test.ru/api/v1/event", {
                     method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
                     credentials: "include"
                 })
                 let result = await response.json()
@@ -217,12 +222,14 @@ export function RegionalTeam(): React.JSX.Element {
         const updatedData = editedData.map(person => (person.birthday ? {...person, birthday: convertToISO(`${person.birthday} 00:00`)} : {...person} ))
         try {
             console.log(editedData)
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    credentials: "include"
+                    "Authorization": `Bearer ${token}`,
                 },
+                credentials: "include",
                 body: JSON.stringify(updatedData),
             });
 
@@ -247,9 +254,11 @@ export function RegionalTeam(): React.JSX.Element {
 
     const handleAddNewParticipant = async () => {
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/district_team_participant/change`, {
                 method: 'PATCH',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({volunteerId: newParticipantId, districtTeamId: id})
@@ -270,9 +279,11 @@ export function RegionalTeam(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (volId: number) => {
         try {
+            const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/district_team_participant/change`, {
                 method: 'PATCH',
                 headers: {
+                    "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({volunteerId: volId, districtTeamId: null})
