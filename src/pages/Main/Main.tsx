@@ -39,7 +39,7 @@ export function Main(): React.JSX.Element {
             const response = await fetch("https://rit-test.ru/api/v1/auth/sign-in", {
                 method: "POST",
                 body: JSON.stringify(loginData),
-                headers: { "Authorization": `Bearer ${token}`,'Content-Type': 'application/json' ,  } ,
+                headers: {'Content-Type': 'application/json' ,  } ,
                 credentials: "include",
             })
             if (response.ok) {
