@@ -145,7 +145,7 @@ export function AllEvents(): React.JSX.Element {
     const handleSave = async () => {
         const formattedEvents = editedEvents.map(event => ({...event, startTime: convertToISO(event.startTime), endTime: convertToISO(event.endTime) }));
         try {
-            const response = await fetch('http://195.133.197.53:8082/event', {
+            const response = await fetch('https://rit-test.ru/api/v1/event', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ export function AllEvents(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const response = await fetch("http://195.133.197.53:8082/event", {
+                const response = await fetch("https://rit-test.ru/api/v1/event", {
                     method: "GET",
                     credentials: "include"
                 })
@@ -203,7 +203,7 @@ export function AllEvents(): React.JSX.Element {
         };
 
         try {
-            const response = await fetch('http://195.133.197.53:8082/event', {
+            const response = await fetch('https://rit-test.ru/api/v1/event', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -225,7 +225,7 @@ export function AllEvents(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
-            const response = await fetch(`http://195.133.197.53:8082/event/${id}`, {
+            const response = await fetch(`https://rit-test.ru/api/v1/event/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -248,7 +248,7 @@ export function AllEvents(): React.JSX.Element {
     const handleRegistrationChange = async (id: number, status: string) => {
         console.log(status)
         try {
-            const response = await fetch(`http://195.133.197.53:8082/event/${id}?status=${status === "allowed"}`, {
+            const response = await fetch(`https://rit-test.ru/api/v1/event/${id}?status=${status === "allowed"}`, {
                 method: "PATCH",
                 credentials: "include",
                 headers: {

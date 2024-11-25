@@ -24,7 +24,7 @@ export function EventCheck(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const response = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}`, {
+                const response = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}`, {
                     method: "GET",
                     credentials: "include"
                 })
@@ -62,7 +62,7 @@ export function EventCheck(): React.JSX.Element {
             try {
                 if (data.cloths && data.equipmentId) {
                     setError('')
-                    const res = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}/mark`, {
+                    const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}/mark`, {
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -80,7 +80,7 @@ export function EventCheck(): React.JSX.Element {
                     }
                 } else if (!data.cloths && !data.equipmentId) {
                     setError('')
-                    const res = await fetch(`http://195.133.197.53:8082/volunteer/${volunid}/event/${eventid}/mark`, {
+                    const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}/mark`, {
                         headers: {
                             'Content-Type': 'application/json'
                         },

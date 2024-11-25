@@ -26,7 +26,7 @@ export function EquipmentReturn(): React.JSX.Element {
         } else
             setError('')
             try {
-                const res = await fetch(`http://195.133.197.53:8082/volunteer/${data.volunteerId}/return_equipment`, {
+                const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${data.volunteerId}/return_equipment`, {
                     headers: {
                         'Content-Type': 'application/json'
                     },
