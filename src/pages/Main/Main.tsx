@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import visibility from "../../assets/visibility.svg"
 import visibility_off from "../../assets/visibility_off.svg"
+import {parseJwt} from "../../utils/parseJWT.ts";
 const cn = classNames;
 
 export function Main(): React.JSX.Element {
@@ -24,8 +25,12 @@ export function Main(): React.JSX.Element {
     }
 
     useEffect(() => {
-        localStorage.getItem("authToken") && navigate("/profile")
-    })
+        const authToken = localStorage.getItem("authToken");
+        if (authToken) {
+            const user = parseJwt(authToken);
+            navigate(`/volunteer/${user.id}`);
+        }
+    }, []);
 
     const handleSubmit = async () => {
         if (!loginData.username || !loginData.password) {
@@ -35,7 +40,7 @@ export function Main(): React.JSX.Element {
         // localStorage.setItem("auth", "true");
         // navigate("/profile")
         try {
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch("https://rit-test.ru/api/v1/auth/sign-in", {
                 method: "POST",
                 body: JSON.stringify(loginData),
@@ -45,8 +50,9 @@ export function Main(): React.JSX.Element {
             if (response.ok) {
                 const responseData = await response.json();
                 localStorage.setItem('authToken', responseData.token);
+                const user = parseJwt(responseData.token)
                 // window.location.hash=`#/profile/`
-                navigate("/profile")
+                navigate(`/volunteer/${user.id}`)
                 // const token = responseData.token;
                 // const data = parseJwt(token);
                 // if (data && data.id && localStorage.getItem('authToken')) {

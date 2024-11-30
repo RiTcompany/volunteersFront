@@ -34,7 +34,7 @@ export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Elem
         (async function fetchData() {
             setData(null)
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch(`https://rit-test.ru/api/v1/personal_account/${token.id}`, {
                     method: "GET",
                     credentials: "include",

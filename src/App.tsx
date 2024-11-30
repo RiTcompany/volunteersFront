@@ -5,7 +5,6 @@ import {Main} from "./pages/Main/Main.tsx";
 import {Footer} from "./components/Footer/Footer.tsx";
 import {Route, Routes, useLocation} from "react-router-dom";
 import {Sidebar} from "./components/Sidebar/Sidebar.tsx";
-import {Profile} from "./pages/Profile/Profile.tsx";
 import {Headquarters} from "./pages/MyHeadquarters/Headquarters.tsx";
 import {RegionalTeam} from "./pages/RegionalTeam/RegionalTeam.tsx";
 import {AllHeadquarters} from "./pages/AllHeadquarters/AllHeadquarters.tsx";
@@ -33,7 +32,7 @@ function App() {
                 && <Sidebar isOpenMenu={isMenuOpen} onMenuClick={() => setIsMenuOpen(prev => !prev)}/>}
             <Routes>
                 <Route element={<Main/>} path={"/"}/>
-                <Route element={<Profile/>} path={"/profile"}/>
+                {/*<Route element={<Profile/>} path={"/profile"}/>*/}
                 <Route element={<Headquarters/>} path={"/:type/:id"}/>
                 <Route element={<RegionalTeam/>} path={"/participants/regional_team/:id"}/>
                 <Route element={<CenterHeadParticipants/>} path={"/participant/:type/:id"}/>
