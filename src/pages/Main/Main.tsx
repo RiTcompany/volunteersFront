@@ -52,7 +52,7 @@ export function Main(): React.JSX.Element {
                 localStorage.setItem('authToken', responseData.token);
                 const user = parseJwt(responseData.token)
                 // window.location.hash=`#/profile/`
-                navigate(`/volunteer/${user.id}`)
+                navigate(`/profile/${user.id}`)
                 // const token = responseData.token;
                 // const data = parseJwt(token);
                 // if (data && data.id && localStorage.getItem('authToken')) {

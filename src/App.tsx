@@ -19,6 +19,7 @@ import {CenterHeadParticipants} from "./pages/CenterHeadParticipants/CenterHeadP
 import {HeadCentEquipment} from "./pages/AllEquipment/HeadCentEquipment.tsx";
 import {EventCheck} from "./pages/EventCheck/EventCheck.tsx";
 import {EquipmentReturn} from "./pages/EquipmentReturn/EquipmentReturn.tsx";
+import {Profile} from "./pages/Profile/Profile.tsx";
 
 function App() {
   const location = useLocation()
@@ -32,7 +33,7 @@ function App() {
                 && <Sidebar isOpenMenu={isMenuOpen} onMenuClick={() => setIsMenuOpen(prev => !prev)}/>}
             <Routes>
                 <Route element={<Main/>} path={"/"}/>
-                {/*<Route element={<Profile/>} path={"/profile"}/>*/}
+                <Route element={<Profile/>} path={"/profile/:id"}/>
                 <Route element={<Headquarters/>} path={"/:type/:id"}/>
                 <Route element={<RegionalTeam/>} path={"/participants/regional_team/:id"}/>
                 <Route element={<CenterHeadParticipants/>} path={"/participant/:type/:id"}/>
