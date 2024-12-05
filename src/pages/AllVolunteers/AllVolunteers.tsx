@@ -260,11 +260,14 @@ export function AllVolunteers(): React.JSX.Element {
                     return [key, value];
                 }).filter(([, value]) => value !== undefined && value !== '')
             );
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const result = await fetch("https://rit-test.ru/api/v1/volunteer", {
                 method: "POST",
                 body: JSON.stringify(newFilters),
-                headers: { "Authorization": `Bearer ${token}`, 'Content-Type': 'application/json' },
+                headers: {
+                    // "Authorization": `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
                 credentials: "include",
             })
             console.log(newFilters)
@@ -281,12 +284,12 @@ export function AllVolunteers(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch("https://rit-test.ru/api/v1/center", {
                     method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    },
+                    // headers: {
+                    //     "Authorization": `Bearer ${token}`
+                    // },
                     credentials: "include"
                 })
                 let result = await response.json()
@@ -301,12 +304,12 @@ export function AllVolunteers(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch("https://rit-test.ru/api/v1/event", {
                     method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    },
+                    // headers: {
+                    //     "Authorization": `Bearer ${token}`
+                    // },
                     credentials: "include"
                 })
                 let result = await response.json()
@@ -321,12 +324,12 @@ export function AllVolunteers(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch("https://rit-test.ru/api/v1/headquarters", {
                     method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    },
+                    // headers: {
+                    //     "Authorization": `Bearer ${token}`
+                    // },
                     credentials: "include"
                 })
                 let result = await response.json()
@@ -457,11 +460,11 @@ export function AllVolunteers(): React.JSX.Element {
         const updatedData = editedData.map(person => (person.birthday ? {...person, birthday: convertToISO(`${person.birthday} 00:00`)} : {...person} ))
         try {
             console.log(editedData)
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(updatedData),
@@ -486,11 +489,11 @@ export function AllVolunteers(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/volunteer/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             });

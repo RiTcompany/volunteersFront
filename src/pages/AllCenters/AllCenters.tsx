@@ -99,11 +99,11 @@ export function AllCenters(): React.JSX.Element {
     const handleAddButtonClick = async () => {
         console.log(newCenter)
         try {
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/center', {
                 method: 'POST',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(newCenter)
@@ -144,11 +144,11 @@ export function AllCenters(): React.JSX.Element {
     const handleSave = async () => {
         try {
             console.log(editedCenters)
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/center', {
                 method: 'PATCH',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json',
 
                 },
@@ -171,11 +171,11 @@ export function AllCenters(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/center/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             });
@@ -213,11 +213,11 @@ export function AllCenters(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch("https://rit-test.ru/api/v1/center", {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                    },
+                    // headers: {
+                    //     "Authorization": `Bearer ${token}`,
+                    // },
                     method: "GET",
                     credentials: "include"
                 })

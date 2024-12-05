@@ -35,12 +35,12 @@ export function VolunteerProfile(): React.JSX.Element {
             setData(null)
             setIsLoading(true)
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch(`https://rit-test.ru/api/v1/personal_account/${id}`, {
                     method: "GET",
                     credentials: "include",
                     headers: {
-                        "Authorization": `Bearer ${token}`,
+                        // "Authorization": `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                 });
@@ -83,7 +83,7 @@ export function VolunteerProfile(): React.JSX.Element {
                     <p className={styles.profile__title}>Личные данные:</p>
                     <p className={styles.profile__data}>ID: {data?.volunteerId}</p>
                     {/*@ts-ignore*/}
-                    {data?.birthdayDto && <p className={styles.profile__data}>Дата рождения: {formatDateTime(data.birthdayDto.birthday).slice(0, 10)} (Возраст: {data.birthdayDto.age})</p>}
+                    {data?.birthdayDto && <p className={styles.profile__data}>Дата рождения: {formatDateTime(data.birthdayDto.birthday)?.slice(0, 10)} (Возраст: {data.birthdayDto.age})</p>}
                     <p className={styles.profile__data}>Telegram: <a>{data?.tgLink}</a></p>
                     <p className={styles.profile__data}>ВКонтакте:  <a>{data?.vkLink}</a></p>
                     <p className={styles.profile__data}>Рейтинг: {data?.rank}</p>

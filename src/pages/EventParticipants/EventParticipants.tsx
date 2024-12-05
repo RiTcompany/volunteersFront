@@ -167,11 +167,13 @@ export function EventParticipants(): React.JSX.Element {
                 }).filter(([, value]) => value !== undefined && value !== '')
             );
             console.log(id)
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const result = await fetch(`https://rit-test.ru/api/v1/event_participant/${id}`, {
                 method: "POST",
                 body: JSON.stringify(newFilters),
-                headers: { 'Content-Type': 'application/json',  "Authorization": `Bearer ${token}` },
+                headers: { 'Content-Type': 'application/json',
+                    // "Authorization": `Bearer ${token}`
+                },
                 credentials: "include",
             })
             console.log(newFilters)
@@ -227,11 +229,11 @@ export function EventParticipants(): React.JSX.Element {
     const handleSave = async () => {
         try {
             console.log(editedData)
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json',
 
                 },

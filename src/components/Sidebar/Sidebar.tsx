@@ -38,9 +38,9 @@ export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Elem
                 const response = await fetch(`https://rit-test.ru/api/v1/my_personal_account/${token.id}`, {
                     method: "GET",
                     credentials: "include",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    },
+                    // headers: {
+                    //     "Authorization": `Bearer ${token}`
+                    // },
                 });
 
                 if (!response.ok) {

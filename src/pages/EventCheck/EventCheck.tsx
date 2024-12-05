@@ -24,12 +24,12 @@ export function EventCheck(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}`, {
                     method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                    },
+                    // headers: {
+                    //     "Authorization": `Bearer ${token}`,
+                    // },
                     credentials: "include",
 
                 })
@@ -67,10 +67,10 @@ export function EventCheck(): React.JSX.Element {
             try {
                 if (data.cloths && data.equipmentId) {
                     setError('')
-                    const token: string | null = localStorage.getItem("authToken");
+                    // const token: string | null = localStorage.getItem("authToken");
                     const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}/mark`, {
                         headers: {
-                            "Authorization": `Bearer ${token}`,
+                            // "Authorization": `Bearer ${token}`,
                             'Content-Type': 'application/json'
                         },
                         method: 'PATCH',
@@ -87,10 +87,10 @@ export function EventCheck(): React.JSX.Element {
                     }
                 } else if (!data.cloths && !data.equipmentId) {
                     setError('')
-                    const token: string | null = localStorage.getItem("authToken");
+                    // const token: string | null = localStorage.getItem("authToken");
                     const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}/mark`, {
                         headers: {
-                            "Authorization": `Bearer ${token}`,
+                            // "Authorization": `Bearer ${token}`,
                             'Content-Type': 'application/json'
                         },
                         method: 'PATCH',

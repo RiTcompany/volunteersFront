@@ -145,11 +145,11 @@ export function AllEvents(): React.JSX.Element {
     const handleSave = async () => {
         const formattedEvents = editedEvents.map(event => ({...event, startTime: convertToISO(event.startTime), endTime: convertToISO(event.endTime) }));
         try {
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/event', {
                 method: 'PATCH',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json',
 
                 },
@@ -173,14 +173,13 @@ export function AllEvents(): React.JSX.Element {
     useEffect(() => {
         (async function() {
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const response = await fetch("https://rit-test.ru/api/v1/event", {
                     method: "GET",
                     credentials: "include",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-
-                    },
+                    // headers: {
+                    //     "Authorization": `Bearer ${token}`,
+                    // },
                 })
                 let result = await response.json()
                 console.log(result)
@@ -211,11 +210,11 @@ export function AllEvents(): React.JSX.Element {
         };
 
         try {
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch('https://rit-test.ru/api/v1/event', {
                 method: 'POST',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(dataToSend)
@@ -235,11 +234,11 @@ export function AllEvents(): React.JSX.Element {
 
     const handleDeleteButtonClick = async (id: number) => {
         try {
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/event/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             });
@@ -260,12 +259,12 @@ export function AllEvents(): React.JSX.Element {
     const handleRegistrationChange = async (id: number, status: string) => {
         console.log(status)
         try {
-            const token: string | null = localStorage.getItem("authToken");
+            // const token: string | null = localStorage.getItem("authToken");
             const response = await fetch(`https://rit-test.ru/api/v1/event/${id}?status=${status === "allowed"}`, {
                 method: "PATCH",
                 credentials: "include",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    // "Authorization": `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
             })

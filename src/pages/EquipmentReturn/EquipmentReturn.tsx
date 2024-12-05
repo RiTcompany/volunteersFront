@@ -26,10 +26,10 @@ export function EquipmentReturn(): React.JSX.Element {
         } else
             setError('')
             try {
-                const token: string | null = localStorage.getItem("authToken");
+                // const token: string | null = localStorage.getItem("authToken");
                 const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${data.volunteerId}/return_equipment`, {
                     headers: {
-                        "Authorization": `Bearer ${token}`,
+                        // "Authorization": `Bearer ${token}`,
 
                         'Content-Type': 'application/json'
                     },
