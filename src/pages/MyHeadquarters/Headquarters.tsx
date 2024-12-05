@@ -11,6 +11,7 @@ interface DataType {
     tgLinkList: string[],
     vkLinkList: string[],
     rank: number,
+    name?: string,
     eventLinkList: { id: number, name: string }[],
     documentLinkList: { id: number, name: string }[],
     participantLinkList: { id: number, name: string }[],
@@ -76,13 +77,13 @@ export function Headquarters(): React.JSX.Element {
                     {data &&
                     <div className={"h-11/12 w-full md:my-5 md:mx-2 bg-white rounded-3xl flex flex-col p-8 gap-5 overflow-y-auto"}>
                         <div className={cn("flex flex-col items-center text-center md:text-left md:flex-row gap-5 bg-[#F6F8FC] rounded-2xl p-8", styles.myHeadquarters__bigTitle)}>
-                            {type === "headquarters" ? <p>Штаб</p> : <p>Центр</p>}
+                            {type === "headquarters" ? <p>Штаб {data.name}</p> : <p>Центр {data.name}</p>}
                         </div>
                         <div className={"flex flex-col gap-2 bg-[#F6F8FC] rounded-2xl p-8"}>
                             <p className={styles.profile__title}>Данные {type === "headquarters" ? <span>штаба:</span> : <span>центра:</span>}</p>
                             <p className={styles.profile__data}>ID: {data.federalId}</p>
                             {/*@ts-ignore*/}
-                            <p className={styles.profile__data}>Дата создания: {formatDateTime(data.createDate).slice(0, 10)}</p>
+                            <p className={styles.profile__data}>Дата создания: {formatDateTime(data.createDate)?.slice(0, 10)}</p>
                             <p className={styles.profile__data}>Telegram:
                                 {data.tgLinkList && data.tgLinkList.map((link) => <Link key={link} to={link}> {link} </Link>)}
                             </p>

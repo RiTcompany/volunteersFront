@@ -60,7 +60,7 @@ export function Sidebar({isOpenMenu, onMenuClick}: SidebarProps): React.JSX.Elem
     console.log(data)
 
     const buttons = [
-        {name: "Личный кабинет", icon: profile, link: `/volunteer/${token.id}`},
+        {name: "Личный кабинет", icon: profile, link: `/profile/${token.id}`},
         {name: "Мой штаб", icon: bag, link: data?.headquartersLink?.id ? `/headquarters/${data.headquartersLink.id}` : null},
         {name: "Мой центр", icon: bag, link: data?.centerLink?.id ? `/center/${data.centerLink.id}` : null},
         {name: "Региональная команда", icon: document, link: data?.districtTeamId ? `/participants/regional_team/${data.districtTeamId}` : null},
