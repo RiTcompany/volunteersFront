@@ -108,7 +108,7 @@ export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
 
     function handleLogout() {
         localStorage.removeItem("authToken")
-        navigate("/")
+        window.location.replace("/")
     }
 
     return (
@@ -145,7 +145,7 @@ export function Navbar({onMenuClick}: NavbarProps): React.JSX.Element {
                         <div className={cn("rounded-full flex justify-center items-center", styles.navbar__nameIcon)}>ИИ</div>
                         <div className={cn("hidden md:flex flex-col")}>
                             <p className={cn("text-[14px] leading-[14px]")}>{user.split(' ').length === 3 ? `${user.split(' ')[0]} ${user.split(' ')[1][0]}. ${user.split(' ')[2][0]}.` : user}</p>
-                            <p className={cn("text-[12px] leading-[12px] text-[#B0B0C1]")}>Руководитель какого-то региона</p>
+                            {/*<p className={cn("text-[12px] leading-[12px] text-[#B0B0C1]")}>Руководитель какого-то региона</p>*/}
                         </div>
                         <button className={cn("border-l-2 border-[#B0B0C1] pl-4 h-10")} onClick={handleLogout}>
                             <img src={logout} alt="logout"/>
