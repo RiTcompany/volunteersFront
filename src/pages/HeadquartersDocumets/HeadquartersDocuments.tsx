@@ -19,17 +19,17 @@ import InputMask from "react-input-mask";
 import {convertToISO, formatDateTime} from "../../utils/formatDate.ts";
 
 const initialColumns = [
-    // { id: 'federalId', title: 'ID', change: false  },
-    { id: 'name', title: 'Документ', change: false  },
-    { id: 'sender', title: 'Отправитель', change: false  },
-    { id: 'recipient', title: 'Получатель', change: false  },
-    { id: 'createDate', title: 'Дата создания', change: false  },
-    { id: 'approvalControl', title: 'Контроль согласования', change: false  },
+    { id: 'docNumber', title: 'Номер', change: true },
+    { id: 'name', title: 'Документ', change: false },
+    { id: 'sender', title: 'Отправитель', change: false },
+    { id: 'recipient', title: 'Получатель', change: false },
+    { id: 'createDate', title: 'Дата создания', change: false },
+    { id: 'approvalControl', title: 'Контроль согласования', change: false },
     // { id: 'delete', title: '', change: false }
 ];
 
 const columnsListFilter = [
-    // { key: 'federalId', label: 'ID'},
+    { key: 'docNumber', label: 'Номер'},
     { key: 'name', label: 'Документ'},
     { key: 'sender', label: 'Отправитель'},
     { key: 'recipient', label: 'Получатель'},
@@ -39,13 +39,14 @@ const columnsListFilter = [
 ];
 
 interface FilterColumnsType {
-    all: boolean, name: boolean, sender: boolean, recipient: boolean, createDate: boolean, approvalControl: boolean,
+    all: boolean, docNumber: boolean, name: boolean, sender: boolean, recipient: boolean, createDate: boolean, approvalControl: boolean,
     delete: boolean,
     [key: string]: boolean;
 }
 
 interface TableDataType {
     id?: 1,
+    number: number | null,
     name: string,
     sender: string,
     recipient: string,
@@ -60,9 +61,10 @@ export function HeadquartersDocuments(): React.JSX.Element {
     const [tableData, setTableData] = useState<TableDataType[]>([])
     const [tableDataLength, setTableDataLength] = useState<number>(0)
 
-    const [editedCenters, setEditedCenters] = useState<TableDataType[]>([]);
+    const [edited, setEdited] = useState<{ id: number, docNumber: number | "" }[]>([]);
 
     const [newDoc, setNewDoc] = useState<TableDataType>({
+        number: null,
         name: "",
         sender: "",
         recipient: "",
@@ -82,7 +84,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
 
     const [columns, setColumns] = useState(initialColumns);
     const [filterColumns, setFilterColumns] = useState<FilterColumnsType>({
-        all: true, name: true, approvalControl: true, createDate: true, recipient: true, sender: true, delete: true});
+        all: true, docNumber: true, name: true, approvalControl: true, createDate: true, recipient: true, sender: true, delete: true});
     const [isOpenDelete, setIsOpenDelete] = useState<{ id: number, open: boolean }>({id: -1, open: false})
 
     useEffect(() => {
@@ -99,7 +101,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
         setFilterColumns(prevState => {
             const newAll = !prevState.all;
             const newColumns = {
-                all: newAll, name: newAll, approvalControl: newAll, createDate: newAll, recipient: newAll, sender: newAll,
+                all: newAll, docNumber: newAll, name: newAll, approvalControl: newAll, createDate: newAll, recipient: newAll, sender: newAll,
                 delete: newAll
             };
 
@@ -230,22 +232,24 @@ export function HeadquartersDocuments(): React.JSX.Element {
     };
 
     const handleInputChange = (id: number, field: string, value: string | number) => {
-        setEditedCenters((prev: TableDataType[]) => {
-            const existingEvent = prev.find(event => event.id === id);
+        setEdited((prev: any) => {
+            const existingEvent = prev.find((event: any) => event.id === id);
             if (existingEvent) {
-                return prev.map(event =>
+                return prev.map((event: any) =>
                     event.id === id
                         ? { ...event, [field]: value }
                         : event
                 );
             } else {
-                return [...prev, { id, [field]: value } as unknown as TableDataType];
+                return [...prev, { id, [field]: value }];
             }
         });
+
+        console.log(edited)
     };
 
     const getEditedValue = (id: number | undefined, field: string) => {
-        const editedEvent = editedCenters.find(event => event.id === id);
+        const editedEvent = edited.find(event => event.id === id);
         return editedEvent ? (editedEvent as any)[field] : null;
     };
 
@@ -380,6 +384,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
                     body: JSON.stringify(newFilters)
                 })
                 let result = await response.json()
+                console.log(result)
                 setTableData(result)
                 setTableDataLength(result.length)
 
@@ -391,6 +396,40 @@ export function HeadquartersDocuments(): React.JSX.Element {
     useEffect(() => {
         console.log(tableData)
     }, tableData)
+
+    const handleSave = async () => {
+        try {
+            console.log(edited);
+
+            const results = await Promise.all(
+                edited.map(async (item) => {
+                    const response = await fetch(
+                        `https://rit-test.ru/api/v1/document/${item.id}?docNumber=${item.docNumber}`,
+                        {
+                            method: 'PATCH',
+                            headers: {
+                                // "Authorization": `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                            },
+                            credentials: 'include',
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(`Ошибка: ${response.status}`);
+                    }
+
+                    return await response.json();
+                })
+            );
+
+            console.log('Изменения сохранены:', results);
+            setEdited([]);
+            setIsEditorMode(false);
+        } catch (error) {
+            console.error('Ошибка при сохранении изменений:', error);
+        }
+    };
 
     return (
         <div className={cn("h-full md:pr-4 mx-auto my-0 flex w-full overflow-hidden", styles.allHeadquarters__container)}>
@@ -426,12 +465,12 @@ export function HeadquartersDocuments(): React.JSX.Element {
                     }
                     {isEditorMode &&
                         <div className={"flex gap-5"}>
-                            <button onClick={() => {setIsEditorMode(false); setEditedCenters([])}}
+                            <button onClick={() => {setIsEditorMode(false); setEdited([])}}
                                     className={cn("hidden md:flex justify-center gap-3 border-none bg-[#E8E8F0]",
                                         styles.allHeadquarters__highlightButton)}>
                                 Отменить
                             </button>
-                            <button onClick={() => setIsEditorMode(false)} className={cn("hidden md:flex justify-center gap-3 " +
+                            <button onClick={() => handleSave()} className={cn("hidden md:flex justify-center gap-3 " +
                                 "border-none bg-[#31AA27] text-white", styles.allHeadquarters__highlightButton)}>
                                 Сохранить
                             </button>
@@ -441,14 +480,14 @@ export function HeadquartersDocuments(): React.JSX.Element {
                 {isEditorMode &&
                     <div className={"flex justify-between"}>
                         <button onClick={() => setIsOpenNew(true)} className={cn(styles.allHeadquarters__addButton, "flex text-white text-center bg-[#4A76CB] justify-center gap-2")}><p className={"hidden md:flex"}>Добавить</p><img src={plus} alt=""/></button>
-                        <button onClick={() => setIsEditorMode(false)} className={cn("flex md:hidden justify-center gap-3 border-none bg-[#31AA27] text-white", styles.allHeadquarters__highlightButton)}>
+                        <button onClick={() => handleSave} className={cn("flex md:hidden justify-center gap-3 border-none bg-[#31AA27] text-white", styles.allHeadquarters__highlightButton)}>
                             Сохранить
                         </button>
                     </div>
                 }
                 <div className={`fixed inset-0 bg-black opacity-50 z-40 ${isOpenNew ? '' : 'hidden'}`} onClick={() => setIsOpenNew(false)}></div>
                 {isOpenNew &&
-                    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[650px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5 overflow-y-auto"}>
+                    <div className={"absolute rounded-lg flex flex-col md:justify-center gap-5 z-50 w-full h-4/5 left-0 bottom-0 md:top-1/2 md:left-1/2 bg-white md:w-[500px] md:h-[760px] md:transform md:-translate-x-1/2 md:-translate-y-1/2 p-5 overflow-y-auto"}>
                         <img src={cross} alt={"close"} className={"absolute top-2 right-2 w-7"} onClick={() => setIsOpenNew(false)}/>
                         <p className={"text-center text-[20px]"}>Добавить данные</p>
                         <div className={"flex flex-col gap-3"}>
@@ -462,6 +501,10 @@ export function HeadquartersDocuments(): React.JSX.Element {
                                         Выбран файл: {selectedFileName}
                                     </div>
                                 )}
+                            </div>
+                            <div className={"flex flex-col gap-3"}>
+                                <label className={"text-[#5E5E5E]"}>Номер документа</label>
+                                <input name={"number"} type={"number"} onChange={handleChangeNew} placeholder={"Номер"} className={"rounded-lg border-[#3B64B3] border-2 py-1 px-2 h-[50px]"}/>
                             </div>
                             <div className={"flex flex-col gap-3"}>
                                 <label className={"text-[#5E5E5E]"}>Название документа</label>
@@ -538,6 +581,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
                                                                 {...provided.dragHandleProps}
                                                                 className={cn("cursor-move", {
                                                                     [styles.allHeadquarters__tableName]: column.id === 'name',
+                                                                    ['w-10']: column.id === 'number',
                                                                     [styles.allHeadquarters__tablePeopleCount]: column.id === 'participantCount',
                                                                     [styles.allHeadquarters__tableAddress]: column.id === 'location',
                                                                     [styles.allHeadquarters__tablePhone]: column.id === 'contact',
