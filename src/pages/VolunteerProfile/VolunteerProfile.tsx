@@ -77,6 +77,7 @@ export function VolunteerProfile(): React.JSX.Element {
                 <div className={"flex flex-col items-center text-center md:text-left md:flex-row gap-5 bg-[#F6F8FC] rounded-2xl p-8"}>
                     <div className={cn("flex flex-col justify-center")}>
                         <p className={cn(styles.profile__name)}>{data?.fullName}</p>
+                        {data?.volunteerId === 248 && <p>Руководитель</p>}
                     </div>
                 </div>
                 <div className={"flex flex-col gap-2 bg-[#F6F8FC] rounded-2xl p-8"}>
