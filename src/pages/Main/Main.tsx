@@ -63,6 +63,7 @@ export function Main(): React.JSX.Element {
                 // }
             } else {
                 console.error('Sign-in failed:', response.statusText);
+                setError("Ошибка авторизации")
             }}
         catch (error) {
             console.log(error)
@@ -87,7 +88,7 @@ export function Main(): React.JSX.Element {
                 </div>
             }
             {page === "login" &&
-                <div className={cn("z-50 flex flex-col justify-center gap-12 md:gap-0 md:justify-between mx-auto my-0 items-center text-white p-10", styles.main__login)}>
+                <div className={cn("z-40 flex flex-col justify-center gap-12 md:gap-0 md:justify-between mx-auto my-0 items-center text-white p-10", styles.main__login)}>
                     <h3 className={cn("text-[32px]")}>Авторизация</h3>
                     <label className={"flex flex-col w-full"}>
                         Логин

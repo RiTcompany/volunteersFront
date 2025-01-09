@@ -83,6 +83,10 @@
     line-height: 20px;
 }
 
+.main__loginButton:active {
+    background-color: rgb(63, 90, 183);
+}
+
 .main__errorContainer {
     height: 25px;
     color: #FB857F;

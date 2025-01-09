@@ -38,22 +38,22 @@ function Modal({ closeModal }: ModalProps): React.JSX.Element {
             </button>
             {showContacts && (
                 <>
-                    <div className={"flex gap-5 text-center"}>
+                    <div className={"flex gap-5 text-center z-50"}>
                         <img src={phone} alt="phone-icon"/>
                         <p>+7 (499) 649 47 77</p>
                     </div>
-                    <hr className={styles.navbar__modalLine}/>
-                    <div className={"flex gap-5"}>
+                    <hr className={cn(styles.navbar__modalLine, "z-50")}/>
+                    <div className={"flex gap-5 z-50"}>
                         <img src={mail} alt="mail-icon"/>
                         <p>info@vsezapobedu.com</p>
                     </div>
-                    <hr className={styles.navbar__modalLine}/>
-                    <div className={"flex gap-5"}>
+                    <hr className={cn(styles.navbar__modalLine, "z-50")}/>
+                    <div className={"flex gap-5 z-50"}>
                         <img src={location} alt="location-icon"/>
                         <p className={cn("leading-4 text-start")}>101000, г. Москва, ул. Мясницкая, д. 46, стр. 1</p>
                     </div>
-                    <hr className={styles.navbar__modalLine}/>
-                    <div className={"flex justify-between"}>
+                    <hr className={cn(styles.navbar__modalLine, "z-50")}/>
+                    <div className={"flex justify-between z-50"}>
                         <a href="#"><img src={tg} alt="tg-icon"/></a>
                         <a href="#"><img src={vk} alt="vk-icon"/></a>
                         <a href="#"><img src={youtube} alt="youtube-icon"/></a>
