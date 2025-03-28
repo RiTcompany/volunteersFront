@@ -177,7 +177,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
         };
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/${request}`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/${request}`, {
                 method: 'POST',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -207,7 +207,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
                 });
 
                 // const token: string | null = localStorage.getItem("authToken");
-                const fileResponse = await fetch(`https://rit-test.ru/api/v1/save_document/${result}`, {
+                const fileResponse = await fetch(`https://spb-zapobedu.ru/api/v1/save_document/${result}`, {
                     method: 'POST',
                     credentials: "include",
                     // headers: {
@@ -256,7 +256,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
     // const handleSave = async () => {
     //     try {
     //         console.log(editedCenters)
-    //         const response = await fetch('https://rit-test.ru/api/v1/headquarters', {
+    //         const response = await fetch('https://spb-zapobedu.ru/api/v1/headquarters', {
     //             method: 'PATCH',
     //             headers: {
     //                 'Content-Type': 'application/json',
@@ -281,7 +281,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
     const handleDeleteButtonClick = async (id: number) => {
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/document/${id}`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/document/${id}`, {
                 method: 'DELETE',
 
                 headers: {
@@ -306,7 +306,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
     const handleShowDocument = async (docId: 1 | undefined) => {
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/document/${docId}/file`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/document/${docId}/file`, {
                 method: "GET",
                 // headers: {
                 //     "Authorization": `Bearer ${token}`,
@@ -374,7 +374,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
 
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch(`https://rit-test.ru/api/v1/${request}`, {
+                const response = await fetch(`https://spb-zapobedu.ru/api/v1/${request}`, {
                     method: "POST",
                     credentials: "include",
                     headers: {
@@ -404,7 +404,7 @@ export function HeadquartersDocuments(): React.JSX.Element {
             const results = await Promise.all(
                 edited.map(async (item) => {
                     const response = await fetch(
-                        `https://rit-test.ru/api/v1/document/${item.id}?docNumber=${item.docNumber}`,
+                        `https://spb-zapobedu.ru/api/v1/document/${item.id}?docNumber=${item.docNumber}`,
                         {
                             method: 'PATCH',
                             headers: {

@@ -41,7 +41,7 @@ export function Main(): React.JSX.Element {
         // navigate("/profile")
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch("https://rit-test.ru/api/v1/auth/sign-in", {
+            const response = await fetch("https://spb-zapobedu.ru/api/v1/auth/sign-in", {
                 method: "POST",
                 body: JSON.stringify(loginData),
                 headers: {'Content-Type': 'application/json' ,  } ,

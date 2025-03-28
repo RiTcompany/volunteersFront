@@ -100,7 +100,7 @@ export function AllCenters(): React.JSX.Element {
         console.log(newCenter)
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/center', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/center', {
                 method: 'POST',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -145,7 +145,7 @@ export function AllCenters(): React.JSX.Element {
         try {
             console.log(editedCenters)
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/center', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/center', {
                 method: 'PATCH',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -172,7 +172,7 @@ export function AllCenters(): React.JSX.Element {
     const handleDeleteButtonClick = async (id: number) => {
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/center/${id}`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/center/${id}`, {
                 method: 'DELETE',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -214,7 +214,7 @@ export function AllCenters(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/center", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/center", {
                     // headers: {
                     //     "Authorization": `Bearer ${token}`,
                     // },

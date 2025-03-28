@@ -146,7 +146,7 @@ export function AllEvents(): React.JSX.Element {
         const formattedEvents = editedEvents.map(event => ({...event, startTime: convertToISO(event.startTime), endTime: convertToISO(event.endTime) }));
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/event', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/event', {
                 method: 'PATCH',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -174,7 +174,7 @@ export function AllEvents(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/event", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/event", {
                     method: "GET",
                     credentials: "include",
                     // headers: {
@@ -211,7 +211,7 @@ export function AllEvents(): React.JSX.Element {
 
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/event', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/event', {
                 method: 'POST',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -235,7 +235,7 @@ export function AllEvents(): React.JSX.Element {
     const handleDeleteButtonClick = async (id: number) => {
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/event/${id}`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/event/${id}`, {
                 method: 'DELETE',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -260,7 +260,7 @@ export function AllEvents(): React.JSX.Element {
         console.log(status)
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/event/${id}?status=${status === "allowed"}`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/event/${id}?status=${status === "allowed"}`, {
                 method: "PATCH",
                 credentials: "include",
                 headers: {

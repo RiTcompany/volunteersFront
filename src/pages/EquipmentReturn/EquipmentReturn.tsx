@@ -27,7 +27,7 @@ export function EquipmentReturn(): React.JSX.Element {
             setError('')
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${data.volunteerId}/return_equipment`, {
+                const res = await fetch(`https://spb-zapobedu.ru/api/v1/volunteer/${data.volunteerId}/return_equipment`, {
                     headers: {
                         // "Authorization": `Bearer ${token}`,
 

@@ -38,7 +38,7 @@ export function Headquarters(): React.JSX.Element {
             const request = `${type}/${id}`;
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch(`https://rit-test.ru/api/v1/${request}`, {
+                const response = await fetch(`https://spb-zapobedu.ru/api/v1/${request}`, {
                     method: "GET",
                     credentials: "include",
                     // headers: {

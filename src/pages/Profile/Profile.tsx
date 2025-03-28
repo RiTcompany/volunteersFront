@@ -36,7 +36,7 @@ export function Profile(): React.JSX.Element {
             setIsLoading(true)
             try {
                 const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch(`https://rit-test.ru/api/v1/my_personal_account/${id}`, {
+                const response = await fetch(`https://spb-zapobedu.ru/api/v1/my_personal_account/${id}`, {
                     method: "GET",
                     credentials: "include",
                     headers: {

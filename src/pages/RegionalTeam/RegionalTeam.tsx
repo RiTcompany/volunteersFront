@@ -94,7 +94,7 @@ export function RegionalTeam(): React.JSX.Element {
             );
             console.log(id)
             // const token: string | null = localStorage.getItem("authToken");
-            const result = await fetch(`https://rit-test.ru/api/v1/district_team_participant/${id}`, {
+            const result = await fetch(`https://spb-zapobedu.ru/api/v1/district_team_participant/${id}`, {
                 method: "POST",
                 body: JSON.stringify(newFilters),
                 // headers: {  "Authorization": `Bearer ${token}`, },
@@ -126,7 +126,7 @@ export function RegionalTeam(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/event", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/event", {
                     method: "GET",
                     // headers: {
                     //     "Authorization": `Bearer ${token}`,
@@ -223,7 +223,7 @@ export function RegionalTeam(): React.JSX.Element {
         try {
             console.log(editedData)
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -255,7 +255,7 @@ export function RegionalTeam(): React.JSX.Element {
     const handleAddNewParticipant = async () => {
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/district_team_participant/change`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/district_team_participant/change`, {
                 method: 'PATCH',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -280,7 +280,7 @@ export function RegionalTeam(): React.JSX.Element {
     const handleDeleteButtonClick = async (volId: number) => {
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/district_team_participant/change`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/district_team_participant/change`, {
                 method: 'PATCH',
                 headers: {
                     // "Authorization": `Bearer ${token}`,

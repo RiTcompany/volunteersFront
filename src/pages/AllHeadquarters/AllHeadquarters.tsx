@@ -100,7 +100,7 @@ export function AllHeadquarters(): React.JSX.Element {
         console.log(newCenter)
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/headquarters', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/headquarters', {
                 method: 'POST',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -145,7 +145,7 @@ export function AllHeadquarters(): React.JSX.Element {
         try {
             console.log(editedCenters)
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/headquarters', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/headquarters', {
                 method: 'PATCH',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -172,7 +172,7 @@ export function AllHeadquarters(): React.JSX.Element {
     const handleDeleteButtonClick = async (id: number) => {
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/headquarters/${id}`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/headquarters/${id}`, {
                 method: 'DELETE',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -214,7 +214,7 @@ export function AllHeadquarters(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/headquarters", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/headquarters", {
                     method: "GET",
                     // headers: {
                     //     "Authorization": `Bearer ${token}`,

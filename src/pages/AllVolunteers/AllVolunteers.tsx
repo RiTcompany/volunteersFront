@@ -261,7 +261,7 @@ export function AllVolunteers(): React.JSX.Element {
                 }).filter(([, value]) => value !== undefined && value !== '')
             );
             // const token: string | null = localStorage.getItem("authToken");
-            const result = await fetch("https://rit-test.ru/api/v1/volunteer", {
+            const result = await fetch("https://spb-zapobedu.ru/api/v1/volunteer", {
                 method: "POST",
                 body: JSON.stringify(newFilters),
                 headers: {
@@ -285,7 +285,7 @@ export function AllVolunteers(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/center", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/center", {
                     method: "GET",
                     // headers: {
                     //     "Authorization": `Bearer ${token}`
@@ -305,7 +305,7 @@ export function AllVolunteers(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/event", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/event", {
                     method: "GET",
                     // headers: {
                     //     "Authorization": `Bearer ${token}`
@@ -325,7 +325,7 @@ export function AllVolunteers(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/headquarters", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/headquarters", {
                     method: "GET",
                     // headers: {
                     //     "Authorization": `Bearer ${token}`
@@ -461,7 +461,7 @@ export function AllVolunteers(): React.JSX.Element {
         try {
             console.log(editedData)
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -490,7 +490,7 @@ export function AllVolunteers(): React.JSX.Element {
     const handleDeleteButtonClick = async (id: number) => {
         try {
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch(`https://rit-test.ru/api/v1/volunteer/${id}`, {
+            const response = await fetch(`https://spb-zapobedu.ru/api/v1/volunteer/${id}`, {
                 method: 'DELETE',
                 headers: {
                     // "Authorization": `Bearer ${token}`,

@@ -25,7 +25,7 @@ export function EventCheck(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}`, {
+                const response = await fetch(`https://spb-zapobedu.ru/api/v1/volunteer/${volunid}/event/${eventid}`, {
                     method: "GET",
                     // headers: {
                     //     "Authorization": `Bearer ${token}`,
@@ -68,7 +68,7 @@ export function EventCheck(): React.JSX.Element {
                 if (data.cloths && data.equipmentId) {
                     setError('')
                     // const token: string | null = localStorage.getItem("authToken");
-                    const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}/mark`, {
+                    const res = await fetch(`https://spb-zapobedu.ru/api/v1/volunteer/${volunid}/event/${eventid}/mark`, {
                         headers: {
                             // "Authorization": `Bearer ${token}`,
                             'Content-Type': 'application/json'
@@ -88,7 +88,7 @@ export function EventCheck(): React.JSX.Element {
                 } else if (!data.cloths && !data.equipmentId) {
                     setError('')
                     // const token: string | null = localStorage.getItem("authToken");
-                    const res = await fetch(`https://rit-test.ru/api/v1/volunteer/${volunid}/event/${eventid}/mark`, {
+                    const res = await fetch(`https://spb-zapobedu.ru/api/v1/volunteer/${volunid}/event/${eventid}/mark`, {
                         headers: {
                             // "Authorization": `Bearer ${token}`,
                             'Content-Type': 'application/json'

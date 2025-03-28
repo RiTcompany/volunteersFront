@@ -87,7 +87,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/center", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/center", {
                     method: "GET",
                     credentials: "include",
                     // headers: {
@@ -107,7 +107,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
         (async function() {
             try {
                 // const token: string | null = localStorage.getItem("authToken");
-                const response = await fetch("https://rit-test.ru/api/v1/headquarters", {
+                const response = await fetch("https://spb-zapobedu.ru/api/v1/headquarters", {
                     method: "GET",
                     // headers: {
                     //     "Authorization": `Bearer ${token}`,
@@ -284,7 +284,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
                 }).filter(([, value]) => value !== undefined && value !== '')
             );
             // const token: string | null = localStorage.getItem("authToken");
-            const result = await fetch(`https://rit-test.ru/api/v1/${type}_participant/${id}`, {
+            const result = await fetch(`https://spb-zapobedu.ru/api/v1/${type}_participant/${id}`, {
                 method: "POST",
                 body: JSON.stringify(newFilters),
                 headers: {
@@ -399,7 +399,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
         try {
             console.log(editedData)
             // const token: string | null = localStorage.getItem("authToken");
-            const response = await fetch('https://rit-test.ru/api/v1/volunteer', {
+            const response = await fetch('https://spb-zapobedu.ru/api/v1/volunteer', {
                 method: 'PATCH',
                 headers: {
                     // "Authorization": `Bearer ${token}`,
@@ -426,7 +426,7 @@ export function CenterHeadParticipants(): React.JSX.Element {
 
     // const handleDeleteButtonClick = async (id: number) => {
     //     try {
-    //         const response = await fetch(`https://rit-test.ru/api/v1/center/${id}`, {
+    //         const response = await fetch(`https://spb-zapobedu.ru/api/v1/center/${id}`, {
     //             method: 'DELETE',
     //             headers: {
     //                 'Content-Type': 'application/json'
